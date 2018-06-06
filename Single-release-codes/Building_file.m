@@ -17,7 +17,7 @@ hold on
 plot([x - pixw,x + pixw, x+pixw, x-pixw,x-pixw],[y-pixw, y-pixw, y+pixw, y+ pixw,y-pixw],'r');
 hold off
 sub = i1(round(y) +wind, round(x) + wind,:);
-mf = mean(mean(sub));
+mf = sum(sum(sub));
 mf = mf(:);
 figure
 t = (1:numel(mf))*tex;
