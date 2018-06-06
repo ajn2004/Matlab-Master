@@ -53,51 +53,51 @@ title('HILO vGlut 10 Stim 10Hz')
 legend(ax1,'F','Stims')
 
 
-
-ax2 = axes(uitab(tg,'Title','2'));
-% close all
-plot(ax2,t,mfluor)
-sf = gausssmooth(mfluor,20,50);
-hold on
-plot(ax2,t,sf);
-legend(ax2,'F','Smoothed F');
-% title(ax2,'non-HILO vGlut 10 Stim 10Hz')
-title('HILO vGlut 10 Stim 10Hz')
-xlabel(ax2,'Seconds')
-ylabel(ax2,'F (AU)');
-
-
-ax = axes(uitab(tg,'Title','3'));
-plot(ax,t,mfluor)
-sf = gausssmooth(mfluor,20,50);
-hold on
-plot(t,sf);
-plot([5.778, 5.778],[min(mfluor), max(mfluor)],'r');
-plot([2.101, 2.101],[min(mfluor), max(mfluor)],'r');
-plot([stim*tex, stim*tex],[min(mfluor), max(mfluor)],'r');
-legend('F','Smoothed F','Cutoff');
-% title('non-HILO vGlut 10 Stim 10Hz')
-title('HILO vGlut 10 Stim 10Hz')
-xlabel('Seconds')
-ylabel('F (AU)');
-ind = t > 5.778;
-mf = mfluor(ind) - sf(ind);
-
-
-ax = axes(uitab(tg,'Title','4'));
-plot(t(ind),mf);
-title('Ave Subtracted post-stim');
+% 
+% ax2 = axes(uitab(tg,'Title','2'));
+% % close all
+% plot(ax2,t,mfluor)
+% sf = gausssmooth(mfluor,20,50);
+% hold on
+% plot(ax2,t,sf);
+% legend(ax2,'F','Smoothed F');
+% % title(ax2,'non-HILO vGlut 10 Stim 10Hz')
 % title('HILO vGlut 10 Stim 10Hz')
-xlabel('Seconds')
-ylabel('F (AU)');
-
-ax = axes(uitab(tg,'Title','dF/F'));
-plot(t,(mfluor-bkg)/bkg);
-title('Ave Subtracted post-stim');
+% xlabel(ax2,'Seconds')
+% ylabel(ax2,'F (AU)');
+% 
+% 
+% ax = axes(uitab(tg,'Title','3'));
+% plot(ax,t,mfluor)
+% sf = gausssmooth(mfluor,20,50);
+% hold on
+% plot(t,sf);
+% plot([5.778, 5.778],[min(mfluor), max(mfluor)],'r');
+% plot([2.101, 2.101],[min(mfluor), max(mfluor)],'r');
+% plot([stim*tex, stim*tex],[min(mfluor), max(mfluor)],'r');
+% legend('F','Smoothed F','Cutoff');
+% % title('non-HILO vGlut 10 Stim 10Hz')
 % title('HILO vGlut 10 Stim 10Hz')
-xlabel('Seconds')
-ylabel('F (AU)');
-snr = (max(mfluor)-bkg)/std(mf)
-% close all
-
+% xlabel('Seconds')
+% ylabel('F (AU)');
+% ind = t > 5.778;
+% mf = mfluor(ind) - sf(ind);
+% 
+% 
+% ax = axes(uitab(tg,'Title','4'));
+% plot(t(ind),mf);
+% title('Ave Subtracted post-stim');
+% % title('HILO vGlut 10 Stim 10Hz')
+% xlabel('Seconds')
+% ylabel('F (AU)');
+% 
+% ax = axes(uitab(tg,'Title','dF/F'));
+% plot(t,(mfluor-bkg)/bkg);
+% title('Ave Subtracted post-stim');
+% % title('HILO vGlut 10 Stim 10Hz')
+% xlabel('Seconds')
+% ylabel('F (AU)');
+% snr = (max(mfluor)-bkg)/std(mf)
+% % close all
+% 
 
