@@ -1,4 +1,5 @@
 % Last modified by AJN 3/21/16
+% Original version from Sam Hess Lab
 % a function version of einzel to choose background levels in
 % bracket_quhzx_neural_1.m
 function [bkgn] = func_einzel_2color05_setup(data_dir,base_name,n_bkgn,pix_to_pho)

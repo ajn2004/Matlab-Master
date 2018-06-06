@@ -1,5 +1,6 @@
 function [bkgn] = func_einzel01_setup_bkgn_only(data_dir,base_name,an_dir,q,n_start,n_bkgn, pix_to_pho)
-
+% Original version from Sam Hess lab
+% Modified by AJN
 global xpix ypix wbox;
 
 imagefile = strcat(data_dir,base_name);
