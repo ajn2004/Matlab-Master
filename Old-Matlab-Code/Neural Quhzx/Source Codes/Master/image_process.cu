@@ -38,9 +38,9 @@ COVOLUTION SECTION
 
 /********CONVOLVE 3***************************************************************************************/
 
-void __global__ convolve3(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_gauss,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ convolve3(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_gauss,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int gausw,				// width of guassian kernel
@@ -48,8 +48,8 @@ void __global__ convolve3(double *d_iall,   // the gaussian is a separable filte
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_igauss[(3)][(3)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_igauss[(3)][(3)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -85,7 +85,7 @@ void __global__ convolve3(double *d_iall,   // the gaussian is a separable filte
 	__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 	// convolution calculation
-	double d_res = 0.0*PI;		// initialize counting variable on thread register
+	float d_res = 0.0*PI;		// initialize counting variable on thread register
 	if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 		for (int rowcount = 0; rowcount < gausw; rowcount++){
 			for (int colcount = 0; colcount < gausw; colcount++){
@@ -107,9 +107,9 @@ void __global__ convolve3(double *d_iall,   // the gaussian is a separable filte
 
 /*************COVOLVE 5**************************************************************************************/
 
-void __global__ convolve5(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_gauss,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ convolve5(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_gauss,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int gausw,				// width of guassian kernel
@@ -117,8 +117,8 @@ void __global__ convolve5(double *d_iall,   // the gaussian is a separable filte
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_igauss[(5)][(5)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_igauss[(5)][(5)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -154,7 +154,7 @@ void __global__ convolve5(double *d_iall,   // the gaussian is a separable filte
 	__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 	// convolution calculation
-	double d_res = 0.0*PI;		// initialize counting variable on thread register
+	float d_res = 0.0*PI;		// initialize counting variable on thread register
 	if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 		for (int rowcount = 0; rowcount < gausw; rowcount++){
 			for (int colcount = 0; colcount < gausw; colcount++){
@@ -176,9 +176,9 @@ void __global__ convolve5(double *d_iall,   // the gaussian is a separable filte
 
 //* COVOLVE 7 ***************************************************************************************************************/
 
-void __global__ convolve7(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_gauss,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ convolve7(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_gauss,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int gausw,				// width of guassian kernel
@@ -186,8 +186,8 @@ void __global__ convolve7(double *d_iall,   // the gaussian is a separable filte
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_igauss[(7)][(7)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_igauss[(7)][(7)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -223,7 +223,7 @@ void __global__ convolve7(double *d_iall,   // the gaussian is a separable filte
 	__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 	// convolution calculation
-	double d_res = 0.0*PI;		// initialize counting variable on thread register
+	float d_res = 0.0*PI;		// initialize counting variable on thread register
 	if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 		for (int rowcount = 0; rowcount < gausw; rowcount++){
 			for (int colcount = 0; colcount < gausw; colcount++){
@@ -245,9 +245,9 @@ void __global__ convolve7(double *d_iall,   // the gaussian is a separable filte
 
 /*****COVOLVE 9********************************************************************************************************/
 
-void __global__ convolve9(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_gauss,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ convolve9(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_gauss,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int gausw,				// width of guassian kernel
@@ -255,8 +255,8 @@ void __global__ convolve9(double *d_iall,   // the gaussian is a separable filte
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_igauss[(9)][(9)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_igauss[(9)][(9)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -292,7 +292,7 @@ void __global__ convolve9(double *d_iall,   // the gaussian is a separable filte
 	__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 	// convolution calculation
-	double d_res = 0.0*PI;		// initialize counting variable on thread register
+	float d_res = 0.0*PI;		// initialize counting variable on thread register
 	if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 		for (int rowcount = 0; rowcount < gausw; rowcount++){
 			for (int colcount = 0; colcount < gausw; colcount++){
@@ -314,9 +314,9 @@ void __global__ convolve9(double *d_iall,   // the gaussian is a separable filte
 
 /*****COVOLVE 11********************************************************************************************************/
 
-void __global__ convolve11(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_gauss,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ convolve11(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_gauss,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int gausw,				// width of guassian kernel
@@ -324,8 +324,8 @@ void __global__ convolve11(double *d_iall,   // the gaussian is a separable filt
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_igauss[(11)][(11)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_igauss[(11)][(11)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -361,7 +361,7 @@ void __global__ convolve11(double *d_iall,   // the gaussian is a separable filt
 	__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 	// convolution calculation
-	double d_res = 0.0*PI;		// initialize counting variable on thread register
+	float d_res = 0.0*PI;		// initialize counting variable on thread register
 	if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 		for (int rowcount = 0; rowcount < gausw; rowcount++){
 			for (int colcount = 0; colcount < gausw; colcount++){
@@ -383,9 +383,9 @@ void __global__ convolve11(double *d_iall,   // the gaussian is a separable filt
 
 /*****COVOLVE 13********************************************************************************************************/
 
-void __global__ convolve13(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_gauss,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ convolve13(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_gauss,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int gausw,				// width of guassian kernel
@@ -393,8 +393,8 @@ void __global__ convolve13(double *d_iall,   // the gaussian is a separable filt
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_igauss[(13)][(13)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_igauss[(13)][(13)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -430,7 +430,7 @@ void __global__ convolve13(double *d_iall,   // the gaussian is a separable filt
 	__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 	// convolution calculation
-	double d_res = 0.0*PI;		// initialize counting variable on thread register
+	float d_res = 0.0*PI;		// initialize counting variable on thread register
 	if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 		for (int rowcount = 0; rowcount < gausw; rowcount++){
 			for (int colcount = 0; colcount < gausw; colcount++){
@@ -452,9 +452,9 @@ void __global__ convolve13(double *d_iall,   // the gaussian is a separable filt
 
 /*****COVOLVE 15********************************************************************************************************/
 
-void __global__ convolve15(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_gauss,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ convolve15(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_gauss,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int gausw,				// width of guassian kernel
@@ -462,8 +462,8 @@ void __global__ convolve15(double *d_iall,   // the gaussian is a separable filt
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_igauss[(15)][(15)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_igauss[(15)][(15)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -499,7 +499,7 @@ void __global__ convolve15(double *d_iall,   // the gaussian is a separable filt
 	__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 	// convolution calculation
-	double d_res = 0.0*PI;		// initialize counting variable on thread register
+	float d_res = 0.0*PI;		// initialize counting variable on thread register
 	if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 		for (int rowcount = 0; rowcount < gausw; rowcount++){
 			for (int colcount = 0; colcount < gausw; colcount++){
@@ -538,9 +538,9 @@ IMAGE EROSION SECTION
 
 /*****ERODE 3********************************************************************************************************/
 
-void __global__ erode3(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_ball,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ erode3(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_ball,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int ballw,				// width of guassian kernel
@@ -548,8 +548,8 @@ void __global__ erode3(double *d_iall,   // the gaussian is a separable filter a
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_iball[(3)][(3)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_iball[(3)][(3)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -585,8 +585,8 @@ void __global__ erode3(double *d_iall,   // the gaussian is a separable filter a
 		__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 		// convolution calculation
-		double d_res_min = 1000.0*PI;		// initialize counting variable on thread register
-		double d_res;
+		float d_res_min = 1000.0*PI;		// initialize counting variable on thread register
+		float d_res;
 		if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 			for (int rowcount = 0; rowcount < ballw; rowcount++){
 				for (int colcount = 0; colcount < ballw; colcount++){
@@ -611,9 +611,9 @@ void __global__ erode3(double *d_iall,   // the gaussian is a separable filter a
 
 /*****ERODE 5********************************************************************************************************/
 
-void __global__ erode5(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_ball,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ erode5(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_ball,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int ballw,				// width of guassian kernel
@@ -621,8 +621,8 @@ void __global__ erode5(double *d_iall,   // the gaussian is a separable filter a
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_iball[(5)][(5)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_iball[(5)][(5)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -658,8 +658,8 @@ void __global__ erode5(double *d_iall,   // the gaussian is a separable filter a
 		__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 		// convolution calculation
-		double d_res_min = 1000.0*PI;		// initialize counting variable on thread register
-		double d_res;
+		float d_res_min = 1000.0*PI;		// initialize counting variable on thread register
+		float d_res;
 		if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 			for (int rowcount = 0; rowcount < ballw; rowcount++){
 				for (int colcount = 0; colcount < ballw; colcount++){
@@ -684,9 +684,9 @@ void __global__ erode5(double *d_iall,   // the gaussian is a separable filter a
 
 /*****ERODE 7********************************************************************************************************/
 
-void __global__ erode7(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_ball,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ erode7(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_ball,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int ballw,				// width of guassian kernel
@@ -694,8 +694,8 @@ void __global__ erode7(double *d_iall,   // the gaussian is a separable filter a
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_iball[(7)][(7)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_iball[(7)][(7)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -731,8 +731,8 @@ void __global__ erode7(double *d_iall,   // the gaussian is a separable filter a
 		__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 		// convolution calculation
-		double d_res_min = 1000.0*PI;		// initialize counting variable on thread register
-		double d_res;
+		float d_res_min = 1000.0*PI;		// initialize counting variable on thread register
+		float d_res;
 		if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 			for (int rowcount = 0; rowcount < ballw; rowcount++){
 				for (int colcount = 0; colcount < ballw; colcount++){
@@ -756,9 +756,9 @@ void __global__ erode7(double *d_iall,   // the gaussian is a separable filter a
 }		// end erosion
 /*****ERODE 9********************************************************************************************************/
 
-void __global__ erode9(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_ball,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ erode9(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_ball,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int ballw,				// width of guassian kernel
@@ -766,8 +766,8 @@ void __global__ erode9(double *d_iall,   // the gaussian is a separable filter a
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_iball[(9)][(9)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_iball[(9)][(9)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -803,8 +803,8 @@ void __global__ erode9(double *d_iall,   // the gaussian is a separable filter a
 		__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 		// convolution calculation
-		double d_res_min = 1000.0*PI;		// initialize counting variable on thread register
-		double d_res;
+		float d_res_min = 1000.0*PI;		// initialize counting variable on thread register
+		float d_res;
 		if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 			for (int rowcount = 0; rowcount < ballw; rowcount++){
 				for (int colcount = 0; colcount < ballw; colcount++){
@@ -829,9 +829,9 @@ void __global__ erode9(double *d_iall,   // the gaussian is a separable filter a
 
 /*****ERODE 11********************************************************************************************************/
 
-void __global__ erode11(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_ball,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ erode11(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_ball,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int ballw,				// width of guassian kernel
@@ -839,8 +839,8 @@ void __global__ erode11(double *d_iall,   // the gaussian is a separable filter 
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_iball[(11)][(11)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_iball[(11)][(11)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -876,8 +876,8 @@ void __global__ erode11(double *d_iall,   // the gaussian is a separable filter 
 		__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 		// convolution calculation
-		double d_res_min = 1000.0*PI;		// initialize counting variable on thread register
-		double d_res;
+		float d_res_min = 1000.0*PI;		// initialize counting variable on thread register
+		float d_res;
 		if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 			for (int rowcount = 0; rowcount < ballw; rowcount++){
 				for (int colcount = 0; colcount < ballw; colcount++){
@@ -904,9 +904,9 @@ void __global__ erode11(double *d_iall,   // the gaussian is a separable filter 
 
 /*****ERODE 13********************************************************************************************************/
 
-void __global__ erode13(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_ball,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ erode13(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_ball,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int ballw,				// width of guassian kernel
@@ -914,8 +914,8 @@ void __global__ erode13(double *d_iall,   // the gaussian is a separable filter 
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_iball[(13)][(13)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_iball[(13)][(13)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -951,8 +951,8 @@ void __global__ erode13(double *d_iall,   // the gaussian is a separable filter 
 		__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 		// convolution calculation
-		double d_res_min = 1000.0*PI;		// initialize counting variable on thread register
-		double d_res;
+		float d_res_min = 1000.0*PI;		// initialize counting variable on thread register
+		float d_res;
 		if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 			for (int rowcount = 0; rowcount < ballw; rowcount++){
 				for (int colcount = 0; colcount < ballw; colcount++){
@@ -978,9 +978,9 @@ void __global__ erode13(double *d_iall,   // the gaussian is a separable filter 
 
 /*****ERODE 15********************************************************************************************************/
 
-void __global__ erode15(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_ball,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ erode15(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_ball,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int ballw,				// width of guassian kernel
@@ -988,8 +988,8 @@ void __global__ erode15(double *d_iall,   // the gaussian is a separable filter 
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_iball[(15)][(15)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_iball[(15)][(15)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -1025,8 +1025,8 @@ void __global__ erode15(double *d_iall,   // the gaussian is a separable filter 
 		__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 		// convolution calculation
-		double d_res_min = 1000.0*PI;		// initialize counting variable on thread register
-		double d_res;
+		float d_res_min = 1000.0*PI;		// initialize counting variable on thread register
+		float d_res;
 		if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 			for (int rowcount = 0; rowcount < ballw; rowcount++){
 				for (int colcount = 0; colcount < ballw; colcount++){
@@ -1066,9 +1066,9 @@ IMAGE DIALATION SECTION
 
 /*****DIALATE 3********************************************************************************************************/
 
-void __global__ dilate3(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_ball,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ dilate3(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_ball,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int ballw,				// width of guassian kernel
@@ -1076,8 +1076,8 @@ void __global__ dilate3(double *d_iall,   // the gaussian is a separable filter 
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_iball[(3)][(3)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_iball[(3)][(3)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -1113,8 +1113,8 @@ void __global__ dilate3(double *d_iall,   // the gaussian is a separable filter 
 		__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 		// convolution calculation
-		double d_res_max = -1.0*PI;		// initialize counting variable on thread register
-		double d_res;
+		float d_res_max = -1.0*PI;		// initialize counting variable on thread register
+		float d_res;
 		if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 			for (int rowcount = 0; rowcount < ballw; rowcount++){
 				for (int colcount = 0; colcount < ballw; colcount++){
@@ -1141,9 +1141,9 @@ void __global__ dilate3(double *d_iall,   // the gaussian is a separable filter 
 
 /*****DIALATE 5********************************************************************************************************/
 
-void __global__ dilate5(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_ball,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ dilate5(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_ball,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int ballw,				// width of guassian kernel
@@ -1151,8 +1151,8 @@ void __global__ dilate5(double *d_iall,   // the gaussian is a separable filter 
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_iball[(5)][(5)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_iball[(5)][(5)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -1188,8 +1188,8 @@ void __global__ dilate5(double *d_iall,   // the gaussian is a separable filter 
 		__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 		// convolution calculation
-		double d_res_max = 0.0*PI;		// initialize counting variable on thread register
-		double d_res;
+		float d_res_max = 0.0*PI;		// initialize counting variable on thread register
+		float d_res;
 		if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 			for (int rowcount = 0; rowcount < ballw; rowcount++){
 				for (int colcount = 0; colcount < ballw; colcount++){
@@ -1216,9 +1216,9 @@ void __global__ dilate5(double *d_iall,   // the gaussian is a separable filter 
 
 /*****DIALATE 7********************************************************************************************************/
 
-void __global__ dilate7(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_ball,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ dilate7(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_ball,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int ballw,				// width of guassian kernel
@@ -1226,8 +1226,8 @@ void __global__ dilate7(double *d_iall,   // the gaussian is a separable filter 
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_iball[(7)][(7)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_iball[(7)][(7)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -1263,8 +1263,8 @@ void __global__ dilate7(double *d_iall,   // the gaussian is a separable filter 
 		__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 		// convolution calculation
-		double d_res_max = 0.0*PI;		// initialize counting variable on thread register
-		double d_res;
+		float d_res_max = 0.0*PI;		// initialize counting variable on thread register
+		float d_res;
 		if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 			for (int rowcount = 0; rowcount < ballw; rowcount++){
 				for (int colcount = 0; colcount < ballw; colcount++){
@@ -1290,9 +1290,9 @@ void __global__ dilate7(double *d_iall,   // the gaussian is a separable filter 
 
 /*****DIALATE 9********************************************************************************************************/
 
-void __global__ dilate9(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_ball,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ dilate9(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_ball,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int ballw,				// width of guassian kernel
@@ -1300,8 +1300,8 @@ void __global__ dilate9(double *d_iall,   // the gaussian is a separable filter 
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_iball[(9)][(9)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_iball[(9)][(9)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -1337,8 +1337,8 @@ void __global__ dilate9(double *d_iall,   // the gaussian is a separable filter 
 		__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 		// convolution calculation
-		double d_res_max = 0.0*PI;		// initialize counting variable on thread register
-		double d_res;
+		float d_res_max = 0.0*PI;		// initialize counting variable on thread register
+		float d_res;
 		if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 			for (int rowcount = 0; rowcount < ballw; rowcount++){
 				for (int colcount = 0; colcount < ballw; colcount++){
@@ -1365,9 +1365,9 @@ void __global__ dilate9(double *d_iall,   // the gaussian is a separable filter 
 
 /*****DIALATE 11********************************************************************************************************/
 
-void __global__ dilate11(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_ball,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ dilate11(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_ball,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int ballw,				// width of guassian kernel
@@ -1375,8 +1375,8 @@ void __global__ dilate11(double *d_iall,   // the gaussian is a separable filter
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_iball[(11)][(11)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_iball[(11)][(11)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -1412,8 +1412,8 @@ void __global__ dilate11(double *d_iall,   // the gaussian is a separable filter
 		__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 		// convolution calculation
-		double d_res_max = -1.0;		// initialize counting variable on thread register
-		double d_res;
+		float d_res_max = -1.0;		// initialize counting variable on thread register
+		float d_res;
 		if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 			for (int rowcount = 0; rowcount < ballw; rowcount++){
 				for (int colcount = 0; colcount < ballw; colcount++){
@@ -1439,9 +1439,9 @@ void __global__ dilate11(double *d_iall,   // the gaussian is a separable filter
 
 /*****DIALATE 13********************************************************************************************************/
 
-void __global__ dilate13(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_ball,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ dilate13(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_ball,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int ballw,				// width of guassian kernel
@@ -1449,8 +1449,8 @@ void __global__ dilate13(double *d_iall,   // the gaussian is a separable filter
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_iball[(13)][(13)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_iball[(13)][(13)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -1486,8 +1486,8 @@ void __global__ dilate13(double *d_iall,   // the gaussian is a separable filter
 		__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 		// convolution calculation
-		double d_res_max = -1.0;		// initialize counting variable on thread register
-		double d_res;
+		float d_res_max = -1.0;		// initialize counting variable on thread register
+		float d_res;
 		if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 			for (int rowcount = 0; rowcount < ballw; rowcount++){
 				for (int colcount = 0; colcount < ballw; colcount++){
@@ -1513,9 +1513,9 @@ void __global__ dilate13(double *d_iall,   // the gaussian is a separable filter
 
 /*****DIALATE 15********************************************************************************************************/
 
-void __global__ dilate15(double *d_iall,   // the gaussian is a separable filter and be treated as such
-	double *d_ball,	// makes these elements eligible for constant caching
-	double *d_ifin,
+void __global__ dilate15(float *d_iall,   // the gaussian is a separable filter and be treated as such
+	float *d_ball,	// makes these elements eligible for constant caching
+	float *d_ifin,
 	int irow,
 	int icol,
 	int ballw,				// width of guassian kernel
@@ -1523,8 +1523,8 @@ void __global__ dilate15(double *d_iall,   // the gaussian is a separable filter
 {
 	// Declare variables
 
-	__shared__ double d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
-	__shared__ double d_iball[(15)][(15)];					// preallocate space for image mask
+	__shared__ float d_i2[(BLOCK_WIDTH)][(BLOCK_WIDTH)];		// preallocate space for shared image
+	__shared__ float d_iball[(15)][(15)];					// preallocate space for image mask
 
 	// Coordinate building
 	int tx = threadIdx.x;			// local x coord
@@ -1560,8 +1560,8 @@ void __global__ dilate15(double *d_iall,   // the gaussian is a separable filter
 		__syncthreads();																			// each thread uploads to a shared array later accessed by all threads, it is imperative to synch threads here
 
 		// convolution calculation
-		double d_res_max = -1.0;		// initialize counting variable on thread register
-		double d_res;
+		float d_res_max = -1.0;		// initialize counting variable on thread register
+		float d_res;
 		if (ty < O_TILE_WIDTH && tx < O_TILE_WIDTH) {										// check that the local thread should be apart of the calcualtion
 			for (int rowcount = 0; rowcount < ballw; rowcount++){
 				for (int colcount = 0; colcount < ballw; colcount++){
@@ -1598,8 +1598,8 @@ BACKGROUND SUBTRACTION STEP
 
 
 
-void __global__ bkgsub(double *d_iall,
-	double *d_ibkg,
+void __global__ bkgsub(float *d_iall,
+	float *d_ibkg,
 	int	numel)
 {
 	int index = blockIdx.x*blockDim.x + threadIdx.x;
@@ -1627,42 +1627,42 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	int nrhs, mxArray const *prhs[])
 {
 	/* Declare all variables.*/
-	double *iall;				// the pointer to the array of all images to be analyzed
-	double *gauss_vec;
-	double *ball_vec;
-	double  *d_iall;			// Pointer to image array on gpu
-	double *d_gauss;
-	double *d_ball;
-	double *d_ifin, *d_ifin2;
+	float *iall;				// the pointer to the array of all images to be analyzed
+	float *gauss_vec;
+	float *ball_vec;
+	float  *d_iall;			// Pointer to image array on gpu
+	float *d_gauss;
+	float *d_ball;
+	float *d_ifin, *d_ifin2;
 	int irow;				// number of pixels in a row which should also be the number in a coloumn
 	int icol;
 	int numi;				// number of images imported
-	const int *idims, *gaudims, *balldims;
+	const size_t *idims, *gaudims, *balldims;
 	cudaDeviceReset();
 
 	/* Throw an error if the input does not match expectations. */
-	if (nrhs != 3) {
+/*	if (nrhs != 3) {
 		printf("Must have 3 inputs ( i1, i_gauss, i_ball) line: %d\n", __LINE__);
 		mexErrMsgTxt("See Error above!\n");
 	}
 
-	if (!mxIsDouble(prhs[0]) || mxIsComplex(prhs[0])){
-		printf("i1 must be a nxnxm double array\n");
+	if (!mxIsfloat(prhs[0]) || mxIsComplex(prhs[0])){
+		printf("i1 must be a nxnxm float array\n");
 		mexErrMsgTxt("See Error above!\n");
 
 	}
-	if (!mxIsDouble(prhs[1]) || mxIsComplex(prhs[1])){
-		printf("i_gauss must be a nxn double array\n");
+	if (!mxIsfloat(prhs[1]) || mxIsComplex(prhs[1])){
+		printf("i_gauss must be a nxn float array\n");
 		mexErrMsgTxt("See Error above!\n");
 	}
-	if (!mxIsDouble(prhs[2]) || mxIsComplex(prhs[2])){
+	if (!mxIsfloat(prhs[2]) || mxIsComplex(prhs[2])){
 		printf("number of threads per block must be an integer between 1 and 1024\n");
 		mexErrMsgTxt("See Error above!\n");
 	}
-
+*/
 
 	// get pointer to input arguments
-	iall = (double *)mxGetPr(prhs[0]);		// matlab linearizes in a coloumn major format which affects indexing (Writing MAtlab C/MEX Code - Research Gate)
+	iall = (float *)mxGetPr(prhs[0]);		// matlab linearizes in a coloumn major format which affects indexing (Writing MAtlab C/MEX Code - Research Gate)
 	idims = mxGetDimensions(prhs[0]);	// get dimensions of image array
 	icol = (int)idims[1];
 	irow = (int)idims[0];
@@ -1672,13 +1672,13 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	}
 
 	// get gauss dims
-	gauss_vec = (double *)mxGetPr(prhs[1]);
+	gauss_vec = (float *)mxGetPr(prhs[1]);
 	gaudims = mxGetDimensions(prhs[1]);
 	int gaurow = (int)gaudims[0];
 	int gaucol = (int)gaudims[1];
 
 	// get ball dims
-	ball_vec = (double *)mxGetPr(prhs[2]);
+	ball_vec = (float *)mxGetPr(prhs[2]);
 	balldims = mxGetDimensions(prhs[1]);
 	int balrow = (int)gaudims[0];
 	int balcol = (int)gaudims[1];
@@ -1694,51 +1694,51 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
 
 
-	cudaError_t err1 = cudaMalloc((void**)&d_iall, irow*icol*numi*sizeof(double));				// allocate image memory
+	cudaError_t err1 = cudaMalloc((void**)&d_iall, irow*icol*numi*sizeof(float));				// allocate image memory
 	if (err1 != cudaSuccess){
 		printf("%s in %s at line %d\n", cudaGetErrorString(err1), __FILE__, __LINE__);
 		mexErrMsgTxt("See Error above!\n");
 	}
 
-	cudaError_t err2 = cudaMalloc((void**)&d_gauss, gaurow*gaucol*sizeof(double));						// allocate gaussian memory
+	cudaError_t err2 = cudaMalloc((void**)&d_gauss, gaurow*gaucol*sizeof(float));						// allocate gaussian memory
 	if (err2 != cudaSuccess){
 		printf("%s in %s at line %d\n", cudaGetErrorString(err2), __FILE__, __LINE__);
 		mexErrMsgTxt("See Error above!\n");
 	}
 
-	cudaError_t err3 = cudaMalloc((void**)&d_ifin, irow*icol*numi*sizeof(double));						// allocate completed image memory
+	cudaError_t err3 = cudaMalloc((void**)&d_ifin, irow*icol*numi*sizeof(float));						// allocate completed image memory
 	if (err3 != cudaSuccess){
 		printf("%s in %s at line %d\n", cudaGetErrorString(err3), __FILE__, __LINE__);
 		mexErrMsgTxt("See Error above!\n");
 	}
 	
-	cudaError_t err3eb = cudaMalloc((void**)&d_ifin2, irow*icol*numi*sizeof(double));						// allocate completed 2 image memory
+	cudaError_t err3eb = cudaMalloc((void**)&d_ifin2, irow*icol*numi*sizeof(float));						// allocate completed 2 image memory
 	if (err3eb != cudaSuccess){
 		printf("%s in %s at line %d\n", cudaGetErrorString(err3eb), __FILE__, __LINE__);
 		mexErrMsgTxt("See Error above!\n");
 	}
 
-	cudaError_t err4 = cudaMalloc((void**)&d_ball, balrow*balcol*sizeof(double));						// allocate completed image memory
+	cudaError_t err4 = cudaMalloc((void**)&d_ball, balrow*balcol*sizeof(float));						// allocate completed image memory
 	if (err4 != cudaSuccess){
 		printf("%s in %s at line %d\n", cudaGetErrorString(err4), __FILE__, __LINE__);
 		mexErrMsgTxt("See Error above!\n");
 	}
 
 	// copy data from host to device
-	cudaError_t err9 = cudaMemcpy(d_iall, iall, irow*icol*numi*sizeof(double), cudaMemcpyHostToDevice);	// copy image data to gpu
+	cudaError_t err9 = cudaMemcpy(d_iall, iall, irow*icol*numi*sizeof(float), cudaMemcpyHostToDevice);	// copy image data to gpu
 	if (err9 != cudaSuccess){
 		printf("%s in %s at line %d\n", cudaGetErrorString(err9), __FILE__, __LINE__);
 		mexErrMsgTxt("See Error above!\n");
 	}
 
-	cudaError_t err10 = cudaMemcpy(d_gauss, gauss_vec, gaurow*gaucol*sizeof(double), cudaMemcpyHostToDevice);		// copy gauss data to gpu
+	cudaError_t err10 = cudaMemcpy(d_gauss, gauss_vec, gaurow*gaucol*sizeof(float), cudaMemcpyHostToDevice);		// copy gauss data to gpu
 	if (err10 != cudaSuccess){
 		printf("%s in %s at line %d\n", cudaGetErrorString(err10), __FILE__, __LINE__);
 		mexErrMsgTxt("See Error above!\n");
 	}
 
 
-	cudaError_t err1a = cudaMemcpy(d_ball, ball_vec, balrow*balcol*sizeof(double), cudaMemcpyHostToDevice);		// copy gauss data to gpu
+	cudaError_t err1a = cudaMemcpy(d_ball, ball_vec, balrow*balcol*sizeof(float), cudaMemcpyHostToDevice);		// copy gauss data to gpu
 	if (err1a != cudaSuccess){
 		printf("%s in %s at line %d\n", cudaGetErrorString(err1a), __FILE__, __LINE__);
 		mexErrMsgTxt("See Error above!\n");
@@ -1841,10 +1841,10 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
 
 	plhs[0] = mxDuplicateArray(prhs[0]);
-	double *ifin = (double *)mxGetPr(plhs[0]);
+	float *ifin = (float *)mxGetPr(plhs[0]);
 
 	//	printf("irow %d, icol %f, numi %f, line %d\n", numi, ifin[1], ifin[2], __LINE__);
-	cudaError_t err16 = cudaMemcpy(ifin, d_iall, irow*icol*numi*sizeof(double), cudaMemcpyDeviceToHost);	// copy xf_all data
+	cudaError_t err16 = cudaMemcpy(ifin, d_iall, irow*icol*numi*sizeof(float), cudaMemcpyDeviceToHost);	// copy xf_all data
 	if (err16 != cudaSuccess){
 		printf("%s in %s at line %d\n", cudaGetErrorString(err16), __FILE__, __LINE__);
 		mexErrMsgTxt("See Error above!\n");

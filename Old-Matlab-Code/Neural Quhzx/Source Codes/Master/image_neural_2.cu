@@ -158,7 +158,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	int irow;				// number of pixels in a row which should also be the number in a coloumn
 	int icol;				// n
 	int numi;				// number of images imported
-	const int *idims, *th1dims, *th2dims;
+	const size_t *idims, *th1dims, *th2dims;
 
 
 	/* Throw an error if the input does not match expectations. */
@@ -206,7 +206,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	int th2row = (int)th2dims[0]; // number of rows in theta2
 	int th2col = 1; // number of coloumns in theta2
 
-
+/*
 	// EVERYONE LOVES SOME GOOD VARIABLE CHECKING!!!!!!!!!!!!!!
 	if (th1row != 50){
 		printf("Theta1 must have 50 rows for what you want to do\n");
@@ -227,7 +227,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	if (nlhs != 1){
 		printf("Declare an output variable [im_activate] = image_neural(i1, Theta1.', Theta2.')\n"); // oh user...... TEACH THEM A LESSON!!!!
 		mexErrMsgTxt("See Error above!\n");
-	}
+	}*/
 	cudaDeviceReset();
 	// allocate memory on the gpu device
 	cudaError_t err1 = cudaMalloc((void**)&d_iall, irow*icol*(numi)*sizeof(double));				// allocate image memory
