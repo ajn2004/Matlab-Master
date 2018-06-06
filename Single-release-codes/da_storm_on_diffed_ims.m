@@ -1,25 +1,32 @@
-function func_da_storm(fname,data_d, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1)
-
+% function func_da_storm(fname,data_d, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1)
+clc; clearvars; close all;
+[fname, fpath] = uigetfile('*.mat');
+load([fpath,fname]);
+iprod = dip1;
 % Convert Variabls
-pix2pho = single(pix2pho);
-q = single(q);
-
-if exist([data_d, 'bead_astig_3dcal.mat'])
-    cal = load([data_d 'bead_astig_3dcal.mat']);
+% pix2pho = single(pix2pho);
+% q = single(q);
+q = 0.133;
+pix2pho = 33.33;
+thresh = 60;
+pixw = 7;
+an_dir = 'analysis';
+if exist([fpath, 'bead_astig_3dcal.mat'])
+    cal = load([fpath, 'bead_astig_3dcal.mat']);
 else
     cal = load('bead_astig_3dcal.mat');
 end
 % mi1 = 0
 % Load file and dark current background subtraction
-i1 = (readtiff(fname) - mi1)/pix2pho;
-i1 = i1.*(i1>0);
-[m,n,o] = size(i1);
+% i1 = (readtiff(fname) - mi1)/pix2pho;
+% i1 = i1.*(i1>0);
+% [m,n,o] = size(i1);
 % i1(1:30,:,:) = 0;
 % i1(m-30:m,:,:) = 0;
 % i1(:,1:30,:) = 0;
 % i1(:,n-30:n,:) = 0;
 % Rolling Ball Background Subtract
-iprod = rollingball(i1);
+% iprod = rollingball(i1);
 % iprod = bp_subtract(i1);
 % iprod = i1;
 % Peak Detection
@@ -60,7 +67,7 @@ zf_all = zf_all/q; % this puts zf_all in units of pix
 
 % Save the Analysis
 %  save([an_dir,'\', fname(1:end-4),'_dast.mat'], 'zf_all','sigx_all' ,'sigy_all','sigx_crlb','sigy_crlb','y','iloc','xf_all' , 'xf_crlb' , 'yf_all' , 'yf_crlb' , 'N' , 'N_crlb' ,'off_all' , 'off_crlb', 'framenum_all', 'llv','pixw','q','pix2pho');
- save([an_dir,'\', fname(1:end-4),'_dast.mat'], 'cents','zf_all','zf_crlb','xf_all' , 'xf_crlb' , 'yf_all' , 'yf_crlb' , 'N' , 'N_crlb' ,'off_all' , 'off_crlb', 'framenum_all', 'llv','iters','pixw','q','pix2pho');
+ save([an_dir,'\', fname(1:end-4),'_dast.mat'], 'fms','cents','zf_all','zf_crlb','xf_all' , 'xf_crlb' , 'yf_all' , 'yf_crlb' , 'N' , 'N_crlb' ,'off_all' , 'off_crlb', 'framenum_all', 'llv','iters','pixw','q','pix2pho');
 catch lsterr
 end
 

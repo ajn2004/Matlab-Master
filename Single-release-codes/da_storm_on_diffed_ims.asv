@@ -1,5 +1,7 @@
-function func_da_storm(fname,data_d, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1)
-
+% function func_da_storm(fname,data_d, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1)
+clc; clearvars; close all;
+[fname, fpath] = uigetfile('*.mat');
+load(fname,fpath
 % Convert Variabls
 pix2pho = single(pix2pho);
 q = single(q);

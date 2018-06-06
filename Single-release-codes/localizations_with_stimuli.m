@@ -3,15 +3,15 @@
 % go afterwards. It requires understanding frame information. If it was
 % created from a cut_up_data set additional.mat should have the true frames
 % in the form of fms. This will probably serve as the basis for future code
-clearvars; close all; clc;
+% clearvars; close all; clc;
 [dname, dpath] = uigetfile('*_tol*');
-[aname, apath] = uigetfile('*additional*');
+% [aname, apath] = uigetfile('*additional*');
 load([dpath, dname]);
-load([apath, aname]);
+% load([apath, aname]);
 Points_diag;
 close all
 cfms = fms(x); % corrected frames
-mfms = mod((cfms - 100),64).'; % modded frames, subtract the prescans then mod 64 which is the stim rate
+mfms = mod((cfms - 100),98).'; % modded frames, subtract the prescans then mod 64 which is the stim rate
 xf = xf - mean(xf);
 yf = yf - mean(yf);
 zf = zf - mean(zf);

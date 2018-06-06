@@ -34,7 +34,7 @@ i_gauss=exp(-2*(Xgs.^2 + Ygs.^2)/(sigma2.^2));
 i_gauss=i_gauss/sum(sum(i_gauss));
 
 % calculate memory requirements
-i1 = double(i1);
+i1 = single(i1);
 rows = numel(i1(:,1,1));
 cols = numel(i1(1,:,1));
 ims = numel(i1(1,1,:));

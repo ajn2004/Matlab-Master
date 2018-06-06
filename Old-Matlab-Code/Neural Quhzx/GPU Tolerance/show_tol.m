@@ -35,8 +35,8 @@ end
 off_crlb_min = 0.0;          % minimum error in number of offset photons
 off_crlb_max = 050;          % maximum error in number of offset photons
       zf_max = 800;
-    fr_unc_N = 0.02;        % fractional uncertainty in N
-  fr_unc_off = 1000;        % Fractional uncertainty in offset
+    fr_unc_N = 02;        % fractional uncertainty in N
+  fr_unc_off = .4;        % Fractional uncertainty in offset
 %       fr_sig = 0.2;         % fractional uncertainty for sigmas
 
 % zf_all = getdz(sigx_all,sigy_all)/(q);
@@ -131,4 +131,4 @@ subplot(2,2,2); hist(yf_crlb(index).^0.5*q*1000, 2*numel(N(index))^(1/3)); title
 subplot(2,2,4); histogram(iln(index)); title('iln');
 whitebg([1 1 1])
 
-save('C:\Users\AJN Lab\Dropbox\Codes\Matlab Testing Folder\Neural Quhzx\GPU Tolerance\these_tol.mat','zf_crlb_max', 'N_tol_min','N_tol_max','off_min','off_max','N_crlb_min','N_crlb_max','zf_crlb_max','xf_crlb_max','yf_crlb_max','off_crlb_min','off_crlb_max','iln_min','fr_unc_N','fr_unc_off','zf_max');
+save('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Old-Matlab-Code\Neural Quhzx\GPU Tolerance\these_tol.mat','zf_crlb_max', 'N_tol_min','N_tol_max','off_min','off_max','N_crlb_min','N_crlb_max','zf_crlb_max','xf_crlb_max','yf_crlb_max','off_crlb_min','off_crlb_max','iln_min','fr_unc_N','fr_unc_off','zf_max');
