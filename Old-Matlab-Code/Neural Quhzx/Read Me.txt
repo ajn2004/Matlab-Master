@@ -12,3 +12,5 @@ To Analyze a folder of data
 10) Once backgrounds are chosen the program is analyzing, you will be notified by email.
 
 Questions or bugs contact AJN @ {andrew.j.nelson@maine.edu} or Sam Hess
+
+As of 6/6/18 this code is obsolete and replaced by the Hurricane codes
