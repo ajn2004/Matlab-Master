@@ -1,5 +1,0 @@
-These codes have been written in cuda C. They are not easily readable if you are only familiar with MATLAB.
-Please do not alter these codes. If you need to rewrite them, take a copy, and alter that locally. Bring that
-final product to Sam Hess to discuss whether or not it should be incorporated into the current GPU MLE codes.
-
--AJN
