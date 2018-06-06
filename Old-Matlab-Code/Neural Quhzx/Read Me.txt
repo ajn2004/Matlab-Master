@@ -1,0 +1,14 @@
+To Analyze a folder of data
+1) Move all files to be anlayzed into 1 folder
+2) Ensure this folder contains ONLY tiffs to be analyzed, other types of files are alright
+3) Open bracket_quhzx_neural_1.m in matlab
+4) Set the usual parameters such as NA, q, wavelength, analysis directory and channel number
+4.1) note that as of 11/9/15 there is only functionality for 1 channel analysis.
+5) enter your email address(es) in the formate of {email1, email2, ....} if you want email notification of completion
+6) choose a frame to start on(n_start) and a frame to end on(n_end) and a frame to measure background noise on (n_bkgn)
+7) Choose a file to start on (file_start) and a file to end on (file_end)
+8) Run the program
+9) Choose backgrounds
+10) Once backgrounds are chosen the program is analyzing, you will be notified by email.
+
+Questions or bugs contact AJN @ {andrew.j.nelson@maine.edu} or Sam Hess
