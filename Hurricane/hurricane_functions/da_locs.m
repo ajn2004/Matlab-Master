@@ -40,6 +40,7 @@ if n > maxi
                 [xf, xc, yf, yc, zf, zc, Np, Nc, off, offc, lv] = chain_d_loc9(i3, zcurve, numthreads, rads);
             case 121
                 [xf, xc, yf, yc, zf, zc, Np, Nc, off, offc, lv] = chain_d_loc11(i3, zcurve, numthreads, rads);
+%                 [xf, xc, yf, yc, zf, zc, Np, Nc, off, offc, lv] = chain_d_loc15(imlocs, zcurve, numthreads, rads);
             otherwise
         end
         qind = Nc == -1;

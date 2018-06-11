@@ -33,7 +33,8 @@ if o > maxi % If we can't localize it all at once, chunk it up
         frx = CRLB(:,1).^0.5./P(:,1);
         fry = CRLB(:,2).^0.5./P(:,2);
 %         ind = frx <= mean(frx) & fry <= mean(fry);
-ind = 1:size(P(:,1));
+%         ind = P(:,1) > 6.5 & P(:,1) < 7 & P(:,2) > 3.25 & P(:,2) < 10.75;
+    ind = 1:size(P(:,1));
         % Make final assignments
         fnout = [fnout;fna(ind)];
         xf_out = [xf_out;P((ind),1)+cen((ind),1)];

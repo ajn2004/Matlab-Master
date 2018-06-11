@@ -27,12 +27,14 @@ iprod = rollingball(i1);
 
 % thrsh = 300/pix2pho;
 % diprod = diff(iprod,3);
+% for i = 1:o
 thrsh = thresh/100*mean(max(max(iprod)));
 % tic
 % thrsh = 3*std(iprod(:)) + mean(iprod(:));
 % toc
 % thrsh = thresh/100*mean(max(max(diprod)));
 dps = get_das_peaks(iprod,thrsh);
+% end
 sum(dps(:))
 
 clear ip ipf i1
@@ -60,7 +62,13 @@ zf_all = zf_all/q; % this puts zf_all in units of pix
 
 % Save the Analysis
 %  save([an_dir,'\', fname(1:end-4),'_dast.mat'], 'zf_all','sigx_all' ,'sigy_all','sigx_crlb','sigy_crlb','y','iloc','xf_all' , 'xf_crlb' , 'yf_all' , 'yf_crlb' , 'N' , 'N_crlb' ,'off_all' , 'off_crlb', 'framenum_all', 'llv','pixw','q','pix2pho');
- save([an_dir,'\', fname(1:end-4),'_dast.mat'], 'cents','zf_all','zf_crlb','xf_all' , 'xf_crlb' , 'yf_all' , 'yf_crlb' , 'N' , 'N_crlb' ,'off_all' , 'off_crlb', 'framenum_all', 'llv','iters','pixw','q','pix2pho');
+if strcmp(sv_im,'Y') || strcmp(sv_im,'y')
+save([an_dir,'\', fname(1:end-4),'_dast.mat'], 'cents','zf_all','zf_crlb','xf_all' , 'xf_crlb' , 'yf_all' , 'yf_crlb' , 'N' , 'N_crlb' ,'off_all' , 'off_crlb', 'framenum_all', 'llv','iters','pixw','q','pix2pho','ilocs');
+else
+    
+save([an_dir,'\', fname(1:end-4),'_dast.mat'], 'cents','zf_all','zf_crlb','xf_all' , 'xf_crlb' , 'yf_all' , 'yf_crlb' , 'N' , 'N_crlb' ,'off_all' , 'off_crlb', 'framenum_all', 'llv','iters','pixw','q','pix2pho');
+end
 catch lsterr
+%      save([an_dir,'\', fname(1:end-4),'_dast.mat'], 'zf_all','sigx_all' ,'sigy_all','sigx_crlb','sigy_crlb','y','iloc','xf_all' , 'xf_crlb' , 'yf_all' , 'yf_crlb' , 'N' , 'N_crlb' ,'off_all' , 'off_crlb', 'framenum_all', 'llv','pixw','q','pix2pho');
 end
 
