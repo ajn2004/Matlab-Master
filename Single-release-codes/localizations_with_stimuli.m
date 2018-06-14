@@ -7,11 +7,13 @@
 [dname, dpath] = uigetfile('*_tol*');
 % [aname, apath] = uigetfile('*additional*');
 load([dpath, dname]);
+prescans = 90; % Number of prescanned images as recorded in labview
+fps = 98; % frames per stim, if using the stimulate every x
 % load([apath, aname]);
 Points_diag;
 close all
 cfms = fms(x); % corrected frames
-mfms = mod((cfms - 100),98).'; % modded frames, subtract the prescans then mod 64 which is the stim rate
+mfms = mod((cfms - prescans),fps).'; % modded frames, subtract the prescans then mod 64 which is the stim rate
 xf = xf - mean(xf);
 yf = yf - mean(yf);
 zf = zf - mean(zf);

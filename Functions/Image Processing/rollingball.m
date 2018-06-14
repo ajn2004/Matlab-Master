@@ -35,10 +35,10 @@ i_gauss=i_gauss/sum(sum(i_gauss));
 
 % calculate memory requirements
 i1 = single(i1);
-rows = numel(i1(:,1,1));
-cols = numel(i1(1,:,1));
-ims = numel(i1(1,1,:));
-
+% rows = numel(i1(:,1,1));
+% cols = numel(i1(1,:,1));
+% ims = numel(i1(1,1,:));
+[rows, cols, ims] = size(i1);
 mem_size = rows*cols*ims*8;
 
 if mem_size < amem / 8             % if memory of the image is small enough, run it through

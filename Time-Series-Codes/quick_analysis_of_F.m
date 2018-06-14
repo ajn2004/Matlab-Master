@@ -7,12 +7,14 @@
 clearvars
 close all
 f = figure('Name','F Trace Analysis');
-i1 = readtiff();
+load('back_subtract.mat');
+c = scrub_config();
+i1 = (readtiff()-mi1)/em_gain(c.Gain);
 [m,n,o] = size(i1);
-pixw = 10;
+pixw = 7;
 tex = 0.0309;
-stim = 110;
-stims = 10;
+stim = 100;
+stims = 1;
 str = 10;
 si1 = std(i1,1,3);
 imagesc(si1)
@@ -29,13 +31,13 @@ sfluor = sum(sum(sub1));
 sfluor = sfluor(:);
 mfluor(:,i) = mfl(:);
 end
-mfluor = mean(mfluor,2);
-bkg = mean(mfluor(68:stim-1));
-nois = std(mfluor(68:stim-1));
+% mfluor = mean(mfluor,2);
+% bkg = mean(mfluor(68:stim-1));
+% nois = std(mfluor(68:stim-1));
 t = (1:o)*tex;
-df = mfluor - bkg;
-ndf = df/bkg;
-nf = mfluor/bkg;
+% df = mfluor - bkg;
+% ndf = df/bkg;
+% nf = mfluor/bkg;
 tbgrp = uitabgroup(f);
 fl = uitab(tbgrp,'Title','F and stims');
 tg = uitabgroup(fl);

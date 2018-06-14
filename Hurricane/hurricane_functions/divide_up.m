@@ -4,6 +4,7 @@ fnum = [];
 i2 = [];
 cents = [];
 wind = -pixw:pixw;
+[X, Y] = meshgrid(wind,wind);
 % [XP, YP ] = meshgrid(wind, wind);
 for j = 1:o % loop over all frames
     
@@ -21,6 +22,8 @@ for j = 1:o % loop over all frames
                 [nrow, ncol] = find(i1(row(i) + wind, col(i) + wind,j) == max(max(i1(row(i) + wind, col(i) + wind,j))),1);
                 col(i) = (col(i) - pixw) + ncol; % matlab's find function starts the subarray at 1 which  = col - pixw
                 row(i) = (row(i) - pixw) + nrow;
+             
+
             catch lster
 %                 disp(lster)
             end % end catch loop

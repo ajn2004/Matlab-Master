@@ -28,6 +28,8 @@ if o > maxi % If we can't localize it all at once, chunk it up
     for i = 1:rounds % Loop over chunks
         fna = fnum((i-1)*maxi +1 :i*maxi); % separate framenums
         cen = cents((i-1)*maxi +1 :i*maxi, :); % separate coms
+        [P, CRLB, LogL] = mleFit_LM(ilocs,3,50,single(cal.gauss_zfit), 1); % perform fit
+        
         [P, CRLB, LogL] = mleFit_LM(ilocs(:,:,(i-1)*maxi +1 :i*maxi),5,50,single(cal.cspline.coeff), 0); % perform fit
 %         ind = abs(P(:,1) - pixw ) <= 0.5 & abs(P(:,2) - pixw) <= 0.5;
         frx = CRLB(:,1).^0.5./P(:,1);
@@ -56,7 +58,10 @@ if o > maxi % If we can't localize it all at once, chunk it up
         
         fna = fnum(i*maxi+1:end); % separate framenums
         cen = cents(i*maxi+1:end, :); % separate coms
-        [P, CRLB, LogL] = mleFit_LM(ilocs(:,:,i*maxi +1 :end),5,50,single(cal.cspline.coeff), 1); % perform fit
+        [P, CRLB, LogL] = mleFit_LM(ilocs,3,50,single(cal.gauss_zfit), 1); % perform fit
+        [P1,CRLB1, LogL1] = mleFit_LM(ilocs,5,50,single(cal.cspline.coeff), 1);
+        
+%         [P, CRLB, LogL] = mleFit_LM(ilocs(:,:,i*maxi +1 :end),5,50,single(cal.cspline.coeff), 1); % perform fit
 %         ind = abs(P(:,1) - pixw ) <= 0.5 & abs(P(:,2) - pixw) <= 0.5;
         frx = CRLB(:,1).^0.5./P(:,1);
         fry = CRLB(:,2).^0.5./P(:,2);
@@ -68,7 +73,8 @@ if o > maxi % If we can't localize it all at once, chunk it up
         yf_out = [yf_out;P((ind),2)+cen((ind),2)];
         N_out = [N_out ; P((ind),3)];
         off_out = [off_out; P((ind),4)];
-        zf_out = [zf_out; (P((ind),5)-cal.cspline.z0)*cal.cspline.dz/1000]; % This puts zf_out in terms of um, we can convert to pixels on the outside
+%         zf_out = [zf_out; (P((ind),5)-cal.cspline.z0)*cal.cspline.dz/1000]; % This puts zf_out in terms of um, we can convert to pixels on the outside
+        zf_out = [zf_out; P(ind,5)];
         its_out = [its_out; P((ind),6)];
         xf_cout = [xf_cout; CRLB((ind),1)];
         yf_cout = [yf_cout; CRLB((ind),2)];        
@@ -84,8 +90,8 @@ else
     try
         fna = fnum;
         cen = cents;
-        [P, CRLB, LogL] = mleFit_LM(ilocs,5,50,single(cal.cspline.coeff), 1); % perform fit
-        
+        [P, CRLB, LogL] = mleFit_LM(ilocs,3,50,single(cal.gauss_zfit), 1); % perform fit
+        [P1,CRLB1, LogL1] = mleFit_LM(ilocs,5,50,single(cal.cspline.coeff), 1);
 %       ind = abs(P(:,1) - pixw ) <= 0.5 & abs(P(:,2) - pixw) <= 0.5; 
         frx = CRLB(:,1).^0.5./P(:,1);
         fry = CRLB(:,2).^0.5./P(:,2);
@@ -98,13 +104,14 @@ else
         yf_out = [yf_out;P((ind),2)+cen((ind),2)];
         N_out = [N_out ; P((ind),3)];
         off_out = [off_out; P((ind),4)];
-        zf_out = [zf_out; (P((ind),5)-cal.cspline.z0)*cal.cspline.dz/1000]; % This puts zf_out in terms of um, we can convert to pixels on the outside
+        zf_out = [zf_out; (P1((ind),5)-cal.cspline.z0)*cal.cspline.dz/1000]; % This puts zf_out in terms of um, we can convert to pixels on the outside
+%         zf_out = [zf_out; P((ind),5)];
         its_out = [its_out; P((ind),6)];
         xf_cout = [xf_cout; CRLB((ind),1)];
         yf_cout = [yf_cout; CRLB((ind),2)];        
         N_cout = [N_cout; CRLB((ind),3)];
         off_cout = [off_cout; CRLB((ind),4)];
-        zf_cout = [zf_cout; CRLB((ind),5)*(cal.cspline.dz/1000)^2]; % this converts the CRLB to um^2, we will convert to pixels on the outside
+        zf_cout = [zf_cout; CRLB1((ind),5)*(cal.cspline.dz/1000)^2]; % this converts the CRLB to um^2, we will convert to pixels on the outside
         llv_out = [llv_out;LogL(ind)];
     catch lsterr
     end

@@ -20,7 +20,7 @@ if ~ exist('xf_all')
 end
 % Tolerance Variables
      iln_min = -1;
-   N_tol_min = 0;        % minimum number of photons
+   N_tol_min = 50;        % minimum number of photons
    N_tol_max = 80000;       % maximum number of photons
      off_min = 0;          % minimum number of offset photons
      off_max = 80;         % maximum number of offset photons
@@ -32,11 +32,11 @@ end
 %      sig_max = 500;     % sigma maximum in nm
 %      sig_crlb_min = 0;
 %      sig_crlb_max = 10;
-off_crlb_min = 0.0;          % minimum error in number of offset photons
+off_crlb_min = -10.0;          % minimum error in number of offset photons
 off_crlb_max = 050;          % maximum error in number of offset photons
       zf_max = 800;
     fr_unc_N = 02;        % fractional uncertainty in N
-  fr_unc_off = .4;        % Fractional uncertainty in offset
+  fr_unc_off = 1;        % Fractional uncertainty in offset
 %       fr_sig = 0.2;         % fractional uncertainty for sigmas
 
 % zf_all = getdz(sigx_all,sigy_all)/(q);
