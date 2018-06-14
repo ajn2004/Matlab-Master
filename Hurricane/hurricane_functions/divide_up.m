@@ -22,11 +22,7 @@ for j = 1:o % loop over all frames
                 [nrow, ncol] = find(i1(row(i) + wind, col(i) + wind,j) == max(max(i1(row(i) + wind, col(i) + wind,j))),1);
                 col(i) = (col(i) - pixw) + ncol; % matlab's find function starts the subarray at 1 which  = col - pixw
                 row(i) = (row(i) - pixw) + nrow;
-                i1s = i1(row(i) + wind,col(i)+wind,j);
-                xc = X.*i1s/(sum(i1s(:)));
-                yc = Y.*i1s/(sum(i1s(:)));
-                col(i) = col(i) - round(sum(xc(:))); % matlab's find function starts the subarray at 1 which  = col - pixw
-                row(i) = row(i) - round(sum(yc(:)));
+             
 
             catch lster
 %                 disp(lster)
