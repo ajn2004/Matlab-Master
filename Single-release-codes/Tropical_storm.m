@@ -12,11 +12,11 @@
 clearvars; close all; clc;
 
 %% USER VARIABLES
-pscans = 90;  % Number of prescans as told by labview
+pscans = 91;  % Number of prescans as told by labview
 fps = 98; % Frames per stimulus: equal to 'Stim Every' value in labview
 q = 0.133;  % um/ pixel must be measured for experimental setup
 ave_fms = 5; % number of frames pre-stimulus to average to get background
-imsafter = 2; % number of images after the stimulus to observe
+imsafter = 1; % number of images after the stimulus to observe
 pixw = 4;  % Window for cutting out region
 
 %% END USER INVOLVEMENT
@@ -53,18 +53,24 @@ fms = [];
 
 for i = 1:nstim % loop over stimuli
     ind = pscans + i*fps; % index now equals stimulus frame
-    dip1 = cat(3,dip1, ip1(:,:,ind+1:ind+imsafter-1) - mean(ip1(:,:,ind-1-ave_fms:ind-1),3));
-    fms =[fms,ind:ind + imsafter-1];
+    dip1 = cat(3,dip1, ip1(:,:,ind:ind+imsafter) - mean(ip1(:,:,ind-1-ave_fms:ind-1),3));
+    fms =[fms,ind:ind + imsafter];
 end
 %% remove negative values
 dip1 = (dip1 > 0).*dip1;
+% dip1 = ip1;
 % clear ip1
 % M = [];
 [~,~,o] = size(dip1);
-dip1 = rollingball(dip1);
+dip1 = rollingball(dip1); % background subtraction
+thrsh = mean(max(max(dip1)));
+dps = get_das_peaks(dip1,thrsh); % peak detection
+[ilocs, fnum, cents] = divide_up(dip1, pixw, dps); % image segmentation
 for i = 1:o
     imagesc(dip1(:,:,i))
-    title(['Relative Frame ', num2str((i)),' absolute frame ', num2str(fms(i))]);
+    ind = fnum == i;
+    draw_boxes(cents(ind,:),pixw);
+%     title(['Relative Frame ', num2str((i)),' absolute frame ', num2str(fms(i))]);
     axis image
     M(i) = getframe(gcf);
 end
@@ -81,17 +87,21 @@ imagesc(std(dip1,1,3));
 %     cents = [cents;repmat(cen,o,1)];
 %     fnum = [fnum;fms];
 % end
-thrsh = 0.8*mean(max(max(dip1)));
+
 % tic
 % thrsh = 3*std(iprod(:)) + mean(iprod(:));
 % toc
 % thrsh = thresh/100*mean(max(max(diprod)));
 
-dps = get_das_peaks(dip1,thrsh);
-[ilocs, fnum, cents] = divide_up(dip1, pixw, dps);
-[ibkgn] = chop_up(ip1,pixw,fms(fnum), cents, ave_fms);
+
+[ibkgn] = chop_up(ip1,pixw,fms(fnum), cents,imsafter, ave_fms);
 % ilocs = reshape(ilocs,numel(ilocs(:,1,1))^2,numel(ilocs(1,1,:)));
-snr = sig2noi(
+[snr, sig, nois] = sig2noi(ilocs, ibkgn,5);
+histogram(sig)
+hold on
+histogram(nois);
+hold off
+figure
 % % localize selected regions
 cal = load('bead_astig_3dcal.mat');
 [xf_all,xf_crlb, yf_all,yf_crlb,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, iters] = da_splines(ilocs, fnum, cents, cal, pixw);

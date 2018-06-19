@@ -8,10 +8,12 @@
 clear all; close all; clc;
 warning('off');
 % File selection and loading
-[fname, fpath] = uigetfile('*tif');
+[fnm, fpath] = uigetfile('*tif');
 cd(fpath);
 % imagfo = imfinfo([fpath, fname]);
-i1 = readtiff([fpath,fname]);
+% i1 = readtiff([fpath,fname]);
+ imag = fitsinfo(fnm); % get image about file
+    i1 = fitsread(fnm,'Info', imag);
 lim = 12000;
 vars = var(i1,0,3);
 aves = mean(i1,3);
