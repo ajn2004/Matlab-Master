@@ -1,4 +1,4 @@
-close all;
+% close all;
 clc;
 clear Points x y
 plot(xf_all,yf_all,'.');
@@ -32,4 +32,8 @@ zf_e = data(:,8).^0.5*133;
 
  plot3(xf,yf,zf,'.')
 
-
+dfc = ((xf-mean(xf)).^2 + (yf - mean(yf)).^2 + (zf - mean(zf)).^2).^0.5;
+for i = 1 : numel(xf) - 1
+    d3(i) = ((yf(i) - yf(i+1))^2+(xf(i) - xf(i+1))^2+(zf(i) - zf(i+1))^2)^0.5;
+    d2(i) = ((yf(i) - yf(i+1))^2+(xf(i) - xf(i+1))^2)^0.5;
+end

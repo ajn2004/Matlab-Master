@@ -4,7 +4,7 @@ mins(1) = f(1);
 inds = 1;
 for i = 2:max([m,n])
     if f(i) <= mins(end)
-        mins(i) = f(i);
+        mins = [mins;f(i)];
         inds = [inds;i];
     end
 end
