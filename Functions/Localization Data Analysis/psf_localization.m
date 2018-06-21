@@ -9,17 +9,17 @@ clearvars; close all; clc;
 [fname, fpath] = uigetfile();
 load([fpath,fname]);
 cal = load('bead_astig_3dcal.mat');
-pixw = 7;
+pixw = 4;
 q = 0.133;
 for i = 1:numel(A)
-    iprod = A{i}/6.94;
+    iprod = A{i}/33.33;
     [m,n,o] = size(iprod);
 %     tic
 %     thrsh =  mean(iprod(:));
 %     toc
 %     thrsh = 20/100*mean(max(max(iprod)));
     for k = 1:o
-        dps(:,:,k) = get_das_peaks(iprod(:,:,k),max(max(iprod(:,:,k)))-1);
+        dps(:,:,k) = get_das_peaks(iprod(:,:,k),50);
     end
     sum(dps(:))
     

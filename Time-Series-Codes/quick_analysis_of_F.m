@@ -8,8 +8,9 @@ clearvars
 close all
 f = figure('Name','F Trace Analysis');
 load('back_subtract.mat');
-c = scrub_config();
-i1 = (readtiff()-mi1)/em_gain(c.Gain);
+% c = scrub_config();
+% i1 = (readtiff()-mi1)/em_gain(c.Gain);
+i1 = (readtiff()-mi1)/em_gain(300);
 [m,n,o] = size(i1);
 pixw = 7;
 tex = 0.0309;
