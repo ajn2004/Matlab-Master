@@ -7,7 +7,10 @@
 clearvars
 close all
 f = figure('Name','F Trace Analysis');
-load('back_subtract.mat');
+try
+    load('back_subtract.mat');
+catch mi1 = 0;
+end
 % c = scrub_config();
 % i1 = (readtiff()-mi1)/em_gain(c.Gain);
 i1 = (readtiff()-mi1)/em_gain(300);
@@ -26,11 +29,11 @@ num = input('How many points?');
 wind = -pixw:pixw;
 
 for i = 1:num
-sub1 = i1(round(y) + wind, round(x) + wind,:);
-mfl = sum(sum(sub1));
-sfluor = sum(sum(sub1));
-sfluor = sfluor(:);
-mfluor(:,i) = mfl(:);
+    sub1 = i1(round(y) + wind, round(x) + wind,:);
+    mfl = sum(sum(sub1));
+    sfluor = sum(sum(sub1));
+    sfluor = sfluor(:);
+    mfluor(:,i) = mfl(:);
 end
 % mfluor = mean(mfluor,2);
 % bkg = mean(mfluor(68:stim-1));
@@ -56,7 +59,7 @@ title('HILO vGlut 10 Stim 10Hz')
 legend(ax1,'F','Stims')
 
 
-% 
+%
 % ax2 = axes(uitab(tg,'Title','2'));
 % % close all
 % plot(ax2,t,mfluor)
@@ -68,8 +71,8 @@ legend(ax1,'F','Stims')
 % title('HILO vGlut 10 Stim 10Hz')
 % xlabel(ax2,'Seconds')
 % ylabel(ax2,'F (AU)');
-% 
-% 
+%
+%
 % ax = axes(uitab(tg,'Title','3'));
 % plot(ax,t,mfluor)
 % sf = gausssmooth(mfluor,20,50);
@@ -85,15 +88,15 @@ legend(ax1,'F','Stims')
 % ylabel('F (AU)');
 % ind = t > 5.778;
 % mf = mfluor(ind) - sf(ind);
-% 
-% 
+%
+%
 % ax = axes(uitab(tg,'Title','4'));
 % plot(t(ind),mf);
 % title('Ave Subtracted post-stim');
 % % title('HILO vGlut 10 Stim 10Hz')
 % xlabel('Seconds')
 % ylabel('F (AU)');
-% 
+%
 % ax = axes(uitab(tg,'Title','dF/F'));
 % plot(t,(mfluor-bkg)/bkg);
 % title('Ave Subtracted post-stim');
@@ -102,5 +105,5 @@ legend(ax1,'F','Stims')
 % ylabel('F (AU)');
 % snr = (max(mfluor)-bkg)/std(mf)
 % % close all
-% 
+%
 
