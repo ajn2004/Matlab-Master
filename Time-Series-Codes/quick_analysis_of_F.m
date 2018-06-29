@@ -11,6 +11,7 @@ try
     load('back_subtract.mat');
 catch mi1 = 0;
 end
+
 c = scrub_config();
 i1 = (readtiff()-mi1)/em_gain(c.Gain);
 % i1 = (readtiff()-mi1)/em_gain(300);
@@ -20,6 +21,7 @@ tex = c.AccumulateCycleTime;
 stim = 100;
 stims = 1;
 str = 10;
+
 si1 = std(i1,1,3);
 imagesc(si1)
 exps = 141;
