@@ -11,27 +11,24 @@ try
     load('back_subtract.mat');
 catch mi1 = 0;
 end
-% c = scrub_config();
-% i1 = (readtiff()-mi1)/em_gain(c.Gain);
-%i1 = (readtiff()-mi1)/em_gain(300);
-[mname,mpath] = uigetfile('*.fits');
-i1 = fitsread([mpath,filesep,mname]);
+c = scrub_config();
+i1 = (readtiff()-mi1)/em_gain(c.Gain);
+% i1 = (readtiff()-mi1)/em_gain(300);
 [m,n,o] = size(i1);
 pixw = 7;
-%tex is time to exposure
-tex = 0.0309;
-%stim is the first frame that stimulation happens. Generally I use 50
-%frames
-stim = markerget(mname,'f');
-%stims is number of APs
-stims = markerget(mname,'s');
-%str is stim rate, in Hz.
-str = markerget(mname,'h');
+tex = c.AccumulateCycleTime;
+stim = 100;
+stims = 1;
+str = 10;
 si1 = std(i1,1,3);
 imagesc(si1)
 exps = 141;
 num = input('How many points?');
-[x,y] = ginput(num);
+
+for i = 1:num
+    [x,y] = ginput(1);
+    draw_boxes([x,y],pixw);
+end
 
 wind = -pixw:pixw;
 
