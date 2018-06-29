@@ -26,7 +26,7 @@ exps = 141;
 num = input('How many points?');
 
 for i = 1:num
-    [x,y] = ginput(1);
+    [x,y] = ginput(num);
     draw_boxes([x,y],pixw);
 end
 

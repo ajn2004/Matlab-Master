@@ -12,8 +12,8 @@
 clearvars; close all; clc;
 
 %% USER VARIABLES
-pscans = 91;  % Number of prescans as told by labview
-fps = 98; % Frames per stimulus: equal to 'Stim Every' value in labview
+pscans = 75;  % Number of prescans as told by labview
+fps = 25; % Frames per stimulus: equal to 'Stim Every' value in labview
 q = 0.133;  % um/ pixel must be measured for experimental setup
 ave_fms = 5; % number of frames pre-stimulus to average to get background
 imsafter = 1; % number of images after the stimulus to observe
@@ -63,7 +63,7 @@ dip1 = (dip1 > 0).*dip1;
 % M = [];
 [~,~,o] = size(dip1);
 dip1 = rollingball(dip1); % background subtraction
-thrsh = mean(max(max(dip1)));
+thrsh = 0.8*mean(max(max(dip1)));
 dps = get_das_peaks(dip1,thrsh); % peak detection
 [ilocs, fnum, cents] = divide_up(dip1, pixw, dps); % image segmentation
 for i = 1:o
