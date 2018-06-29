@@ -22,11 +22,11 @@ pixw = 7;
 tex = 0.0309;
 %stim is the first frame that stimulation happens. Generally I use 50
 %frames
-stim = 100;
+stim = markerget(mname,'f');
 %stims is number of APs
-stims = 1;
+stims = markerget(mname,'s');
 %str is stim rate, in Hz.
-str = 10;
+str = markerget(mname,'h');
 si1 = std(i1,1,3);
 imagesc(si1)
 exps = 141;
