@@ -13,12 +13,19 @@ catch mi1 = 0;
 end
 % c = scrub_config();
 % i1 = (readtiff()-mi1)/em_gain(c.Gain);
-i1 = (readtiff()-mi1)/em_gain(300);
+%i1 = (readtiff()-mi1)/em_gain(300);
+[mname,mpath] = uigetfile('*.fits');
+i1 = fitsread([mpath,filesep,mname]);
 [m,n,o] = size(i1);
 pixw = 7;
+%tex is time to exposure
 tex = 0.0309;
+%stim is the first frame that stimulation happens. Generally I use 50
+%frames
 stim = 100;
+%stims is number of APs
 stims = 1;
+%str is stim rate, in Hz.
 str = 10;
 si1 = std(i1,1,3);
 imagesc(si1)
