@@ -15,7 +15,7 @@ pixw = 7;           % Pixel width in radius (i.e. value of 7 gives 15x15 square 
 
 %% Analysis
 c = scrub_config();  % reads camera configuration file
-[i1, mname, mpa = read_im(im_type); % loads in an image and corrects
+[i1, mname, mpath] = read_im(im_type); % loads in an image and corrects
 [m,n,o] = size(i1); % get image size in [rows, cols, frames]
 
 tex = c.AccumulateCycleTime;
@@ -23,7 +23,9 @@ tex = c.AccumulateCycleTime;
 si1 = std(i1,1,3);  % create standard deviation image for selection
 imagesc(si1)    % display standard deviation image
 axis image
-exps = 141;
+
+if exists([mpath,mname(1:end-4),'_ROIlist.mat'])
+    l
 while true  % ensure user must input a number
     try
         num = input('How many points?');  % ask user how many points to select
@@ -76,5 +78,5 @@ ylabel('F in [A.U.]');
 title('Trace of mean F');
 
 
-
+save([mpath,mname(1:end-4),'_ROIlist.mat','x','y','ifluor','mfluor');
 

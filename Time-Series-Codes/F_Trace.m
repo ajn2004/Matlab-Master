@@ -23,31 +23,39 @@ tex = c.AccumulateCycleTime;
 si1 = std(i1,1,3);  % create standard deviation image for selection
 imagesc(si1)    % display standard deviation image
 axis image
-exps = 141;
-while true  % ensure user must input a number
-    try
-        num = input('How many points?');  % ask user how many points to select
-        break
-    catch lsterr
+
+if exist([mpath,mname(1:end-4),'_ROIlist.mat'])
+    roi_load = input('A ROI file has been found, would you like to load it(y/n)?', 's');
+    if strcmp(roi_load,'y') || strcmp(roi_load,'Y')
+        load([mpath,mname(1:end-4),'_ROIlist.mat']);
     end
 end
 
-for i = 1:num  % Select regions and create boxes around selections
-    [x(i),y(i)] = ginput(1);
-    draw_boxes([x(i),y(i)],pixw);
+if ~exist('x')
+    while true  % ensure user must input a number
+        try
+            num = input('How many points?');  % ask user how many points to select
+            break
+        catch lsterr
+        end
+    end
+    
+    for i = 1:num  % Select regions and create boxes around selections
+        [x(i),y(i)] = ginput(1);
+        draw_boxes([x(i),y(i)],pixw);
+    end
+    
+    wind = -pixw:pixw;  % define a variable for easy sub_image selection
+    
+    for i = 1:num  % select out each sub region and measurements
+        sub1 = i1(round(y(i)) + wind, round(x(i)) + wind,:);  % grab image subregion
+        sfl = sum(sum(sub1));    % sum up region fluorescence in each frame
+        sfluor = sum(sum(sub1)); % creates a 1x1xo variable of total fluorescence/region/frame
+        sfluor = sfluor(:);   % linearize array
+        ifluor(:,i) = sfl(:);  % ifluor is for individual fluor
+    end
+    mfluor = mean(ifluor,2);  % average over all individuals gives mfluor (mean fluorescence)
 end
-
-wind = -pixw:pixw;  % define a variable for easy sub_image selection
-
-for i = 1:num  % select out each sub region and measurements
-    sub1 = i1(round(y(i)) + wind, round(x(i)) + wind,:);  % grab image subregion
-    sfl = sum(sum(sub1));    % sum up region fluorescence in each frame
-    sfluor = sum(sum(sub1)); % creates a 1x1xo variable of total fluorescence/region/frame
-    sfluor = sfluor(:);   % linearize array
-    ifluor(:,i) = sfl(:);  % ifluor is for individual fluor
-end
-mfluor = mean(ifluor,2);  % average over all individuals gives mfluor (mean fluorescence)
-
 t = (1:o)*tex;
 
 %% DATA PLOTTING
@@ -76,5 +84,5 @@ ylabel('F in [A.U.]');
 title('Trace of mean F');
 
 
-
+save([mpath,mname(1:end-4),'_ROIlist.mat'],'x','y','ifluor','mfluor');
 
