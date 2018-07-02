@@ -26,20 +26,21 @@ exps = 141;
 num = input('How many points?');
 
 for i = 1:num
-    [x,y] = ginput(1);
-    draw_boxes([x,y],pixw);
+    [x(i),y(i)] = ginput(1);
+    draw_boxes([x(i),y(i)],pixw);
 end
 
 wind = -pixw:pixw;
 
 for i = 1:num
-    sub1 = i1(round(y) + wind, round(x) + wind,:);
+    sub1 = i1(round(y(i)) + wind, round(x(i)) + wind,:);
     mfl = sum(sum(sub1));
     sfluor = sum(sum(sub1));
     sfluor = sfluor(:);
+    iflour(:,i) = mfl(:);
     mfluor(:,i) = mfl(:);
 end
-% mfluor = mean(mfluor,2);
+mfluor = mean(mfluor,2);
 % bkg = mean(mfluor(68:stim-1));
 % nois = std(mfluor(68:stim-1));
 t = (1:o)*tex;
