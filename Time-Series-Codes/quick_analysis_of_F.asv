@@ -11,7 +11,6 @@ try
     load('back_subtract.mat');
 catch mi1 = 0;
 end
-
 c = scrub_config();
 i1 = (readtiff()-mi1)/em_gain(c.Gain);
 % i1 = (readtiff()-mi1)/em_gain(300);
@@ -21,17 +20,14 @@ tex = c.AccumulateCycleTime;
 stim = 100;
 stims = 1;
 str = 10;
-
 si1 = std(i1,1,3);
 imagesc(si1)
 exps = 141;
 num = input('How many points?');
 
 for i = 1:num
-
     [x(i),y(i)] = ginput(1);
     draw_boxes([x(i),y(i)],pixw);
-
 end
 
 wind = -pixw:pixw;
@@ -67,52 +63,4 @@ title('HILO vGlut 10 Stim 10Hz')
 % title(ax1,'non-HILO vGlut 10 Stim 10Hz')
 legend(ax1,'F','Stims')
 
-
-%
-% ax2 = axes(uitab(tg,'Title','2'));
-% % close all
-% plot(ax2,t,mfluor)
-% sf = gausssmooth(mfluor,20,50);
-% hold on
-% plot(ax2,t,sf);
-% legend(ax2,'F','Smoothed F');
-% % title(ax2,'non-HILO vGlut 10 Stim 10Hz')
-% title('HILO vGlut 10 Stim 10Hz')
-% xlabel(ax2,'Seconds')
-% ylabel(ax2,'F (AU)');
-%
-%
-% ax = axes(uitab(tg,'Title','3'));
-% plot(ax,t,mfluor)
-% sf = gausssmooth(mfluor,20,50);
-% hold on
-% plot(t,sf);
-% plot([5.778, 5.778],[min(mfluor), max(mfluor)],'r');
-% plot([2.101, 2.101],[min(mfluor), max(mfluor)],'r');
-% plot([stim*tex, stim*tex],[min(mfluor), max(mfluor)],'r');
-% legend('F','Smoothed F','Cutoff');
-% % title('non-HILO vGlut 10 Stim 10Hz')
-% title('HILO vGlut 10 Stim 10Hz')
-% xlabel('Seconds')
-% ylabel('F (AU)');
-% ind = t > 5.778;
-% mf = mfluor(ind) - sf(ind);
-%
-%
-% ax = axes(uitab(tg,'Title','4'));
-% plot(t(ind),mf);
-% title('Ave Subtracted post-stim');
-% % title('HILO vGlut 10 Stim 10Hz')
-% xlabel('Seconds')
-% ylabel('F (AU)');
-%
-% ax = axes(uitab(tg,'Title','dF/F'));
-% plot(t,(mfluor-bkg)/bkg);
-% title('Ave Subtracted post-stim');
-% % title('HILO vGlut 10 Stim 10Hz')
-% xlabel('Seconds')
-% ylabel('F (AU)');
-% snr = (max(mfluor)-bkg)/std(mf)
-% % close all
-%
 

@@ -34,18 +34,19 @@ for l = 1:numel(files)  % loop over number of mitochondrial images
     A{1,2} = 'Mito Ratio';
     for i = 1:numel(sroi)  % loop over all regions of interest
         % Grab pixel region
-        top = max(sroi(i).vnRectBounds([1,3])+1); % make corrections from imageJ
+        top = max(m-sroi(i).vnRectBounds([1,3])+1); % make corrections from imageJ
         left = min(sroi(i).vnRectBounds([2,4])+1);
-        bottom = min(sroi(i).vnRectBounds([1,3])+1);
+        bottom = min(m-sroi(i).vnRectBounds([1,3])+1);
         right = max(sroi(i).vnRectBounds([2,4])+1);
         nrat(i) = mean(mean(i2(bottom:top,left:right)))/bkgn; % calculate ration which is average pixel value in region / bkgn
         A{i+1,1} = str2num(sroi(i).strName(4:end)); % prepare data for spreadsheet
         A{i+1,2} =  nrat(i);
         plot([left, right, right, left, left],[bottom, bottom, top, top, bottom],'r'); % plot roi box
     end
-
+axis image
     xlswrite(['cell_',num2str(mname(1)),'_results.xlsx'],A); % write spreadsheet for cell
     totrat = [totrat;nrat.'];
+    clear nrat A sroi
     hold off
 end
 
