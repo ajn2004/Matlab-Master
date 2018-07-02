@@ -15,7 +15,7 @@ pixw = 7;           % Pixel width in radius (i.e. value of 7 gives 15x15 square 
 
 %% Analysis
 c = scrub_config();  % reads camera configuration file
-i1 = read_im(im_type); % loads in an image and corrects
+[i1, mname, mpath] = read_im(im_type); % loads in an image and corrects
 [m,n,o] = size(i1); % get image size in [rows, cols, frames]
 
 tex = c.AccumulateCycleTime;
