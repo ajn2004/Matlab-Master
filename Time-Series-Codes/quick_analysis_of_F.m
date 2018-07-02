@@ -28,8 +28,10 @@ exps = 141;
 num = input('How many points?');
 
 for i = 1:num
+
     [x(i),y(i)] = ginput(1);
     draw_boxes([x(i),y(i)],pixw);
+
 end
 
 wind = -pixw:pixw;
