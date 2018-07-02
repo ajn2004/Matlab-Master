@@ -1,4 +1,4 @@
-function [im2] = readtiff(varargin)
+function [im2, fname, fpath] = readtiff(varargin)
 %READTIFF Read a tiff image faster than imread
 %   A = READTIFF(FILENAME) reads a tiff from the file specified by the
 %   string FILENAME. FILENAME must be in the current directory, or have the
