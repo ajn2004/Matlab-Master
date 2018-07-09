@@ -32,7 +32,11 @@ end
 wind = -pixw:pixw; % array variable for selecting square region for fitting
 
 %% Image Loading
-i1 = (readtiff(fname) - mi1)/pix2pho; % load image, subtract dark current and convert to photons
+i1 = [];
+files = dir('*tif');
+for i = 1:numel(files)
+i1 = cat(3,i1,(readtiff(files(i).name) - mi1)/pix2pho); % load image, subtract dark current and convert to photons
+end
 % ip1 = rollingball(i1); % rolling ball background subtraction of all frames
 ip1 = i1;  % attempt to change up workflow to subtract stimulus response before rolling ball subtraction
 [~,~,o] = size(ip1); % grab size of images
@@ -51,19 +55,21 @@ nstim = floor((o-pscans)/fps); % number of stims
 dip1 = [];
 fms = [];
 
-for i = 1:nstim % loop over stimuli
-    ind = pscans + i*fps; % index now equals stimulus frame
-    dip1 = cat(3,dip1, ip1(:,:,ind:ind+imsafter) - mean(ip1(:,:,ind-1-ave_fms:ind-1),3));
+for i = 1:(o-1)/3 % loop over stimuli
+%     ind = pscans + i*fps; % index now equals stimulus frame
+    ind = i*3+2; % index now equals stimulus frame
+%     dip1 = cat(3,dip1, ip1(:,:,ind:ind+imsafter) - mean(ip1(:,:,ind-1-ave_fms:ind-1),3));
+    dip1 = cat(3,dip1, ip1(:,:,ind) - mean(ip1(:,:,ind-1),3));
     fms =[fms,ind:ind + imsafter];
 end
 %% remove negative values
 dip1 = (dip1 > 0).*dip1;
-% dip1 = ip1;
+dip1 = ip1;
 % clear ip1
 % M = [];
 [~,~,o] = size(dip1);
 dip1 = rollingball(dip1); % background subtraction
-thrsh = 0.8*mean(max(max(dip1)));
+thrsh = 0.9*mean(max(max(dip1)));
 dps = get_das_peaks(dip1,thrsh); % peak detection
 [ilocs, fnum, cents] = divide_up(dip1, pixw, dps); % image segmentation
 for i = 1:o

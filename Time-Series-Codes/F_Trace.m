@@ -8,8 +8,8 @@ clearvars; clc; close all;
 %% USER VARIABLES
 im_type = 'tif';  % image extension currently either 'tif' or 'fits'
 stim_fr = 100;        % First frame stimulation occurs on
-stims = 1;            % Total number of stimulations
-str = 10;            % Stimulation rate in Hz
+stims = 10;            % Total number of stimulations
+str = 0.5;            % Stimulation rate in Hz
 pixw = 7;           % Pixel width in radius (i.e. value of 7 gives 15x15 square window)
 %%%%%%%%%%%%%%%%%%%%%END USER CONTROL%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -17,7 +17,12 @@ pixw = 7;           % Pixel width in radius (i.e. value of 7 gives 15x15 square 
 c = scrub_config();  % reads camera configuration file
 [i1, mname, mpath] = read_im(im_type); % loads in an image and corrects
 [m,n,o] = size(i1); % get image size in [rows, cols, frames]
-
+try
+    stim_fr = markerget(mname,'f');
+    str = markerget(mname,'h');
+    stims = markerget(mname,'s');
+catch lsterr
+end
 tex = c.AccumulateCycleTime;
 
 si1 = std(i1,1,3);  % create standard deviation image for selection
