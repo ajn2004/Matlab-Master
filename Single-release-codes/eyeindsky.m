@@ -21,7 +21,7 @@ dps = get_das_peaks(rat1,thresh); % get the local maxima in the ratio image
 
 rps = dps.*i1(:,:,2);  % multiplying the peaks image by the ratio image gives a sparse image with only local maxima values
 sr2 = sort(rps(:));  % repeat sort
-
+% imagesc(rat1);
 thrsh = sr2(end-molish+1); % select only the molish number of regions
 
 [row, col] = find(rps >= thrsh);

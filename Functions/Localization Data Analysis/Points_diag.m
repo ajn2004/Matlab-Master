@@ -10,10 +10,10 @@ num = 1;
     
 % num = 1;
 for i = 1:num
-    ind = xf_all >= min(x) & xf_all <= max(x);
+    ind = xf_all >= min(x) & xf_all <= max(x) & iters < 12;
     ind = ind & yf_all >= min(y) & yf_all <= max(y);
     ind = ind & abs(zf_all*133) <= 600;
-    ind = ind & N <= 1000 & N >= 50;
+    ind = ind & N <= 10000 & N >= 50;
     Points{i} = [xf_all(ind),yf_all(ind),zf_all(ind),framenum_all(ind),N(ind), xf_crlb(ind), yf_crlb(ind), zf_crlb(ind)];
 end
 

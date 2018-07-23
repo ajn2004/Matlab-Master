@@ -18,16 +18,14 @@ for i = 1:numel(A)
 %     thrsh =  mean(iprod(:));
 %     toc
 %     thrsh = 20/100*mean(max(max(iprod)));
-    ip = iprod(:,:,3) - iprod(:,:,1);
-    for k = 1:1
-        dps(:,:,k) = get_das_peaks(ip(:,:,k),11);
+    ip = iprod(:,:,2) - iprod(:,:,1);
+    for k = 1:o
+        dps(:,:,k) = get_das_peaks(ip(:,:,k),12);
     end
     sum(dps(:))
     
     clear ip ipf i1
-    dps(:,:,3) = dps;
-    dps(:,:,1) = 0*dps(:,:,1);
-    dps(:,:,2) = 0*dps(:,:,1);
+    
     % divide up the data
     [iloc, fnum, cents] = divide_up(iprod, pixw, dps);
     

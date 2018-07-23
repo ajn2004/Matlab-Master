@@ -12,7 +12,7 @@
 clearvars; close all; clc;
 
 %% USER VARIABLES
-molish = 1; % expected number of molecules
+molish = 3; % expected number of molecules
 q = 0.133;  % um/ pixel must be measured for experimental setup
 pixw = 4;  % Window for cutting out region
 fps = 3;    % frames per set is the number of frames / tiff stack
@@ -49,24 +49,21 @@ dip1(:,:,1) = ip1(:,:,2) - ip1(:,:,1);
 dip1(:,:,2) = ip1(:,:,3) - ip1(:,:,1);
 fms = [];
 dps = zeros(m,n,2*(o)/3);
-    
 for i = 1:(o-fps)/3 % loop over stimuli
-tic
+    tic
     ind = i*3+2; % index now equals stimulus frame
     dip1 = cat(3,dip1, ip1(:,:,ind) - ip1(:,:,ind-1));   % grab stim1 frame
     dip1 = cat(3,dip1, ip1(:,:,ind+1) - ip1(:,:,ind-1)); % grab stim2 frame
     fms =[fms,ind,ind+1];
     
     [cents] = eyeindsky(ip1(:,:,ind-1:ind),molish);
-    for j = 1:molish
-    dps(cents(j,2),cents(j,1),numel(dip1(1,1,:))-1) = 1;
+    for i = 1:3
+    dps(cents(i,2),cents(i,1),numel(dip1(1,1,:))-1) = 1;
     end
     [cents] = eyeindsky(ip1(:,:,[ind-1,ind+1]),molish);
-    for j = 1:molish
-    dps(cents(j,2),cents(j,1),numel(dip1(1,1,:))) = 1;
-    end
+    dps(cents(:,2),cents(:,1),numel(dip1(1,1,:))) = 1;
     t(i) = toc;
-    ajn_wait(t, i, (o-fps)/3);
+    ajn_wait(t, i, (o-fps)/3)
 end
 ip1 = rollingball(ip1); % rolling ball the raw images
 %% remove negative values
@@ -107,14 +104,14 @@ imagesc(std(dip1,1,3));
 % thrsh = thresh/100*mean(max(max(diprod)));
 
 
-% [ibkgn] = chop_up(ip1,pixw,fms(fnum), cents,imsafter, ave_fms);
-% % ilocs = reshape(ilocs,numel(ilocs(:,1,1))^2,numel(ilocs(1,1,:)));
-% [snr, sig, nois] = sig2noi(ilocs, ibkgn,5);
-% histogram(sig)
-% hold on
-% histogram(nois);
-% hold off
-% figure
+[ibkgn] = chop_up(ip1,pixw,fms(fnum), cents,imsafter, ave_fms);
+% ilocs = reshape(ilocs,numel(ilocs(:,1,1))^2,numel(ilocs(1,1,:)));
+[snr, sig, nois] = sig2noi(ilocs, ibkgn,5);
+histogram(sig)
+hold on
+histogram(nois);
+hold off
+figure
 % % localize selected regions
 cal = load('bead_astig_3dcal.mat');
 [xf_all,xf_crlb, yf_all,yf_crlb,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, iters] = da_splines(ilocs, fnum, cents, cal, pixw);
