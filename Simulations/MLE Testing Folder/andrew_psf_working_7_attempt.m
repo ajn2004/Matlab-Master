@@ -16,8 +16,7 @@ clc
 global xpix ypix wbox
 rbox = 4;
 [xpix, ypix] = meshgrid(-rbox:rbox,-rbox:rbox);
-% xpix = gpuArray(xpix);
-% ypix = gpuArray(ypix);
+
 wbox = 2*rbox+1;
 i1 = xpix.*0;
 
@@ -26,12 +25,11 @@ B = 1;
 ntrue = 100;
 x0true = 2*(rand-0.5);
 y0true = 2*(rand - 0.5);
-% x0true = 0;
-% y0true = 0;
+
 sigma2 = 1.75;   %this would be rayleigh radius in pixel space
 sigx = 1.18;   % sigma used for fitting
 sigy = 1.24;
-% r0t_pix = 2*sigma; % 1/e^2 radius
+
 r0t_um = .2;        % Rayleigh radius in um
 pix2pho = 1;
 q = r0t_um / (sigma2);
@@ -49,7 +47,7 @@ i1 = xpix.*0;
 %% Create Frames with noise
 for i = 1:frames
     waitbar(i/frames,w2, 'Creating points');
-    i2(:,:,i) = double(imnoise(uint16(i1), 'poisson'))+.00001;
+    i2(:,:,i) = single(imnoise(uint16(i1), 'poisson'))+.00001;
 %     i2(:,:,i) = i1;
 end
 % imagesc(i2);

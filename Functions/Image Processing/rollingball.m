@@ -21,8 +21,8 @@ end
 gpud = gpuDevice;
 amem = gpud.AvailableMemory;
 se = strel('ball',rball,rball); %structural element, i.e. rolling ball
-i_ball = se.getheight();
-i_hood = se.getnhood();
+i_ball = single(se.getheight());
+i_hood = single(se.getnhood());
 kw=10; %kernal width of smoothing function
 [Xgs,Ygs]=meshgrid(-kw/2:kw/2,-kw/2:kw/2);
 
@@ -31,7 +31,7 @@ i_ball= i_ball./sum(sum(i_ball));
 
 % gauss_vec = exp(-2*xrow.*xrow/(rk*rk));
 i_gauss=exp(-2*(Xgs.^2 + Ygs.^2)/(sigma2.^2));
-i_gauss=i_gauss/sum(sum(i_gauss));
+i_gauss=single(i_gauss/sum(sum(i_gauss)));
 
 % calculate memory requirements
 i1 = single(i1);

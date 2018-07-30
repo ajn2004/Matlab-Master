@@ -12,7 +12,7 @@
 clearvars; close all; clc;
 
 %% USER VARIABLES
-molish = 1; % expected number of molecules
+molish = 4; % expected number of molecules
 q = 0.133;  % um/ pixel must be measured for experimental setup
 pixw = 4;  % Window for cutting out region
 fps = 3;    % frames per set is the number of frames / tiff stack
