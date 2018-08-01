@@ -1,0 +1,25 @@
+% Drift-Figures
+close all
+xf = (xf_all-mean(xf_all))*q;
+yf = (yf_all-mean(yf_all))*q;
+zf = (zf_all-mean(zf_all))*q;
+ff = framenum_all*0.02;
+subplot(1,2,1);
+plot(ff,xf);
+hold on
+plot(ff,yf);
+% plot(ff,zf-mean(zf));
+legend('X(t)','Y(t)')
+xlabel('Time(s)');
+ylabel('Position(um)');
+title('X(t) and Y(t) Drift');
+subplot(1,2,2);
+plot(xf,yf);
+xlabel('position (um)');
+ylabel('position (um)');
+title('X-Y Drift');
+figure
+plot(ff,zf)
+xlabel('Time(s)');
+ylabel('Position(um)');
+title('Z(t) Drift');

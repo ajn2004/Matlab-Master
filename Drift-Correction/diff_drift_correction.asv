@@ -16,15 +16,8 @@ catch lsterr
     [~,~,o] = size(i1);
     ind = 1:o;
     files = ind;
-%     imagesc(sum(i1,3));
-%     [x,y] = ginput(1);
-%     x = round(x);
-%     y = round(y);
-%     wind = -15:15;
-%     isub = i1(y+wind, x+ wind,:);
-%     clear i1
-%     i1 = isub;
-%     clear isub
+    imagesc(sum(i1,3));
+    [x,y] = ginput(2
 end
 imagesc(sum(i1,3)) % display 'sum' or uncorrected projection of images
 [B,I] = sort(ind); % determine numerical order of files

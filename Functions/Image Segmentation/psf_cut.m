@@ -6,6 +6,7 @@ psfs = 1;
 % num = 3;
 [fname, fpath] = uigetfile('*tif');
 pixw = 7;
+wind = -pixw:pixw;
 im1 = readtiff(fname);
 sim1 = sum(im1,3);
 imagesc(sim1, [min(sim1(:)), 0.75*max(sim1(:))])
@@ -21,7 +22,7 @@ im2 = im1;
 A = cell(psfs,1);
 % A=zeros(pixw,pixw,o);
 for i = 1:numel(x)
-    A{i} = im2(round(y(i))-pixw:round(y(i))+pixw,round(x(i))-pixw:round(x(i))+pixw,:);
+    A{i} = im2(row+wind,col+wind,:);
 %     writetiff(A{i},[imname,num2str(num)]);
 end
 save(['PSF_',num2str(num)],'A');
