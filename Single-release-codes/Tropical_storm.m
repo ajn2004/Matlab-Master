@@ -19,8 +19,9 @@ fps = 3;    % frames per set is the number of frames / tiff stack
 %% END USER INVOLVEMENT
 [fname, fpath] = uigetfile('*local*');  % so far all localization experiments have been named with local in file name
 cd(fpath);
-c = scrub_config(); % get imaging information.
-pix2pho = em_gain(c.Gain);
+% c = scrub_config(); % get imaging information.
+% pix2pho = em_gain(c.Gain);
+pix2pho = em_gain(300);
 try % attempt to load dark current info
     load('back_subtract.mat')
 catch lsterr
@@ -32,8 +33,14 @@ wind = -pixw:pixw; % array variable for selecting square region for fitting
 i1 = [];
 files = dir('*tif');
 for i = 1:numel(files)
-i1 = cat(3,i1,(readtiff(files(i).name))/pix2pho); % load image, subtract dark current and convert to photons
+    ind(i) = str2num(files(i).name(7:end-4));
 end
+[B,I] = sort(ind);
+
+for i = 1:numel(files)
+i1 = cat(3,i1,(readtiff(files(I(i)).name))/pix2pho); % load image, subtract dark current and convert to photons
+end
+% [B,I] = sort(ind); % determine numerical order of files
 % ip1 = rollingball(i1); % rolling ball background subtraction of all frames
 ip1 = i1;  % attempt to change up workflow to subtract stimulus response before rolling ball subtraction
 [m,n,o] = size(ip1); % grab size of images
@@ -94,7 +101,8 @@ imagesc(std(dip1,1,3));
 % fnum = [];
 % for i = 1:secs
 %     [x,y] = ginput(1);
-%     boxes([x,y],pixw,'r');
+%     boxes([x,y],pixw,'r');close all
+
 %     ilocs = cat(3,ilocs,dip1(round(y) + wind, round(x) + wind,:));
 %     cen = [x,y];
 %     cents = [cents;repmat(cen,o,1)];
@@ -120,5 +128,7 @@ cal = load('bead_astig_3dcal.mat');
 [xf_all,xf_crlb, yf_all,yf_crlb,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, iters] = da_splines(ilocs, fnum, cents, cal, pixw);
 zf_all = zf_all/q;
 zf_crlb = zf_crlb./q^2;
-Points_diag;
+% Points_diag;
+% [drifts = get_drift_ims(ip1);
+save('Localization_file.mat','xf_all','xf_crlb', 'yf_all','yf_crlb','zf_all', 'zf_crlb', 'N', 'N_crlb','off_all', 'off_crlb', 'framenum_all', 'llv', 'iters');
 % [xf_all,xf_crlb, yf_all,yf_crlb,sigx_all, sigx_crlb, sigy_all, sigy_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, y, inloc, xin, yin] = da_locs_sigs(ilocs, fnum, cents, 0);

@@ -1,0 +1,27 @@
+%% Resolution versus Localization Demonstration
+close all
+clear M;
+sigs = 300;
+[X,Y] = meshgrid(-639.5:639.5,-359.5:359.5);
+x1 = -639.5;
+x2 = 639.5;
+y1 = 0;
+y2 = 0;
+cmap = colormap(jet(200));
+% im = zeros(720,1280,3);
+for i = 640-75:(640+ 75)
+    imy = (sin(2*pi*((X-(i+x1)).^2 + (Y-y1).^2).^0.5/(sigs))./(0.00000001+((X-(i+x1)).^2 + (Y-y1).^2).^0.5/(sigs))).^2 + (sin(2*pi*((X+(i-x2)).^2 + (Y-y2).^2).^0.5/(sigs))./(0.00000001+((X+(i-x2)).^2 + (Y-y2).^2).^0.5/(sigs))).^2;
+    im = color_it(imy,cmap);
+    imagesc(im);
+    axis image
+    drawnow
+    [imind, cm] = rgb2ind(im,256);
+%     M(i) = getframe(gcf);
+    if i == 640-75
+        imwrite(imind,cm,'difflim_loop.gif','gif','LoopCount',Inf,'DelayTime',0.03);
+    else
+        imwrite(imind,cm,'difflim_loop.gif','gif', 'WriteMode', 'append','DelayTime',0.03);
+    end
+end
+% movie2gif(M,'Diff_loop.gif','DelayTime',0.03,'LoopCount',Inf)
+% frame2im
