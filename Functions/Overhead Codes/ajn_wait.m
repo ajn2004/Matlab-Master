@@ -4,8 +4,8 @@ clc;
 % iteration and o is the total number of iterations needed to complete
     if numel(t) > 1 % only begin analysis if there is more than 1 t value
         t1(1) = t(1);
-        for i = 2:numel(t)
-            t1(i) = t(i) - t(i-1); % build a vector of differences
+        for j = 2:numel(t)
+            t1(j) = t(j) - t(j-1); % build a vector of differences
         end
     tm_rem = mean(t)*(o-i);  % average time/element value multiplied remaining elements
     tm1_rem = sum(t)/i*(o-i); % total time / all elements multiplied by remaining elements

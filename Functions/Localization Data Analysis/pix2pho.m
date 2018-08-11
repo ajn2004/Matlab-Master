@@ -6,18 +6,25 @@
 %
 % AJN 3/15/17
 clear all; close all; clc;
-warning('off');
+% warning('off');
 % File selection and loading
 [fnm, fpath] = uigetfile('*tif');
 cd(fpath);
+files = dir('*.tif');
 % imagfo = imfinfo([fpath, fname]);
-% i1 = readtiff([fpath,fname]);
- imag = fitsinfo(fnm); % get image about file
-    i1 = fitsread(fnm,'Info', imag);
-lim = 12000;
-vars = var(i1,0,3);
-aves = mean(i1,3);
+vars = [];
+aves = [];
+for i = 1:numel(files)
+i1 = readtiff(files(i).name);
+%  imag = fitsinfo(fnm); % get image about file
+%     i1 = fitsread(fnm,'Info', imag);
 
+vars = cat(3,vars,var(i1,0,3));
+aves = cat(3,aves,mean(i1,3));
+end
+vars = mean(vars,3);
+aves = mean(aves,3);
+lim = 12000;
 fits = polyfit(aves(aves<lim),vars(aves<lim),1);
 
 disp(['The pixel to photon ratio is ', num2str(fits(1))]);

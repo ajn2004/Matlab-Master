@@ -18,13 +18,16 @@ for i = 1:numel(A)
 %     thrsh =  mean(iprod(:));
 %     toc
 %     thrsh = 20/100*mean(max(max(iprod)));
+%     ip = iprod(:,:,3) - iprod(:,:,1);
     for k = 1:o
-        dps(:,:,k) = get_das_peaks(iprod(:,:,k),50);
+        dps(:,:,k) = get_das_peaks(iprod(:,:,k),max(max(iprod(:,:,k))));
     end
     sum(dps(:))
     
     clear ip ipf i1
-    
+%     dps(:,:,3) = dps;
+%     dps(:,:,1) = 0*dps(:,:,1);
+%     dps(:,:,2) = 0*dps(:,:,1);
     % divide up the data
     [iloc, fnum, cents] = divide_up(iprod, pixw, dps);
     
@@ -37,7 +40,8 @@ for i = 1:numel(A)
     % [xf_all,xf_crlb, yf_all,yf_crlb,sigx_all, sigx_crlb, sigy_all, sigy_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, y, inloc, xin, yin] = da_locs_sigs(iloc, fnum, cents, angle);
     % zf_all = getdz(sigx_all,sigy_all)/q;
     % [xf_all,xf_crlb, yf_all,yf_crlb,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, y, inloc, xin, yin] = da_locs(iloc, fnum, cents, angle);zf_all = zf_all/q;                        % This is to handle Z informtation uncomment once calibration is fixed
-    [xf_all,xf_crlb, yf_all,yf_crlb,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, iters] = da_splines(iloc, fnum, cents, cal, pixw);
+    [xf_all,xf_crlb, yf_all,yf_crlb,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, iters] = da_splines(iprod, fnum, cents*0+floor(m/2)+1, cal, pixw);
+% [xf_all,xf_crlb, yf_all,yf_crlb,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, iters] = da_splines(iloc, fnum, cents, cal, pixw);
     try
         zf_crlb = zf_crlb/(q)^2; % this puts the CRLB in units of pix^2
         zf_all = zf_all/q; % this puts zf_all in units of pix

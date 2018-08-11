@@ -21,6 +21,8 @@ llv_out = [];
 fnout = [];
 its_out = [];
 
+
+
 if o > maxi % If we can't localize it all at once, chunk it up
     rounds = floor(o/maxi);
     lefo = mod(o,maxi);
@@ -108,9 +110,11 @@ else
         llv_out = [llv_out;LogL(ind)];
     catch lsterr
     end
+end
     try
-    xf_out = xf_out - pixw;
-    yf_out = yf_out - pixw;
+        dx = floor(m/2);
+    xf_out = xf_out - dx;
+    yf_out = yf_out - dx;
     catch lsterr
     end
     disp('Done Localizing');

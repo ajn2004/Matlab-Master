@@ -1,7 +1,10 @@
 % close all;
 clc;
 clear Points x y
-plot(xf_all,yf_all,'.');
+xf_a = xf_all - drifts(floor(framenum_all/3),1);
+yf_a = yf_all - drifts(floor(framenum_all/3),2);
+
+plot(xf_a,yf_a,'.');
 % num = input('How Many Points are you selecting?');
 [x,y] = ginput(2);
 Points = {};
@@ -10,11 +13,11 @@ num = 1;
     
 % num = 1;
 for i = 1:num
-    ind = xf_all >= min(x) & xf_all <= max(x);
+    ind = xf_a >= min(x) & xf_a <= max(x) & iters < 45;
     ind = ind & yf_all >= min(y) & yf_all <= max(y);
     ind = ind & abs(zf_all*133) <= 600;
-    ind = ind & N <= 1000 & N >= 50;
-    Points{i} = [xf_all(ind),yf_all(ind),zf_all(ind),framenum_all(ind),N(ind), xf_crlb(ind), yf_crlb(ind), zf_crlb(ind)];
+    ind = ind & N <= 10000 & N >= 50;
+    Points{i} = [xf_a(ind),yf_a(ind),zf_all(ind),framenum_all(ind),N(ind), xf_crlb(ind), yf_crlb(ind), zf_crlb(ind)];
 end
 
 
@@ -37,3 +40,4 @@ for i = 1 : numel(xf) - 1
     d3(i) = ((yf(i) - yf(i+1))^2+(xf(i) - xf(i+1))^2+(zf(i) - zf(i+1))^2)^0.5;
     d2(i) = ((yf(i) - yf(i+1))^2+(xf(i) - xf(i+1))^2)^0.5;
 end
+hold on
