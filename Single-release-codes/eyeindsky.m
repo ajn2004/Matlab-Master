@@ -1,4 +1,4 @@
-function cents = eyeindsky(i1,molish)
+function [cents, thrsh] = eyeindsky(i1,molish)
 % this is a function to find molecules in noisey images by looking at the
 % ratio of a 'signal' image and the 'background' image
 

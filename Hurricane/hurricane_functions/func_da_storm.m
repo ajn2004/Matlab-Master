@@ -19,8 +19,9 @@ i1 = i1.*(i1>0);
 % i1(:,1:30,:) = 0;
 % i1(:,n-30:n,:) = 0;
 % Rolling Ball Background Subtract
-iprod = rollingball(i1);
+% iprod = rollingball(i1);
 % iprod = bp_subtract(i1);
+iprod = imgaussfilt(i1,0.8947);
 % iprod = i1;
 % Peak Detection
 
@@ -41,7 +42,7 @@ clear ip ipf i1
 
 % divide up the data
 [iloc, fnum, cents] = divide_up(iprod, pixw, dps);
-
+[m,n,o] = size(iloc);
 % remove duplicate data
 % [ind] = find_dupes(cents,fnum);
 % iloc(:,:,ind) = [];
@@ -69,7 +70,10 @@ clear ip ipf i1
 % [xf_all,xf_crlb, yf_all,yf_crlb,sigx_all, sigx_crlb, sigy_all, sigy_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, y, inloc, xin, yin] = da_locs_sigs(iloc, fnum, cents, angle);
 % zf_all = getdz(sigx_all,sigy_all)/q;
 % [xf_all,xf_crlb, yf_all,yf_crlb,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, y, inloc, xin, yin] = da_locs(iloc, fnum, cents, angle);zf_all = zf_all/q;                        % This is to handle Z informtation uncomment once calibration is fixed
-[xf_all,xf_crlb, yf_all,yf_crlb,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, iters] = da_splines(iloc, fnum, cents, cal, pixw);
+[xf_all,xf_crlb, yf_all,yf_crlb,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, iters, cex, cey] = da_splines(iloc, fnum, cents, cal, pixw);
+% [~,~, ~,~,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, iters, cex, cey] = da_splines(iloc, fnum, cents, cal, pixw);
+% i2 = reshape(iloc,m*n,o);
+% [xf_all, xf_crlb, yf_all, yf_crlb, N, N_crlb, zf_all, zf_crlb, framenum_all] = slim_locs(i2,framenum_all, [cex, cey], 0, zf_all, zf_crlb, N, N_crlb);
 try
 zf_crlb = zf_crlb/(q)^2; % this puts the CRLB in units of pix^2
 zf_all = zf_all/q; % this puts zf_all in units of pix

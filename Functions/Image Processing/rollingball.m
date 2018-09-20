@@ -1,4 +1,4 @@
-function iprod = rollingball(i1, varargin)
+function [iprod, ibkgn] = rollingball(i1, varargin)
 %ROLLINGBALL a function to perform gpu rolling ball subtraction on an image
 %   A = ROLLINGBALL(IM1) will return a matrix A the same size as IM1 that
 %   has been background subtracted using the rolling ball method with
@@ -26,49 +26,50 @@ i_hood = single(se.getnhood());
 kw=10; %kernal width of smoothing function
 [Xgs,Ygs]=meshgrid(-kw/2:kw/2,-kw/2:kw/2);
 
-% xrow = -kw/2:kw/2;
+
 i_ball= i_ball./sum(sum(i_ball));
 
-% gauss_vec = exp(-2*xrow.*xrow/(rk*rk));
+
 i_gauss=exp(-2*(Xgs.^2 + Ygs.^2)/(sigma2.^2));
 i_gauss=single(i_gauss/sum(sum(i_gauss)));
 
 % calculate memory requirements
 i1 = single(i1);
-% rows = numel(i1(:,1,1));
-% cols = numel(i1(1,:,1));
-% ims = numel(i1(1,1,:));
 [rows, cols, ims] = size(i1);
 mem_size = rows*cols*ims*8;
 
 if mem_size < amem / 8             % if memory of the image is small enough, run it through
-    [iprod] = image_process(i1,i_gauss, i_ball);
+    [iprod,ibkgn] = image_process(i1,i_gauss, i_ball);
 else                                                % If memory of image is too small, break it down into chunks and run it through the gpu
     chunks = ceil(mem_size / (amem/10));
     chunkim = ceil(ims / chunks);
     for i = 1:chunks
         if i ~= chunks
-            [iprod_temp] = image_process(i1(:,:,1+(i-1)*chunkim:i*chunkim),i_gauss, i_ball);
-            %             [atemp] = image_neural_2(iprod_temp, Theta1.', Theta2.', numel(iprod_temp(1,1,:)));
+            [iprod_temp,bkgn_temp] = image_process(i1(:,:,1+(i-1)*chunkim:i*chunkim),i_gauss, i_ball);
+            
             if i ==1
                 iprod = iprod_temp;
-                %                 a1 = atemp;
+                ibkgn = bkgn_temp;
+            
                 clear iprod_temp
             else
                 iprod = cat(3,iprod, iprod_temp);
-                %                 a1 = cat(3,a1,atemp);
+                ibkgn = cat(3,ibkgn, ibkgn_temp);
+            
                 clear iprod_temp atemp
             end
         else
-            [iprod_temp] = image_process(i1(:,:,1+(i-1)*chunkim:end),i_gauss, i_ball);
-            %             [atemp] = image_neural_2(iprod_temp, Theta1.', Theta2.', numel(iprod_temp(1,1,:)));
+            [iprod_temp,bkgn_temp] = image_process(i1(:,:,1+(i-1)*chunkim:end),i_gauss, i_ball);
+            
             iprod = cat(3,iprod,iprod_temp);
-            %             a1 = cat(3,a1,atemp);
+            ibkgn = cat(3,ibkgn, ibkgn_temp);
+            
             clear iprod_temp
         end
     end
 end
 if strcmp(type,'single')
     iprod = single(iprod);
+    ibkgn = single(ibkgn);
 end
 disp('Done Subtracting background');

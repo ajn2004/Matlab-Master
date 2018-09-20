@@ -1686,7 +1686,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
 
 
-	if (nlhs != 1){
+	if (nlhs != 2){
 		printf("You must have 1 output variables [i_erode]\n");
 		mexErrMsgTxt("See Error above!\n");
 	}
@@ -1842,9 +1842,15 @@ void mexFunction(int nlhs, mxArray *plhs[],
 
 	plhs[0] = mxDuplicateArray(prhs[0]);
 	float *ifin = (float *)mxGetPr(plhs[0]);
-
+	plhs[1] = mxDuplicateArray(prhs[0]);
+	float *ibkn = (float *)mxGetPr(plhs[1]);
 	//	printf("irow %d, icol %f, numi %f, line %d\n", numi, ifin[1], ifin[2], __LINE__);
 	cudaError_t err16 = cudaMemcpy(ifin, d_iall, irow*icol*numi*sizeof(float), cudaMemcpyDeviceToHost);	// copy xf_all data
+	if (err16 != cudaSuccess){
+		printf("%s in %s at line %d\n", cudaGetErrorString(err16), __FILE__, __LINE__);
+		mexErrMsgTxt("See Error above!\n");
+	}
+	cudaError_t err17 = cudaMemcpy(ibkn, d_ifin, irow*icol*numi*sizeof(float), cudaMemcpyDeviceToHost);	// copy xf_all data
 	if (err16 != cudaSuccess){
 		printf("%s in %s at line %d\n", cudaGetErrorString(err16), __FILE__, __LINE__);
 		mexErrMsgTxt("See Error above!\n");

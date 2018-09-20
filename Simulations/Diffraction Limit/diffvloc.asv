@@ -9,19 +9,20 @@ y1 = 0;
 y2 = 0;
 cmap = colormap(jet(200));
 % im = zeros(720,1280,3);
-for i = 1:1280/2
-    imy = sin(2*pi*((X-(i*10+x1)).^2 + (Y-y1).^2).^0.5/(sigs))./(0.0001+((X-(i*10+x1)).^2 + (Y-y1).^2).^0.5/(sigs)) + sin(2*pi*((X+(i*10-x2)).^2 + (Y-y2).^2).^0.5/(sigs))./(0.0001+((X+(i*10-x2)).^2 + (Y-y2).^2).^0.5/(sigs));
-    im = color_it(imy.^2,cmap);
+for i = 1:(640+ 75)
+%     imy = (sin(2*pi*((X-(i+x1)).^2 + (Y-y1).^2).^0.5/(sigs))./(0.00000001+((X-(i+x1)).^2 + (Y-y1).^2).^0.5/(sigs))).^2 + (sin(2*pi*((X+(i-x2)).^2 + (Y-y2).^2).^0.5/(sigs))./(0.00000001+((X+(i-x2)).^2 + (Y-y2).^2).^0.5/(sigs))).^2;
+imy = (sin(2*pi*((X-(i+x1)) + (Y-y1).^2).^0.5/(sigs))./(0.00000001+((X-(i+x1)).^2 + (Y-y1).^2).^0.5/(sigs))) + (sin(2*pi*((X+(i-x2)).^2 + (Y-y2).^2).^0.5/(sigs))./(0.00000001+((X+(i-x2)).^2 + (Y-y2).^2).^0.5/(sigs)));
+    im = color_it(imy,cmap);
     imagesc(im);
     axis image
     drawnow
     [imind, cm] = rgb2ind(im,256);
 %     M(i) = getframe(gcf);
     if i == 1
-        imwrite(imind,cm,'diff_loop.gif','gif','LoopCount',Inf,'DelayTime',0.03);
+        imwrite(imind,cm,'end_loop.gif','gif','LoopCount',Inf,'DelayTime',0.03);
     else
-        imwrite(imind,cm,'diff_loop.gif','gif', 'WriteMode', 'append','DelayTime',0.03);
+        imwrite(imind,cm,'end_loop.gif','gif', 'WriteMode', 'append','DelayTime',0.03);
     end
 end
 % movie2gif(M,'Diff_loop.gif','DelayTime',0.03,'LoopCount',Inf)
-frame2im
+% frame2im

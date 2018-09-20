@@ -1,13 +1,15 @@
 function set_scale(i1,q,x)
 % sets the scale to reflect physical size
-close all
+% i1 is the image, q is the pixel to um variable, x is the number of ticks
+% to have
+
 [m,n,o] = size(i1);
 xtix = floor(n/x);
 ytix = floor(m/x);
 clims = [min(i1(:)),max(i1(:))];
 
 for i = 1:o
-    figure
+%     figure
     imagesc(i1(:,:,i),clims);
     set(gca,'Xtick',0:xtix:n);
     set(gca,'XtickLabel',(0:xtix:n)*q);
