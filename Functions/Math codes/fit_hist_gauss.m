@@ -1,9 +1,9 @@
 function [fits, CovB] = fit_hist_gauss(X)
 % this is a script to fit the histogram of N-D variable X w/ a gaussian and
 % return the fitted gaussian values
-h = histogram(X(:));
-ys = h.Values;
-xs = ((1:numel(ys)) - numel(ys)/2)*h.BinWidth;
+[N,edge] = histcounts(X(:));
+ys = N;
+xs = (edge(1:end-1))+(edge(2)-edge(1))/2;
 
 % build the beta vector
 

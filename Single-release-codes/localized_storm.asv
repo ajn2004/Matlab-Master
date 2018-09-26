@@ -21,7 +21,7 @@ fps = 3;    % frames per set is the number of frames / tiff stack
 cd(fpath);
 % c = scrub_config(); % get imaging information.
 % pix2pho = em_gain(c.Gain);
-pix2pho = em_gain(100);
+pix2pho = em_gain(300);
 try % attempt to load dark current info
     load('back_subtract.mat')
 catch lsterr
@@ -66,8 +66,7 @@ dip1(:,:,2) = ip1(:,:,3) - imgaussfilt(ip1(:,:,1),mins);
 % dsi1(:,:,2) = movsum(ip1(:,:,3),3) - movsum(ip1(:,:,1),3);
 fms = [];
 dps = zeros(m,n,2*(o)/3);
-dip2(:,:,1) =     ip1(:,:,2);
-dip2(:,:,2) =     ip1(:,:,3);
+    
 for i = 1:(o-fps)/3 % loop over stimuli
 tic
     ind = i*3+2; % index now equals stimulus frame
@@ -77,8 +76,6 @@ tic
 %     dip1 = cat(3,dip1, imgaussfilt(ip1(:,:,ind+1),mins) - imgaussfilt(ip1(:,:,ind-1),mins)); % grab stim2 frame
 %     dsi1 = cat(3,dsi1, movsum(ip1(:,:,ind),3) - movsum(ip1(:,:,ind-1),3));
 % 	dsi1 = cat(3,dsi1, movsum(ip1(:,:,ind+1),3) - movsum(ip1(:,:,ind-1),3));
-    dip2 = cat(3,dip2, ip1(:,:,ind));
-    dip2 = cat(3,dip2, ip1(:,:,ind+1));
     fms =[fms,ind,ind+1];
     
 %     [cents] = eyeindsky(ip1(:,:,ind-1:ind),molish);
@@ -93,11 +90,7 @@ tic
 %     ajn_wait(t, i, (o-fps)/3);
 end
 rip1 = rollingball(dip1); % rolling ball the raw images
-
-% dip3 = bandpass(dip1,mins,maxs);
-dip2 = denoise_psf(dip1,2); % wavelet decomposition w/ watershed threshold @ 2xstd of the first wavelet plane
-
-% dps = get_das_peaks(wip1,2);
+dip3 = bandpass(dip1,mins,maxs);
 %% remove negative values
 [m2,n2,o2] = size(dip1);
 % for i = 1:o2
@@ -105,15 +98,15 @@ dip2 = denoise_psf(dip1,2); % wavelet decomposition w/ watershed threshold @ 2xs
 % end
 dip1 = (dip1 > 0).*dip1;
 % dip2 = lp_filt(dip1,4);
-% dip2 = bandpass(dip1,0.8,5.5);
+dip2 = bandpass(dip1,0.8,5.5);
 surf(max(dip2,[],3));
 thrsh = input('What is the threshold?');
 % thrsh = max(max(max(dip2(:,:,1:2))));
 dps = get_das_peaks(dip2,thrsh);
 
 for i = 1:o2
-%     dig(:,:,i) = imgaussfilt(rip1(:,:,i),1.5);
-    imagesc(rip1(:,:,i));
+    dig(:,:,i) = imgaussfilt(dip1(:,:,i),1.5);
+    imagesc(dip2(:,:,i));
 %     drawnow
     colormap('gray');
     hold on
@@ -177,8 +170,7 @@ lv = [];
 ang = 0.1047;
 for i = 1:numel(fnum)
    [fits,crlb,llv] = func_mle_crlb(sdi1(:,:,i),0,0,3,ang); 
-    x = fits(1)*cos(-ang) - sin(-ang)*fits(2);
-    y = fits(1)*sin(-ang) + cos(-ang)*fits(2);
+    x = fits(1)
     xf = [xf;x+cents(i,1)];
     yf = [yf;y+cents(i,2)];
     N = [N;fits(3)];
@@ -195,9 +187,7 @@ for i = 1:numel(fnum)
 end
 % lv = lv.';
 ind = N > 0 & N < 1000;
-histogram(lv(ind)./N(ind));
-t = input('What Threshold?');
-ind = ind & lv./N > t;
+ind = ind & lv./N > -1;
 ind = ind & sx*2 > 1.5 & sx *2 < 6;
 ind = ind & sy*2 > 1.5 & sy *2 < 6;
 
@@ -209,27 +199,27 @@ ind = ind & sy*2 > 1.5 & sy *2 < 6;
 % ind = N < fluor;
 % ind = ind & zf_all*q < 0.5 & zf_all > -0.5;
 % ind = ind & q*xf_crlb.^0.5 < 1 & q*yf_crlb.^0.5 < 1;
-wave_trajectories;
-% figure
-% plot(fluor);
-% xlabel('Framenumber')
-% ylabel('Photons')
-% title('Sum of every frame');
-% figure
-% scatter3(xf_all*q, yf_all*q, zf_all*q,[],mod(framenum_all,2));
-% axis equal
-% zlim([-0.700, 0.4]); % limit of Z in um
-% xlabel('Position um')
-% ylabel('Position um');
-% zlabel('A. Position um')
-% title('"Localizations"')
-% figure
-% % imagesc(std(si1,1,3))
-% set_scale(std(sdi1,1,3),q,4);
-% colormap('jet')
-% hold on
-% plot(xf_all(ind),yf_all(ind),'k.')
-% axis image
-% title('Projection of localizations onto image');
-% save('Localization_file.mat','xf_all','xf_crlb', 'yf_all','yf_crlb','zf_all', 'zf_crlb', 'N', 'N_crlb','off_all', 'off_crlb', 'framenum_all', 'llv', 'iters');
-% Traj_show;
+
+figure
+plot(fluor);
+xlabel('Framenumber')
+ylabel('Photons')
+title('Sum of every frame');
+figure
+scatter3(xf_all*q, yf_all*q, zf_all*q,[],mod(framenum_all,2));
+axis equal
+zlim([-0.700, 0.4]); % limit of Z in um
+xlabel('Position um')
+ylabel('Position um');
+zlabel('A. Position um')
+title('"Localizations"')
+figure
+% imagesc(std(si1,1,3))
+set_scale(std(sdi1,1,3),q,4);
+colormap('jet')
+hold on
+plot(xf_all(ind),yf_all(ind),'k.')
+axis image
+title('Projection of localizations onto image');
+save('Localization_file.mat','xf_all','xf_crlb', 'yf_all','yf_crlb','zf_all', 'zf_crlb', 'N', 'N_crlb','off_all', 'off_crlb', 'framenum_all', 'llv', 'iters');
+Traj_show;
