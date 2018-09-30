@@ -35,7 +35,7 @@ end
 [B,I] = sort(ind); % determine numerical order of files
 figure
 % for i = 1:numel(files) % create movie of consecutive frames
-    i2 = i1(:,:,I); % build array i2 to be a chronological array of images
+    i2 = i1(:,:,I(1:144)); % build array i2 to be a chronological array of images
 %     % display stuff and grab frame
 %     imagesc(i2(:,:,i))
 %     drawnow
