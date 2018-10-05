@@ -12,7 +12,7 @@ close all; clearvars; clc;
 % function Hurricane(thresh)
 
 %% User Controlled Area
-emg = 300; % Enter the EM Gain value used on the camera
+emg = 0; % Enter the EM Gain value used on the camera
 pix2pho = em_gain(emg);    %Pixel to photon ratio
 q = 0.133;          % Pixel size in um
 pixw = 7;       % radius to localize (final image size is (2*pixw+1)^2 pixels)
