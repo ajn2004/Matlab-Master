@@ -19,7 +19,7 @@ pixw = 7;       % radius to localize (final image size is (2*pixw+1)^2 pixels)
 an_dir = 'Analysis'; % name of analysis directory
 angle = 0; %approximate astig rotation in degrees
 sv_im = 'y'; % set to y/Y to save image of localizations
-thresh = 80;
+thresh = 60;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % END USER CONTROL JUST RUN IT AND SELECT A FILE

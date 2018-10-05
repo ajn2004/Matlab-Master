@@ -48,12 +48,21 @@ tic
 %     [ang] = get_elip_ang(subC,3,4);
 %     [frb] = func_mle_crlb(subC,0,0,3,ang); % perform a gaussian fit to image
 %     clear C subC row col
+<<<<<<< HEAD
 subplot(1,2,1);
 imagesc(Crb);
 hold on
 plot(crb,rrb,'rx');
 axis image
 hold off
+=======
+subplot(1,3,2);
+imagesc(Crb);
+hold on
+plot(crb,rrb,'rx');
+% axis image
+% hold off
+>>>>>>> 306ac6cd665346f72d554508c8ac28d3e3530487
 %     Cbp = rollingball(Cbp);
 
     [rbp,cbp] = find(Cbp == max(Cbp(:))); % find peak
@@ -68,12 +77,22 @@ hold off
 %     subC = subC/max(subC(:)); % normalize peak value to 1
 %     [ang] = get_elip_ang(subC,3,4);
 %     [fbp] = func_mle_crlb(subC,0,0,3,ang); % perform a gaussian fit to image
+<<<<<<< HEAD
     subplot(1,2,2);
     imagesc(Cbp)
     hold on
     plot(cbp,rbp,'rx');
     axis image
     hold off
+=======
+    subplot(1,3,3);
+    imagesc(Cbp)
+    hold on
+%     plot(cbp,rbp,'rx');
+% title(num2str(
+    axis image
+%     hold off
+>>>>>>> 306ac6cd665346f72d554508c8ac28d3e3530487
     drawnow
     % average the final results
     drift = [drift;drift(i-1,1) + (crb(1)+cbp(1))/2 - (n), drift(i-1,2) + (rrb(1)+rbp(1))/2-(m)];
