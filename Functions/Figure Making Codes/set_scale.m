@@ -20,4 +20,4 @@ for i = 1:o
     ylabel('Position(um)');
     colormap('jet');
 end    
-    
+axis image

@@ -15,10 +15,11 @@ else % if the above doesn't hold m must be odd
     n = (m-1)/2;
     [X,Y] = meshgrid(-n:n);
 end
-
+xcm = sum(sum(im1.*X./sum(im1(:))));
+ycm = sum(sum(im1.*Y./sum(im1(:))));
 for i = 0:179 % loop around in degrees
-    rx = X*cos(deg2rad(i)) - Y*sin(deg2rad(i)); % rotate underlying grid
-    ry = X*sin(deg2rad(i)) + Y*cos(deg2rad(i));
+    rx = (X-xcm)*cos(deg2rad(i)) - (Y-ycm)*sin(deg2rad(i)); % rotate underlying grid
+    ry = (X-xcm)*sin(deg2rad(i)) + (Y-ycm)*cos(deg2rad(i));
     imx = peak*exp(-rx.^2/(2*sigx^2) - ry.^2/(2*sigy^2)) + offs; % approximate gaussian
     C(i+1) = sum(sum((imx - im1).^2)); % determin cost as sum of squares
     if C(i+1) < mC % check for minimum cost

@@ -21,7 +21,7 @@ fps = 3;    % frames per set is the number of frames / tiff stack
 cd(fpath);
 % c = scrub_config(); % get imaging information.
 % pix2pho = em_gain(c.Gain);
-pix2pho = em_gain(100);
+pix2pho = em_gain(300);
 try % attempt to load dark current info
     load('back_subtract.mat')
 catch lsterr
@@ -80,7 +80,7 @@ tic
     dip2 = cat(3,dip2, ip1(:,:,ind));
     dip2 = cat(3,dip2, ip1(:,:,ind+1));
     fms =[fms,ind,ind+1];
-    
+%     frames  = 
 %     [cents] = eyeindsky(ip1(:,:,ind-1:ind),molish);
 %     for j = 1:molish
 %     dps(cents(j,2),cents(j,1),numel(dip1(1,1,:))-1) = 1;
@@ -103,7 +103,7 @@ dip2 = denoise_psf(dip1,2); % wavelet decomposition w/ watershed threshold @ 2xs
 % for i = 1:o2
 %     dip1(:,:,i) = dip1(:,:,i) - min(min(dip1(:,:,i)));
 % end
-dip1 = (dip1 > 0).*dip1;
+% dip1 = (dip1 > 0).*dip1;
 % dip2 = lp_filt(dip1,4);
 % dip2 = bandpass(dip1,0.8,5.5);
 surf(max(dip2,[],3));
@@ -118,15 +118,21 @@ for i = 1:o2
     colormap('gray');
     hold on
     [row,col] = find(dps(:,:,i) == 1);
-    plot(col,row,'rx');
-    
+%     plot(col,row,'rx');
+
+    draw_boxes([col,row],pixw);
     axis image
     drawnow;
     hold off
+%     mvy(i) = getframe(gcf);
 %     waitforbuttonpress
 end
 
 [sdi1, fnum, cents] = divide_up(rip1,pixw, dps);
+[ind] = find_dupes(cents,fnum);
+sdi1(:,:,ind) = [];
+cents(ind,:) = [];
+fnum(ind) = [];
 
 %% Comment section to hold code
 % imgaussfilt(dip1,1.5)
@@ -183,8 +189,8 @@ for i = 1:numel(fnum)
     yf = [yf;y+cents(i,2)];
     N = [N;fits(3)];
     O = [O;fits(6)];
-    sx = [sx;fits(4)];
-    sy = [sy;fits(5)];
+    sx = [sx;abs(fits(4))];
+    sy = [sy;abs(fits(5))];
     xfc = [xfc;crlb(1)];
     yfc = [yfc;crlb(2)];
     Nc = [Nc;crlb(3)];
@@ -194,13 +200,16 @@ for i = 1:numel(fnum)
     lv(i,1) = -abs(llv);
 end
 % lv = lv.';
-ind = N > 0 & N < 1000;
+ind = N > 0 & N < 1500;
 histogram(lv(ind)./N(ind));
 t = input('What Threshold?');
-ind = ind & lv./N > t;
-ind = ind & sx*2 > 1.5 & sx *2 < 6;
-ind = ind & sy*2 > 1.5 & sy *2 < 6;
-
+ind = ind & lv./N > -1.5;
+ind = ind & abs(sx)*2 > 1.5 & abs(sx) *2 <10;
+ind = ind & sy*2 > 1.5 & sy *2 < 20;
+ind = ind & xfc.^0.5*q < 0.1 & yfc.^0.5*q < 0.1;
+s0 = (sy.*sx).^0.5;
+lp2 = ((q*s0).^2+q^2/12)./N + 8*pi*(q*s0).^4.*O./(q^2*N.^2);
+lp = lp2.^0.5;
 
 % zf_all = zf_all/q;
 % zf_crlb = zf_crlb./q^2;
@@ -233,3 +242,5 @@ wave_trajectories;
 % title('Projection of localizations onto image');
 % save('Localization_file.mat','xf_all','xf_crlb', 'yf_all','yf_crlb','zf_all', 'zf_crlb', 'N', 'N_crlb','off_all', 'off_crlb', 'framenum_all', 'llv', 'iters');
 % Traj_show;
+frate = sum(ind)/numel(ind);
+save('Analysis.mat');
