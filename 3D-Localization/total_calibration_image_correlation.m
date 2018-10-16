@@ -56,17 +56,17 @@ clear A dps psf row col files pind
 
 %% Cross Correlate PSFs
 [m,n,o] = size(psfs{1});                                                    % Grab size of PSF regions
-% t2 = uitab(tg,'Title','X-Correlation');                                     % Make tab for X-Corr representation
-% ax = axes(t2);                                                              % Get axes for X-Corr plot
-% 
-% % Correlate all PSFS to the first frame scan
-% for i = 1:numel(psfs)
-%     [ind(i),mc] = cross3d(psfs{1},psfs{i}(:,:,round(o/2) + (-CCs:CCs)));    % Perform Correlation
-%     plot(ax,(1:numel(mc(:))),mc(:)/max(mc(:)))                              % Represent Result
-%     hold on
-% end
-% hold off
-% disp = ind - ind(1); % Make Correction to x-corrs by subtracting the identity index
+t2 = uitab(tg,'Title','X-Correlation');                                     % Make tab for X-Corr representation
+ax = axes(t2);                                                              % Get axes for X-Corr plot
+
+% Correlate all PSFS to the first frame scan
+for i = 1:numel(psfs)
+    [ind(i),mc] = cross3d(psfs{1},psfs{i}(:,:,round(o/2) + (-CCs:CCs)));    % Perform Correlation
+    plot(ax,(1:numel(mc(:))),mc(:)/max(mc(:)))                              % Represent Result
+    hold on
+end
+hold off
+disp = ind - ind(1); % Make Correction to x-corrs by subtracting the identity index
 
 ang = [];
 %% Fitting Analysis
@@ -126,55 +126,14 @@ for i = 1:numel(psfs)                                                       % Lo
 %     fnum = [fnum;fnout - disp(i)];                                          % Correct the Frame number based off correlation result
     fnum = [fnum;fnout]; 
 end
-z1 = fnum*step/1000;                                                        % Populate Z-positions
+z0 = fnum*step/1000;                                                        % Populate Z-positions
 % Tolerance Step
 %(User can adjust these values to change fidelity of data used to determine calibration results)
 % For use with 10-3-18 scans
 % indy = llv./N > -0.1 & N >0 & N < 10000 & abs(syc) < 0.01 & abs(sxc) < 0.01 ;
-% indy = llv./N > -0.15 & N >0 & N < 100000 & abs(syc).^0.5*q < 0.006 & abs(sxc).^0.5*q < 0.006 ;
-indy = sx < 5 & sx >0 & sy < 5 & sy > 0;
-
-%% Scan Correlation
-refp = mode(psf(indy)); % find psf scan w/ the most number of passed fits, this is our reference psf
-rid = psf == refp; % build an index for the reference ID
-sigr = [fnum(indy&rid),sx(indy &rid),sy(indy & rid)]; % build reference sigma scan
-fnumc = fnum;
-for i = 1:numel(psfs) % loop over all psfs
-    cid = psf == i; % grab Id for psf scan to correct
-    sigc = [fnum(indy&cid),sx(indy & cid),sy(indy & cid)];
-    dff = xcorrsig(sigr,sigc);
-    fnumc(cid) = fnumc(cid) + dff;
-end
-z0 = fnumc*step/1000;
+indy = llv./N > -0.15 & N >0 & N < 100000 & abs(syc).^0.5*q < 0.006 & abs(sxc).^0.5*q < 0.006 ;
 
 %% Data Representation
-
-% x corr corrections
-t3 = uitab(tg,'Title','Correlation Correction');
-tg3 = uitabgroup(t3); 
-tunc = uitab(tg3,'Title','Without Height Adjustment'); % start with uncorrected
-ax = axes(tunc);
-plot(ax,z1,sx,'.');
-hold on
-plot(ax,z1,sy,'.');
-ylim(ax,[0,5])
-xlim(ax,[0,3]);
-hold off
-legend('Sigma X', 'Sigma Y','Location','North');
-xlabel(ax,'Height (um)');
-ylabel(ax,'Width (pix)');
-
-tc = uitab(tg3, 'Title','With Height Adjustment');
-ax = axes(tc);
-plot(ax,z0,sx,'.');
-hold on
-plot(ax,z0,sy,'.');
-ylim(ax,[0,5])
-xlim(ax,[0,3]);
-hold off
-legend('Sigma X', 'Sigma Y','Location','North');
-xlabel(ax,'Height (um)');
-ylabel(ax,'Width (pix)');
 
 % Display X-Y Position
 t4 = uitab(tg,'Title','Fitting Outputs');
@@ -249,43 +208,36 @@ end
 
 % Find plane of least confusion
 ds = ssx - ssy;                                                             % Subtract sigma-y from sigma-x
-tds = uitab(tg3,'Title','DS curve');
-ax = axes(tds);
-plot(ax,abs(ds))
-xlabel(ax,'Index')
-ylabel(ax,'Difference between average sx and sy')
-tdx = input('Choose an Index to grab minimum of the DS curve');
-ind = find(abs(ds(tdx:tdx+50)) == min(abs(ds(tdx:tdx+50))));                  % Find minimum of absolute value
-z0s = zus - zus(ind(1)+tdx);                                                 % Call the found index the 0 point
+ind = find(abs(ds(40:end-40)) == min(abs(ds(40:end-40))));                                        % Find minimum of absolute value
+z0s = zus - zus(ind(1)+40);                                                       % Call the found index the 0 point
 
 % Data Representation of Sigma and Z space
 t3 = uitab(tg,'Title','Sigmas');
 ax = axes(t3);
-plot(ax,z0(indy)-zus(ind(1)+tdx),sx(indy),'.')                               % Plot Toleranced Sigma-x data
+plot(ax,z0(indy)-zus(ind(1)+40),sx(indy),'.')                                  % Plot Toleranced Sigma-x data
 hold on
-plot(ax,z0(indy)-zus(ind(1)+tdx),sy(indy),'.')                               % Plot Toleranced Sigma-y data
+plot(ax,z0(indy)-zus(ind(1)+40),sy(indy),'.')                                  % Plot Toleranced Sigma-y data
 plot(ax,z0s,ssx)                                                            % Plot average sigma-x
 plot(ax,z0s,ssy)                                                            % Plot average sigma-y
 
 % Determining Z parameters
-ind = abs(z0s) < 1;                                                       % Limit height over which to fit sigmas
-z_cal = get_z_params(z0s(ind),ssx(ind),ssy(ind));                           % Fit sigma curves to data and return result
+ind = abs(z0s) < 0.7; % Limit
+z_cal = get_z_params(z0s(ind),ssx(ind),ssy(ind));
 
 % Display results of Z-calibration
-yx = z_cal_fit(z0s(ind),z_cal(1:5));                                        % Determine ideal fitted Sig-x Values
-yy = z_cal_fit(z0s(ind),z_cal(6:end));                                      % Determine ideal fitted Sig-y values
+yx = z_cal_fit(z0s(ind),z_cal(1:5));    % Determine fitted Sig-x Values
+yy = z_cal_fit(z0s(ind),z_cal(6:end));  % Determine fitted Sig-y values
 % Overlay result on scatted / average sig-x plot
 plot(ax,z0s(ind),yx,'gx')
 plot(ax,z0s(ind),yy,'gx')
 hold off
-xlim(ax,[-1,1]);
-legend('Sig-X','Sigy-Y','Location','North');
+
 %% Determine Necessary x-y-z correction
 % It's known that in astigmatism there may be a slight slant that
 % exists over the Z direction, in this section we'll address that
 
-zf_um = getdz(sx,sy,z_cal);                                                 % Get Z-values
-indy = indy & abs(zf_um) <0.5;                                              % Limit view to fitted region listed above
+zf_um = getdz(sx,sy,z_cal); % Get Z-values
+indy = indy & abs(zf_um) <0.6;
 d3 = uitab(tg4,'Title','3-D Positions');
 ax = axes(d3);
 scatter3(xf(indy),yf(indy),zf_um(indy)/q,[],psf(indy));
@@ -299,20 +251,14 @@ tt4 = uitab(tg,'Title','Final Corrections');
 tg5 = uitabgroup(tt4);
 tf = uitab(tg5,'Title','Z0 v. Zf');
 ax = axes(tf);
-
-% Overlay stage v fit curves
-zc = z0;
-for i = 1:numel(psfs)
-    id = psf == i & abs(zf_um) < 1; % ident by psf and position
-    zs = z0(id); % subset of stage positions
-    zfs = zf_um(id); % subset of fitted positions
-    a = polyfit(zfs,zs,1); % linear fit to obtain x-intercept of stage
-    zc(id) = zc(id) - a(2); % adjust stage position to 'center' by subtracting x-interecept of all psfs
-end
-
-% plot(ax,z0(indy),zf_um(indy),'.')
-% a = polyfit(z0(indy),zf_um(indy),1);                                        % The slope of this distribution gives us the 'correction' for absolute Z
-
+plot(ax,z0(indy),zf_um(indy),'.')
+a = polyfit(z0(indy),zf_um(indy),1);  % The slope of this distribution gives us the 'correction' for absolute Z
+hold on
+plot(ax,z0(indy),a(1)*z0(indy)+a(2),'g')
+legend('Data','Fit','Location','North');
+hold off
+xlabel('Stage Position');
+ylabel('Found Position');
 
 % grab subsets
 dist = 0.5;
@@ -322,24 +268,6 @@ yfs = yf(indy);
 zfs = zf_um(indy)/q;
 pfs = psf(indy);
 zs = (min(zfs*q):0.02:max(zfs*q))/q;  % zfs is in pixels, are values are in pixels right now
-for i = 1:numel(zs)-1 % Attempt to grab the magnification curve of stage versus fit
-    id = zf_um >= zs(i)*q & zf_um < zs(i+1)*q;
-    zcm = mean(zc(id));
-    zstd = std(zc(id));
-    id2 = id & zc < zcm + zstd & zc > zcm - zstd;
-    z0m(i) = mean(zc(id2));
-    zfm(i) = mean(zf_um(id2));
-end
-a = polyfit(z0m,zfm,1);
-clear zfm
-plot(ax,zc(indy),zf_um(indy),'.');
-hold on
-plot(ax,zc(indy),a(1)*zc(indy)+a(2),'g')
-legend('Data','Fit','Location','North');
-ylim(ax,[-0.5,0.5])
-hold off
-xlabel('Stage Position');
-ylabel('Found Position');
 
 % Align the PSFs by their average positions
 xt = [];
@@ -359,7 +287,8 @@ ysel = [];
 zsel = [];
 for i = 1:numel(zs) - 1
     ind1 = zt >= zs(i) & zt <=zs(i+1);
-    ind1 = ind1 & (xt.^2+yt.^2).^0.5 < 0.5;
+    ind1 = ind1 & xt > -0.2 & xt < 0.5;
+    ind1 = ind1 & yt > -0.25 & yt < 0.25;
     xts = xt(ind1);
     yts = yt(ind1);
     zts = zt(ind1);
@@ -405,7 +334,7 @@ yf_c = yf - yc;
 zf_c = zf/(a(1));
 tc = uitab(tg5,'Title','Corrected localizations');
 ax = axes(tc);
-scatter3(ax,xf_c(indy)*q,q*yf_c(indy),q*zf_c(indy),[],psf(indy));
+scatter3(ax,xf_c(indy),yf_c(indy),zf_c(indy),[],psf(indy));
 colormap('jet')
 xlabel('Lat-X');
 ylabel('Lat-Y');

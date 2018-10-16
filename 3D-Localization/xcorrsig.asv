@@ -1,0 +1,25 @@
+function diff = xcorrsig(sig1, sig2)
+% This function is to return the index of most overlap between two sigma
+% curves by correlating the sx^2-sy^2 curves. Each sig input should be
+% packed in the form of [fnum, sx,sy]
+% AJN 
+% Unpacking
+% Smooth inputs to avoid noise w/ spline fit
+sxy1 = gausssmooth(sig1(:,2).^2 - sig1(:,3).^2,4,10);
+sxy2 = gausssmooth(sig2(:,2).^2 - sig2(:,3).^2,4,10);
+f1 = sig1(:,1);
+f2 = sig2(:,1);
+% fout = min([f1,f2]):max([f1,f2]);
+
+% Spline interpolation onto the output
+
+
+for i = 1:min([numel(f1),numel(f2)])
+    if min(sxy2)> min(sxy1)
+        
+    else
+    end
+end
+
+
+diff = lag(I);

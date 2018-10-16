@@ -1,8 +1,7 @@
-function [z] = getdz(sigx,sigy)
+function [z] = getdz(sigx,sigy,z_cal)
 z =[];
-x = (-1:0.001:1).';
-% load('C:\Users\AJN Lab\Desktop\Code Development\Matlab Testing Folder\3D Localization\Z calibrations\3d_theta.mat');
-load('C:\Users\AJN Lab\Desktop\Code Development\Matlab Testing Folder\3D Localization\Z calibrations\z_cal.mat');
+x = (-0.6:0.001:0.6).';
+
 xs = z_cal(1);
 gx = z_cal(2);
 dx = z_cal(3);
@@ -15,19 +14,21 @@ dy = z_cal(8);
 ay = z_cal(9);
 by = z_cal(10);
 
+% g = (gx+gy)/2;
+% d = (dx+dy)/2;
 
 sx = xs*(1 + ((x-gx)./dx).^2 + ax*((x-gx)./dx).^3 + bx*((x-gx)./dx).^4).^0.5; %defocusing stuff
 sy = ys*(1 + ((x-gy)./dy).^2 + ay*((x-gy)./dy).^3 + by*((x-gy)./dy).^4).^0.5;
-% ss = func_eval_NN(x,theta1,theta2);
 
-% sx = ss(:,1)*ysc(1) + ymi(1);
-% sy = ss(:,2)*ysc(2) + ymi(2);
+% sx = xs*(1 + ((x-g)./d).^2 + ax*((x-g)./d).^3 + bx*((x-g)./d).^4).^0.5; %defocusing stuff
+% sy = ys*(1 + ((x+g)./d).^2 + ay*((x+g)./d).^3 + by*((x+g)./d).^4).^0.5;
+
 
 for i = 1:numel(sigx)
     D = ((sigx(i).^0.5-sx.^0.5).^2 + (sigy(i).^0.5-sy.^0.5).^2);
     ind = find(D == min(D), 1);
     try
-    z(i,1) = 1.0015*x(ind(1));  % emperically found to be the axial zoom factor by fitting a line between board movements and position measurements
+    z(i,1) = x(ind(1));  % emperically found to be the axial zoom factor by fitting a line between board movements and position measurements
     catch
         z(i,1) = -300000;
     end

@@ -16,8 +16,6 @@ if vars ==0
 end
 if vars >= 1
     fnum = varargin{1};
-    cents = zeros(o,2);
-
 end
 if vars >= 2
     cents = varargin{2};
@@ -49,6 +47,7 @@ offo = [];
 offco = [];
 llv = [];
 fnout = [];
+n = o;
 if n > maxi
     rounds = floor(n/maxi);    
     for i = 1:rounds
@@ -61,8 +60,10 @@ if n > maxi
          yc = -yc;
         ind = Nc ~= -1; % remove all failed localizations
       fnout = [fnout;fna(ind)];
-        xfo = [xfo;cos(-rads)*xf(ind) - sin(-rads)*yf(ind) +cen(ind,1)]; % X-Y values will be rotated by rads, perform inverse transformation
-        yfo = [yfo;sin(-rads)*xf(ind) + cos(-rads)*yf(ind) +cen(ind,2)];
+        xs = cos(-rads)*xf - sin(-rads)*yf+cen(:,1);
+      ys = sin(-rads)*xf + cos(-rads)*yf+cen(:,2);
+        xfo = [xfo; xs(ind)]; % X-Y values will be rotated by rads, perform inverse transformation
+        yfo = [yfo; ys(ind)];
         xfc = [xfc; xc(ind)];
         yfc = [yfc; yc(ind)];
           N = [N;Np(ind)];
@@ -84,8 +85,10 @@ if n > maxi
          yc = -yc;
         ind = Nc ~= -1; % remove all failed localizations
       fnout = [fnout;fna(ind)];
-        xfo = [xfo;cos(-rads)*xf(ind) - sin(-rads)*yf(ind) +cen(ind,1)]; % X-Y values will be rotated by rads, perform inverse transformation
-        yfo = [yfo;sin(-rads)*xf(ind) + cos(-rads)*yf(ind) +cen(ind,2)];
+        xs = cos(-rads)*xf - sin(-rads)*yf+cen(:,1);
+      ys = sin(-rads)*xf + cos(-rads)*yf+cen(:,2);
+        xfo = [xfo; xs(ind)]; % X-Y values will be rotated by rads, perform inverse transformation
+        yfo = [yfo; ys(ind)];
         xfc = [xfc; xc(ind)];
         yfc = [yfc; yc(ind)];
           N = [N;Np(ind)];
@@ -106,10 +109,10 @@ else
          yc = -yc;
         ind = Nc ~= -1; % remove all failed localizations
       fnout = [fnout;fna(ind)];
-      xs = cos(-rads)*xf - sin(-rads)*yf;
-      ys = sin(-rads)*xf + cos(-rads)*yf;
-        xfo = [xfo; xs(ind) +cen(ind,1)]; % X-Y values will be rotated by rads, perform inverse transformation
-        yfo = [yfo; ys(ind) +cen(ind,2)];
+      xs = cos(-rads)*xf - sin(-rads)*yf+cen(:,1);
+      ys = sin(-rads)*xf + cos(-rads)*yf+cen(:,2);
+        xfo = [xfo; xs(ind)]; % X-Y values will be rotated by rads, perform inverse transformation
+        yfo = [yfo; ys(ind)];
         xfc = [xfc; xc(ind)];
         yfc = [yfc; yc(ind)];
           N = [N;Np(ind)];

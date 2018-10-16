@@ -45,7 +45,7 @@ clear ip ipf i1
 [iloc, fnum, cents] = divide_up(iprod, pixw, dps);
 [m,n,o] = size(iloc);
 % remove duplicate data
-[ind] = find_fm_dupes(cents,fnum,pixw*1.5);
+[ind] = find_dupes(cents,fnum);
 iloc(:,:,ind) = [];
 cents(ind,:) = [];
 fnum(ind) = [];
@@ -59,7 +59,7 @@ fnum(ind) = [];
 % [xf_all,xf_crlb, yf_all,yf_crlb,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, iters, cex, cey] = da_splines(iloc, fnum, cents, cal, pixw);
 % [~,~, ~,~,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, iters, cex, cey] = da_splines(iloc, fnum, cents, cal, pixw);
 % i2 = reshape(iloc,m*n,o);
-[fits, crlbs, llv, framenumber] = slim_locs(iloc, fnum, cents, cal.ang);
+[fits, crlbs, llv, framenumber] = slim_locs(iloc, fnum, cents, cal.angle);
 zf = getdz(fits(:,4),fits(:,5),cal.z_cal)/q;
 coords = [fits(:,1:2),zf];
 [ncoords] = astig_tilt(coords,cal);

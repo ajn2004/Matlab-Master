@@ -129,10 +129,10 @@ for i = 1:o2
 end
 
 [sdi1, fnum, cents] = divide_up(rip1,pixw, dps);
-% [ind] = find_fm_dupes(cents,fnum,1.5*pixw);
-% sdi1(:,:,ind) = [];
-% cents(ind,:) = [];
-% fnum(ind) = [];
+[ind] = find_dupes(cents,fnum);
+sdi1(:,:,ind) = [];
+cents(ind,:) = [];
+fnum(ind) = [];
 
 %% Comment section to hold code
 % imgaussfilt(dip1,1.5)
@@ -163,7 +163,9 @@ end
 %     rat(numel(rat)+1) = rat_view(si1(:,:,[ind,ind+2]));
 % end
 % fnum = 1:numel(sdi1(1,1,:));
-load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Single-release-codes\z_calib.mat');
+cal = load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Single-release-codes\bead_astig_3dcal.mat');
+% cents = zeros(numel(sdi1(1,1,:)),2);
+% [xf_all,xf_crlb, yf_all,yf_crlb,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, iters] = da_splines(sdi1, fnum, cents, cal, pixw);
 xf = [];
 yf = [];
 N = [];
@@ -177,44 +179,33 @@ Nc = [];
 sxc = [];
 syc = [];
 yfc = [];
-llv = [];
-fnumb = [];
-% ang = 0.1047;
-% for i = 1:numel(fnum)
-   [fits,crlb,lv, fnout] = slim_locs(sdi1,fnum,cents,cal.ang,50,100); 
-   fnumb = [];
-     fnout = fnout.';                                                        % Save frame number which corresponds to Z-position
-    xf = [xf;fits(:,1)];                                                    % X-Position
-    yf = [yf;fits(:,2)];                                                    % Y-Position
-    N = [N; fits(:,3)];                                                     % Number of Photons
-    sx = [sx;fits(:,4)];                                                    % Sigma in x' direction
-    sy = [sy;fits(:,5)];                                                    % Sigma in y' direction
-    O = [O; fits(:,6)];                                                     % Offset
-    % Lower bound on Variance of fitted variables
-    xfc = [xfc;crlb(:,1)];
-    yfc = [yfc;crlb(:,2)];
-    Nc = [Nc;crlb(:,3)];
-    Oc = [Oc;crlb(:,6)];
-    sxc = [sxc;crlb(:,4)];
-    syc = [syc;crlb(:,5)];
-    llv = [llv;-abs(lv)];                                                   % Log Likelihood Value
-    fnumb = [fnumb;fnout];                                          % Correct the Frame number based off correlation result
-    zf = getdz(sx,sy,cal.z_cal)/q;  % get z values from sigma measurements
-%     icoords = [xf,yf,zf]; % icoords will contain the initial 'uncorrected' coordinates
-%     clear xf yf zf
-%     [coords] = astig_tilt(icoords,cal); % Correct tilt induced issues
-%     xf = coords(:,1); % Reassign coordinates based off of corrected values
-%     yf = coords(:,2);
-%     zf = coords(:,3);
-    
-% end
+lv = [];
+ang = 0.1047;
+for i = 1:numel(fnum)
+   [fits,crlb,llv] = func_mle_crlb(sdi1(:,:,i),0,0,3,ang); 
+    x = fits(1)*cos(-ang) - sin(-ang)*fits(2);
+    y = fits(1)*sin(-ang) + cos(-ang)*fits(2);
+    xf = [xf;x+cents(i,1)];
+    yf = [yf;y+cents(i,2)];
+    N = [N;fits(3)];
+    O = [O;fits(6)];
+    sx = [sx;abs(fits(4))];
+    sy = [sy;abs(fits(5))];
+    xfc = [xfc;crlb(1)];
+    yfc = [yfc;crlb(2)];
+    Nc = [Nc;crlb(3)];
+    Oc = [Oc;crlb(6)];
+    sxc = [sxc;crlb(4)];
+    syc = [syc;crlb(5)];
+    lv(i,1) = -abs(llv);
+end
 % lv = lv.';
 ind = N > 0 & N < 1500;
 histogram(lv(ind)./N(ind));
 t = input('What Threshold?');
-ind = ind & lv./N > t;
-ind = ind & abs(sx)*2 > 1 & abs(sx) *2 <10;
-ind = ind & sy*2 > 1 & sy *2 < 20;
+ind = ind & lv./N > -1.5;
+ind = ind & abs(sx)*2 > 1.5 & abs(sx) *2 <10;
+ind = ind & sy*2 > 1.5 & sy *2 < 20;
 ind = ind & xfc.^0.5*q < 0.1 & yfc.^0.5*q < 0.1;
 s0 = (sy.*sx).^0.5;
 lp2 = ((q*s0).^2+q^2/12)./N + 8*pi*(q*s0).^4.*O./(q^2*N.^2);

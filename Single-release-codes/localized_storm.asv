@@ -129,10 +129,10 @@ for i = 1:o2
 end
 
 [sdi1, fnum, cents] = divide_up(rip1,pixw, dps);
-% [ind] = find_fm_dupes(cents,fnum,1.5*pixw);
-% sdi1(:,:,ind) = [];
-% cents(ind,:) = [];
-% fnum(ind) = [];
+[ind] = find_dupes(cents,fnum);
+sdi1(:,:,ind) = [];
+cents(ind,:) = [];
+fnum(ind) = [];
 
 %% Comment section to hold code
 % imgaussfilt(dip1,1.5)
@@ -212,9 +212,9 @@ fnumb = [];
 ind = N > 0 & N < 1500;
 histogram(lv(ind)./N(ind));
 t = input('What Threshold?');
-ind = ind & lv./N > t;
+ind = ind & lv./N > -1.5;
 ind = ind & abs(sx)*2 > 1 & abs(sx) *2 <10;
-ind = ind & sy*2 > 1 & sy *2 < 20;
+ind = ind & sy*2 > 1.5 & sy *2 < 20;
 ind = ind & xfc.^0.5*q < 0.1 & yfc.^0.5*q < 0.1;
 s0 = (sy.*sx).^0.5;
 lp2 = ((q*s0).^2+q^2/12)./N + 8*pi*(q*s0).^4.*O./(q^2*N.^2);
