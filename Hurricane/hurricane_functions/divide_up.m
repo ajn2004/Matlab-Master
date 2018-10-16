@@ -10,17 +10,17 @@ for j = 1:o % loop over all frames
    
     for i = 1:numel(row) % loop over all found areas
     
-            try
-            % Center onto the brightest picture within a 5x5 area of the center in the reason, if you're
-            % out of bounds it will catch the last error and use the
-            % previous values
-                [nrow, ncol] = find(i1(row(i) + wind, col(i) + wind,j) == max(max(i1(row(i) + wind, col(i) + wind,j))),1);
-                col(i) = (col(i) - pixw - 1) + ncol; % matlab's find function starts the subarray at 1 which  = col - pixw
-                row(i) = (row(i) - pixw - 1) + nrow;
-             
-            catch lster
-%                 disp(lster)
-            end % end catch loop
+%             try
+%             % Center onto the brightest picture within a 5x5 area of the center in the reason, if you're
+%             % out of bounds it will catch the last error and use the
+%             % previous values
+%                 [nrow, ncol] = find(i1(row(i) + wind, col(i) + wind,j) == max(max(i1(row(i) + wind, col(i) + wind,j))),1);
+%                 col(i) = (col(i) - pixw - 1) + ncol; % matlab's find function starts the subarray at 1 which  = col - pixw
+%                 row(i) = (row(i) - pixw - 1) + nrow;
+%              
+%             catch lster
+% %                 disp(lster)
+%             end % end catch loop
             
             %now segment area with updated values
             if col(i) - pixw > 0 && col(i) + pixw <= n && row(i) - pixw > 0 &&  row(i) + pixw < m  % if cut out region is within the image, cut it out

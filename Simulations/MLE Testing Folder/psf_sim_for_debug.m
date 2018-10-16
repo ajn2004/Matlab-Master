@@ -15,7 +15,7 @@ load('z_cal.mat');
 %% Initialization
 global xpix ypix wbox
 pixind = 1;
-rbox = 6;
+rbox = 3;
 [xpix, ypix] = meshgrid(-rbox:rbox,-rbox:rbox);
 xpix = double(xpix);
 ypix = double(ypix);
@@ -23,26 +23,26 @@ ypix = double(ypix);
 % ypix = gpuArray(ypix);
 wbox = 2*rbox+1;
 i1 = xpix.*0;
-sxo = xsig;
-syo = ysig;
-axo = Ax;
-bxo = Bx;
-ayo = Ay;
-byo = By;
-gxo = - gx/1000;
-gyo = gy/1000;
-dxo = dx/1000;
-dyo = dy/1000;
-% sxo = 1.08;
-% syo = 1.01;
-% axo = -0.0708;
-% bxo = -0.073;
-% ayo = 0.164;
-% byo = 0.0417;
-% gxo = 0.389;
-% gyo = -0.389;
-% dxo = 0.531;
-% dyo = 0.531;
+% sxo = xsig;
+% syo = ysig;
+% axo = Ax;
+% bxo = Bx;
+% ayo = Ay;
+% byo = By;
+% gxo = - gx/1000;
+% gyo = gy/1000;
+% dxo = dx/1000;
+% dyo = dy/1000;
+sxo = 1.08;
+syo = 1.01;
+axo = -0.0708;
+bxo = -0.073;
+ayo = 0.164;
+byo = 0.0417;
+gxo = 0.389;
+gyo = -0.389;
+dxo = 0.531;
+dyo = 0.531;
 zcurve = double([sxo, syo, axo, ayo, bxo, byo, dxo, dyo, gxo, gyo]);
 % gxo = -(gx*0.5+gy*0.5)/1000;
 % gyo = (gx*0.5+gy*0.5)/1000;
@@ -59,8 +59,8 @@ z(1) = 0;
 z(2) = 0;
 frames = 1000;
 % for op = 1:1000
-z0true = 0.218;
-zs = -1:0.01:1;
+z0true = 0.0;
+zs = -0.1:0.01:0.1;
 Zfin = cell(numel(z),1);
  for op = 1:numel(zs)
     z0true = zs(op);
@@ -104,8 +104,8 @@ Zfin = cell(numel(z),1);
             
             N = sum(i3(:));
             offguess = min(i3(:));
-            xguess = sum(sum(xpix.*i3./N));
-            yguess = sum(sum(ypix.*i3./N));
+            xguess(l,op) = sum(sum(xpix.*i3./N));
+            yguess(l,op) = sum(sum(ypix.*i3./N));
             
             % beta0 = [ xguess, yguess, peakguess, sigma2/2, sigma2/2, offguess];
             %
@@ -113,22 +113,24 @@ Zfin = cell(numel(z),1);
             % elapsed_nlon = toc;
             %% MLE approximation
             % sigma = sx;
-            xf = xguess;
-            yf = yguess;
+            xf = xguess(l,op);
+            yf = yguess(l,op);
             zf = 0;
             offs = offguess;
+            sx = (rbox)/2;
+            sy = (rbox)/2;
             % u = gpuArray(zeros(wbox,wbox,frames));
             % while fittime(l) < 100
             flag = 0;
-            for k = 1
+            for k = 1:10
                 
                 %Define psf and error function for each pixel
                 if abs(zf) > 1 || flag == 1
                     zf = 0;
                     flag = 1;
                 end
-                sx = double(sxo*(1 + ((zf - gxo)/dxo).^2 + axo*((zf - gxo)/dxo).^3 + bxo*((zf - gxo)/dxo).^4).^0.5);
-                sy = double(syo*(1 + ((zf - gyo)/dyo).^2 + ayo*((zf - gyo)/dyo).^3 + byo*((zf - gyo)/dyo).^4).^0.5);
+%                 sx = double(sxo*(1 + ((zf - gxo)/dxo).^2 + axo*((zf - gxo)/dxo).^3 + bxo*((zf - gxo)/dxo).^4).^0.5);
+%                 sy = double(syo*(1 + ((zf - gyo)/dyo).^2 + ayo*((zf - gyo)/dyo).^3 + byo*((zf - gyo)/dyo).^4).^0.5);
                 
                 Ex = 1/2.*(erf((xpix - xf + 1/2)./(2*sx^2)^0.5)-erf((xpix - xf - 1/2)./(2*sx^2)^0.5)); % error function of x integration over psf for each pixel
                 Ey = 1/2.*(erf((ypix - yf + 1/2)./(2*sy^2)^0.5)-erf((ypix - yf - 1/2)./(2*sy^2)^0.5)); % error function of y integration over psf for each pixel
@@ -163,12 +165,12 @@ Zfin = cell(numel(z),1);
                 d2udsy2 = N.*Ex.*(2*pi)^-0.5.*((sy^-5.* ((ypix - yf - 1/2).^3.*exp(-(ypix -yf - 1/2).^2.*(2*sy^2)^-1) - (ypix - yf + 1/2).^3.*exp(-(ypix -yf + 1/2).^2.*(2*sy^2)^-1))) ...
                     - 2.*sy.^-3.*((ypix - yf - 1/2).*   exp(-(ypix -yf - 1/2).^2.*(2*sy^2)^-1) - (ypix - yf + 1/2)   .*exp(-(ypix -yf + 1/2).^2.*(2*sy^2)^-1)));
                 
-                d2sxdz2 = sxo*(2/(dxo)^2 + axo*6*(zf-gxo)/(dxo)^3 + bxo*12*(zf-gxo)^2/(dxo)^4)/ (2*(1 + ((zf - gxo)/dxo).^2 + axo*((zf - gxo)/dxo).^3 + bxo*((zf - gxo)/dxo).^4).^0.5)...
-                    - sxo*(2 * (zf - gxo) / (dxo*dxo) + axo * 3 * ((zf-gxo)^2/dxo^3) + bxo*4*((zf-gxo)^3/dxo^4))^2/ (4*(1 + ((zf - gxo)/dxo).^2 + axo*((zf - gxo)/dxo).^3 + bxo*((zf - gxo)/dxo).^4).^1.5);
-                d2sydz2 = syo*(2/(dyo)^2 + ayo*6*(zf-gyo)/(dyo)^3 + byo*12*(zf-gyo)^2/(dyo)^4)/ (2*(1 + ((zf - gyo)/dyo).^2 + ayo*((zf - gyo)/dyo).^3 + byo*((zf - gyo)/dyo).^4).^0.5)...
-                    - syo*(2 * (zf - gyo) / (dyo*dyo) + ayo * 3 * ((zf-gyo)^2/dyo^3) + byo*4*((zf-gyo)^3/dyo^4))^2/ (4*(1 + ((zf - gyo)/dyo).^2 + ayo*((zf - gyo)/dyo).^3 + byo*((zf - gyo)/dyo).^4).^1.5);
+%                 d2sxdz2 = sxo*(2/(dxo)^2 + axo*6*(zf-gxo)/(dxo)^3 + bxo*12*(zf-gxo)^2/(dxo)^4)/ (2*(1 + ((zf - gxo)/dxo).^2 + axo*((zf - gxo)/dxo).^3 + bxo*((zf - gxo)/dxo).^4).^0.5)...
+%                     - sxo*(2 * (zf - gxo) / (dxo*dxo) + axo * 3 * ((zf-gxo)^2/dxo^3) + bxo*4*((zf-gxo)^3/dxo^4))^2/ (4*(1 + ((zf - gxo)/dxo).^2 + axo*((zf - gxo)/dxo).^3 + bxo*((zf - gxo)/dxo).^4).^1.5);
+%                 d2sydz2 = syo*(2/(dyo)^2 + ayo*6*(zf-gyo)/(dyo)^3 + byo*12*(zf-gyo)^2/(dyo)^4)/ (2*(1 + ((zf - gyo)/dyo).^2 + ayo*((zf - gyo)/dyo).^3 + byo*((zf - gyo)/dyo).^4).^0.5)...
+%                     - syo*(2 * (zf - gyo) / (dyo*dyo) + ayo * 3 * ((zf-gyo)^2/dyo^3) + byo*4*((zf-gyo)^3/dyo^4))^2/ (4*(1 + ((zf - gyo)/dyo).^2 + ayo*((zf - gyo)/dyo).^3 + byo*((zf - gyo)/dyo).^4).^1.5);
                 
-                d2udz2 = d2udsx2.*dsxdz.^2 + dudsx.*d2sxdz2 + d2udsy2.*dsydz.^2 + dsydz.*d2sydz2;
+%                 d2udz2 = d2udsx2.*dsxdz.^2 + dudsx.*d2sxdz2 + d2udsy2.*dsydz.^2 + dsydz.*d2sydz2;
                 d2udi2 = 0;
                 d2udb2 = 0;
                 
@@ -180,7 +182,9 @@ Zfin = cell(numel(z),1);
                 % update variables
                 xf = xf - sum(sum(dudx.*((i3./u(:,:,k))-1)))/(sum(sum(d2udx2.*((i3./u(:,:,k))-1) - dudx.^2.*i3./(u(:,:,k).^2))));
                 yf = yf - sum(sum(dudy.*((i3./u(:,:,k))-1)))/(sum(sum(d2udy2.*((i3./u(:,:,k))-1) - dudy.^2.*i3./(u(:,:,k).^2))));
-                zf = zf - sum(sum(dudz.*((i3./u(:,:,k))-1)))/(sum(sum(d2udz2.*((i3./u(:,:,k))-1) - dudz.^2.*i3./(u(:,:,k).^2))));
+                sx = sx - sum(sum(dudsx.*((i3./u(:,:,k))-1)))/(sum(sum(d2udsx2.*((i3./u(:,:,k))-1) - dudsx.^2.*i3./(u(:,:,k).^2))));
+                sy = sy - sum(sum(dudsy.*((i3./u(:,:,k))-1)))/(sum(sum(d2udsy2.*((i3./u(:,:,k))-1) - dudsy.^2.*i3./(u(:,:,k).^2))));
+%                 zf = zf - sum(sum(dudz.*((i3./u(:,:,k))-1)))/(sum(sum(d2udz2.*((i3./u(:,:,k))-1) - dudz.^2.*i3./(u(:,:,k).^2))));
                 N = N - sum(sum(dudi.*((i3./u(:,:,k))-1)))/(sum(sum(d2udi2.*((i3./u(:,:,k))-1) - dudi.^2.*i3./(u(:,:,k).^2))));
                 offs = offs - sum(sum(dudb.*((i3./u(:,:,k))-1)))/(sum(sum(d2udb2.*((i3./u(:,:,k))-1) - dudb.^2.*i3./(u(:,:,k).^2))));
                 
@@ -189,7 +193,9 @@ Zfin = cell(numel(z),1);
             end
             xlap(k+1,l) = xf;
             ylap(k+1,l) = yf;
-            zlap(k+1,l) = zf;
+%             zlap(k+1,l) = zf;
+            sxlap (k+1,l) = sx-sigmax;
+            sylap (k+1,l) = sy;
             nlap(k+1,l) = N;
             bglap(k+1,l) = offs;
             flagy(l) = flag;
@@ -212,8 +218,17 @@ Zfin = cell(numel(z),1);
         end
         t(op) = toc;
         ajn_wait(t, op, numel(zs))
-
-    [xmf, xmc, ymf, ymc, zmf, zmc, Npm, Ncm, omff, ofmfc, lmv] = chain_d_loc13(double(il), double(zcurve), 100, double(0));    
+i1 = double(i1);
+ang = double(0);
+% i1 = single(i1);
+% ang = single(0);
+    [xmf, xmc, ymf, ymc, nmf, nmc, sxmf, sxmc, symf, symc, omf, omc,  lmv] = slim_chain_loc_7((il),  100, ang,10);
+    xmfa(:,op) = xmf;
+    ymfa(:,op) = ymf;
+    sxmfa(:,op) = sxmf-sigx;
+    symfa(:,op) = symf-sigy;
+    nmfa(:,op) = nmf;
+    omfa(:,op) = omf;
 %     disp(num2str([xmf,ymf,zmf]));
 %     disp(num2str([Npm,omff,lmv]));
 %     dx(op) = (xfa(op) - xmf);
@@ -221,24 +236,24 @@ Zfin = cell(numel(z),1);
 %     dz(op) = (zfa(op) - zmf);
 % end
 % plot(dx)
-    Zfin{op} = (zlap(end,:));
-    Zmfin{op} = (zmf);
+%     Zfin{op} = (zlap(end,:));
+%     Zmfin{op} = (zmf);
  end
 %  
-for i =1:numel(Zfin)
-    dzs = Zfin{i};
-    dzms = Zmfin{i};
-    ind = abs(dzs) < 1;
-    ind1 = abs(dzms) <1;
-    meanz(i) = mean(dzs(ind));
-    mzms(i) = mean(dzms(ind1));
-    stdz(i) = std(dzs(ind));
-    clear dzs
-end
-plot(zs,meanz)
-hold on
-plot(zs,mzms,'.');
-legend('CPU','GPU')
+% for i =1:numel(Zfin)
+%     dzs = Zfin{i};
+%     dzms = Zmfin{i};
+%     ind = abs(dzs) < 1;
+%     ind1 = abs(dzms) <1;
+%     meanz(i) = mean(dzs(ind));
+%     mzms(i) = mean(dzms(ind1));
+%     stdz(i) = std(dzs(ind));
+%     clear dzs
+% end
+% plot(zs,meanz)
+% hold on
+% plot(zs,mzms,'.');
+% legend('CPU','GPU')
 % xlabel('Simulated Axial Position [um]')
 % ylabel('Fitted Axial Position [um]')
 % title('Comparison between CPU and GPU calculation')

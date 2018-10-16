@@ -9,7 +9,7 @@ clearvars; clc; close all;
 im_type = 'tif';  % image extension currently either 'tif' or 'fits'
 stim_fr = 100;        % First frame stimulation occurs on
 stims = 10;            % Total number of stimulations
-str = 0.5;            % Stimulation rate in Hz
+str = 10;            % Stimulation rate in Hz
 pixw = 7;           % Pixel width in radius (i.e. value of 7 gives 15x15 square window)
 %%%%%%%%%%%%%%%%%%%%%END USER CONTROL%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -78,15 +78,26 @@ ylabel('F in [A.U.]');
 title('Trace of mean F with individuals');
 % create new figure of just average fluorescence
 figure % make new figure
-plot(t,mfluor,'k');  % plot only average trace
+<<<<<<< HEAD
+dfluor = (mfluor - mean(mfluor(1:90)))/mean(mfluor(1:90));
+plot(t,dfluor,'k');  % plot only average trace
 hold on
 % plot stims
 for i = 1:stims
-    plot([stim_fr*tex + (i-1)/str,stim_fr*tex + (i-1)/str],[min(mfluor),max(mfluor)],'r'); % plot a red line at stim_frame * s/frame + (stimnumber-1)/stimspersec
+    plot([stim_fr*tex + (i-1)/str,stim_fr*tex + (i-1)/str],[min(dfluor),max(dfluor)],'r'); % plot a red line at stim_frame * s/frame + (stimnumber-1)/stimspersec
+=======
+df = (mfluor - mean(mfluor(1:90)))/mean(mfluor(1:90));
+plot(t,df,'k');  % plot only average trace
+hold on
+% plot stims
+for i = 1:stims
+    plot([stim_fr*tex + (i-1)/str,stim_fr*tex + (i-1)/str],[min(df),max(df)],'r'); % plot a red line at stim_frame * s/frame + (stimnumber-1)/stimspersec
+>>>>>>> 306ac6cd665346f72d554508c8ac28d3e3530487
 end
 hold off
 xlabel('Time in [s]')
-ylabel('F in [A.U.]');
+% ylabel('F in [A.U.]');
+ylabel('dF/F_0');
 title('Trace of mean F');
 
 

@@ -48,12 +48,21 @@ tic
 %     [ang] = get_elip_ang(subC,3,4);
 %     [frb] = func_mle_crlb(subC,0,0,3,ang); % perform a gaussian fit to image
 %     clear C subC row col
-% subplot(1,3,2);
-% imagesc(Crb);
-% hold on
-% plot(crb,rrb,'rx');
+<<<<<<< HEAD
+subplot(1,2,1);
+imagesc(Crb);
+hold on
+plot(crb,rrb,'rx');
+axis image
+hold off
+=======
+subplot(1,3,2);
+imagesc(Crb);
+hold on
+plot(crb,rrb,'rx');
 % axis image
 % hold off
+>>>>>>> 306ac6cd665346f72d554508c8ac28d3e3530487
 %     Cbp = rollingball(Cbp);
 
     [rbp,cbp] = find(Cbp == max(Cbp(:))); % find peak
@@ -64,25 +73,36 @@ tic
     rbp = rbp + ycm;
     cbp = cbp + xcm;
 %     
-    
+    title('Rolling Ball Subtraction');
 %     subC = subC/max(subC(:)); % normalize peak value to 1
 %     [ang] = get_elip_ang(subC,3,4);
 %     [fbp] = func_mle_crlb(subC,0,0,3,ang); % perform a gaussian fit to image
-%     subplot(1,3,3);
-%     imagesc(Cbp)
-%     hold on
+<<<<<<< HEAD
+    subplot(1,2,2);
+    imagesc(Cbp)
+    hold on
+    plot(cbp,rbp,'rx');
+    axis image
+    hold off
+=======
+    subplot(1,3,3);
+    imagesc(Cbp)
+    hold on
 %     plot(cbp,rbp,'rx');
-%     axis image
+% title(num2str(
+    axis image
 %     hold off
-%     drawnow
+>>>>>>> 306ac6cd665346f72d554508c8ac28d3e3530487
+    drawnow
     % average the final results
     drift = [drift;drift(i-1,1) + (crb(1)+cbp(1))/2 - (n), drift(i-1,2) + (rrb(1)+rbp(1))/2-(m)];
+    title('Bandpass Filter');
 %     drift = [drift;(crb(1)+cbp(1))/2 - n, (rrb(1)+rbp(1))/2-m];
 %     drift(i,:) = [(crb(1)+cbp(1))/2 - n, (rrb(1)+rbp(1))/2-m];
 %     drift = [drift; (fits(1)+frb(1)+fbp(1))/3, (fits(2)+frb(2)+fbp(2))/3]; % record value in output variable
 %     clear C subC fits fbp frb crlbs llv row col % clear values that are used in the calculation
-%     M(i-1) = getframe(gcf);
+    M(i-1) = getframe(gcf);
 t(i-1) = toc;
 ajn_wait(t,i,o);
 end
-% movie2gif(M,'xcorrelation.gif','DelayTime',0.05,'LoopCount',Inf);
+movie2gif(M,'xcorrelation.gif','DelayTime',0.05,'LoopCount',Inf);

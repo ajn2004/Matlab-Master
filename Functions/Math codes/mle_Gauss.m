@@ -1,4 +1,4 @@
-function [xf,yf,sx,sy,N,O] = mle_Gauss(i3)
+function [xf,yf,sx,sy,N,O] = mle_Gauss(i3, ang)
 
 [m,n,o] = size(i3);
 if o > 1
@@ -6,8 +6,12 @@ if o > 1
 elseif m ~=n
     error('square images only');
 end
-i3 = i3./max(i3(:));
-[xpix, ypix] = meshgrid(-(n-1)/2:(n-1)/2,-(m-1)/2:(m-1)/2);
+% i3 = i3./max(i3(:));
+[xpix, ypix] = meshgrid((1:n)-n/2,(1:m)-m/2);
+X = cos(ang)*xpix - sin(ang)*ypix;
+Y = sin(ang)*xpix + cos(ang)*ypix;
+xpix = X;
+ypix = Y;
 beta0 = [(sum(sum(xpix.*i3))/sum(i3(:))), (sum(sum(ypix.*i3))/sum(i3(:))), sum(i3(:)), 1.5, 1.5, min(i3(:))];
 for k = 1:20
 
@@ -46,9 +50,9 @@ for k = 1:20
     beta0(6) = beta0(6) - sum(sum(dudb.*((i3./u(:,:,k))-1)))/(sum(sum(d2udb2.*((i3./u(:,:,k))-1) - dudb.^2.*i3./(u(:,:,k).^2))));
 
 end
-xf = beta0(1);
-yf = beta0(2);
-sx = beta0(3);
-sy = beta0(4);
-N  = beta0(5)*max(i3(:));
+xf = beta0(1)*cos(-ang) - beta0(2)*sin(-ang);
+yf = beta0(1)*sin(-ang) + beta0(2)*cos(-ang);
+sx = beta0(4);
+sy = beta0(5);
+N  = beta0(3)*max(i3(:));
 O  = beta0(6)*max(i3(:));

@@ -1,4 +1,4 @@
-function yfit = gauss1d(beta,x)
+function yfit = gauss1d(beta0,x)
 
-yfit = (beta(2)*exp(- (x - beta(1)).^2./(2*beta(3)^2)) + beta(4)).';
+yfit = (beta0(2)*exp(- (x - beta0(1)).^2./(2*beta0(3)^2)) + beta0(4));
 end

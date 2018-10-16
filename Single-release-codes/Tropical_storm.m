@@ -33,7 +33,11 @@ wind = -pixw:pixw; % array variable for selecting square region for fitting
 i1 = [];
 files = dir('*tif');
 for i = 1:numel(files)
+    try
     ind(i) = str2num(files(i).name(7:end-4));
+    catch
+        ind(i) = 0;
+    end
 end
 [B,I] = sort(ind);
 
@@ -124,11 +128,12 @@ imagesc(std(dip1,1,3));
 % hold off
 % figure
 % % localize selected regions
-cal = load('bead_astig_3dcal.mat');
+cal = load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Single-release-codes\bead_astig_3dcal.mat');
 [xf_all,xf_crlb, yf_all,yf_crlb,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, iters] = da_splines(ilocs, fnum, cents, cal, pixw);
 zf_all = zf_all/q;
 zf_crlb = zf_crlb./q^2;
 % Points_diag;
 % [drifts = get_drift_ims(ip1);
+Traj_show;
 save('Localization_file.mat','xf_all','xf_crlb', 'yf_all','yf_crlb','zf_all', 'zf_crlb', 'N', 'N_crlb','off_all', 'off_crlb', 'framenum_all', 'llv', 'iters');
 % [xf_all,xf_crlb, yf_all,yf_crlb,sigx_all, sigx_crlb, sigy_all, sigy_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, y, inloc, xin, yin] = da_locs_sigs(ilocs, fnum, cents, 0);

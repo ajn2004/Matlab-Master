@@ -1,4 +1,4 @@
-function [xf_out,xf_cout, yf_out,yf_cout,zf_out,zf_cout, N_out, N_cout,off_out, off_cout, fnout, llv_out, its_out] = da_splines(iloc, fnum, cents, cal, pixw)
+function [xf_out,xf_cout, yf_out,yf_cout,zf_out,zf_cout, N_out, N_cout,off_out, off_cout, fnout, llv_out, its_out, cex_out, cey_out] = da_splines(iloc, fnum, cents, cal, pixw)
 
 % Assume iloc from previous sections 
 [m,n,o] = size(iloc); % get size of iloc
@@ -20,7 +20,8 @@ off_cout = [];
 llv_out = [];
 fnout = [];
 its_out = [];
-
+cex_out = [];
+cey_out = [];
 
 
 if o > maxi % If we can't localize it all at once, chunk it up
@@ -98,6 +99,8 @@ else
         fnout = [fnout;fna(ind)];
         xf_out = [xf_out;P((ind),1)+cen((ind),1)];
         yf_out = [yf_out;P((ind),2)+cen((ind),2)];
+        cex_out = [cex_out;cen((ind),1)];
+        cey_out = [cey_out;cen((ind),2)];
         N_out = [N_out ; P((ind),3)];
         off_out = [off_out; P((ind),4)];
         zf_out = [zf_out; (P((ind),5)-cal.cspline.z0)*cal.cspline.dz/1000]; % This puts zf_out in terms of um, we can convert to pixels on the outside
@@ -112,9 +115,9 @@ else
     end
 end
     try
-        dx = floor(m/2);
-    xf_out = xf_out - dx;
-    yf_out = yf_out - dx;
+%         dx = floor(m/2);
+%     xf_out = xf_out - dx;
+%     yf_out = yf_out - dx;
     catch lsterr
     end
     disp('Done Localizing');
