@@ -8,6 +8,7 @@
 dmax = 300;
 % ind  = fits(:,3) > 70;
 % ind  = N > 200;
+
 xf_all = xf(ind);
 yf_all = yf(ind);
 framenum_all = fnum(ind);
@@ -65,12 +66,13 @@ plot(xf_all(ind1),yf_all(ind1),'.g')
 plot(xf_all(logical(1-ind1)),yf_all(logical(1-ind1)),'.r')
 for i = 1:numel(trajec)    
     inds = trajec(i).t;
+    d(i) = q*((xf_all(trajec(i).t(1)) - xf_all(trajec(i).t(2))).^2 + (yf_all(trajec(i).t(1)) - yf_all(trajec(i).t(2))).^2).^0.5;
     plot(xf_all(inds),yf_all(inds),'b');
 end
 legend('Releases','Post-stims','Trajectory')
 hold off
 axis image
-
+d = d.';
 % % show all localizations that got through the threshold
 % f = figure;
 % tg = uitabgroup(f);
