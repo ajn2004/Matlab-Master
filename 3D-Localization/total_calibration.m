@@ -357,20 +357,24 @@ end
 xsel = [];
 ysel = [];
 zsel = [];
-for i = 1:numel(zs) - 1
-    ind1 = zt >= zs(i) & zt <=zs(i+1);
-    ind1 = ind1 & (xt.^2+yt.^2).^0.5 < 0.5;
+for i = 1:numel(zs) - 1 % Loop over a variety of height windows for averaging of points
+    ind1 = zt >= zs(i) & zt <=zs(i+1);  % grab all points within height window
+    ind1 = ind1 & (xt.^2+yt.^2).^0.5 < 0.5; % grab all points who lie within a half pixel radius of center (at this point all scans have a 0 mean in XY)
+    % Subsets
     xts = xt(ind1);
     yts = yt(ind1);
     zts = zt(ind1);
-    mx = mean(xts);
-    stx = std(xts);
-    my = mean(yts);
-    sty = std(yts);
-    ind2 = xts >= mx - 1*stx & xts <= mx +1*stx & yts >= my - 1*sty & yts <= my +1*sty;
+    rts = (xts.^2+yts.^2).^0.5; % convert subsetted xy to R
+    mr = mean(rts); % grab mean of R
+    str = std(rts); % grab stdev of R
+%     my = mean(yts);
+%     sty = std(yts);
+    ind2 = rts <= (mr + 0.325*str); % Inclusion criteria is based on mean and std deviation
+    % record subset
     xsel = [xsel;xts(ind2)];
     ysel = [ysel;yts(ind2)];
     zsel = [zsel;zts(ind2)];
+    % make final measurement of averaged points
     xfm(i) = mean(xts(ind2));
     yfm(i) = mean(yts(ind2));
     zfm(i) = mean(zts(ind2));

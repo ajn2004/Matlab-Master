@@ -78,21 +78,20 @@ ylabel('F in [A.U.]');
 title('Trace of mean F with individuals');
 % create new figure of just average fluorescence
 figure % make new figure
-<<<<<<< HEAD
+
 dfluor = (mfluor - mean(mfluor(1:90)))/mean(mfluor(1:90));
 plot(t,dfluor,'k');  % plot only average trace
 hold on
 % plot stims
 for i = 1:stims
     plot([stim_fr*tex + (i-1)/str,stim_fr*tex + (i-1)/str],[min(dfluor),max(dfluor)],'r'); % plot a red line at stim_frame * s/frame + (stimnumber-1)/stimspersec
-=======
 df = (mfluor - mean(mfluor(1:90)))/mean(mfluor(1:90));
 plot(t,df,'k');  % plot only average trace
 hold on
+end
 % plot stims
 for i = 1:stims
     plot([stim_fr*tex + (i-1)/str,stim_fr*tex + (i-1)/str],[min(df),max(df)],'r'); % plot a red line at stim_frame * s/frame + (stimnumber-1)/stimspersec
->>>>>>> 306ac6cd665346f72d554508c8ac28d3e3530487
 end
 hold off
 xlabel('Time in [s]')

@@ -250,17 +250,20 @@ end
 % Find plane of least confusion
 ds = ssx - ssy;                                                             % Subtract sigma-y from sigma-x
 tds = uitab(tg3,'Title','DS curve');
-plot(abs(ds))
+ax = axes(tds);
+plot(ax,abs(ds))
+xlabel(ax,'Index')
+ylabel(ax,'Difference between average sx and sy')
 tdx = input('Choose an Index to grab minimum of the DS curve');
-ind = find(abs(ds(150:250)) == min(abs(ds(150:250))));                  % Find minimum of absolute value
-z0s = zus - zus(ind(1)+150);                                                 % Call the found index the 0 point
+ind = find(abs(ds(tdx:tdx+50)) == min(abs(ds(tdx:tdx+50))));                  % Find minimum of absolute value
+z0s = zus - zus(ind(1)+tdx);                                                 % Call the found index the 0 point
 
 % Data Representation of Sigma and Z space
 t3 = uitab(tg,'Title','Sigmas');
 ax = axes(t3);
-plot(ax,z0(indy)-zus(ind(1)+150),sx(indy),'.')                               % Plot Toleranced Sigma-x data
+plot(ax,z0(indy)-zus(ind(1)+tdx),sx(indy),'.')                               % Plot Toleranced Sigma-x data
 hold on
-plot(ax,z0(indy)-zus(ind(1)+150),sy(indy),'.')                               % Plot Toleranced Sigma-y data
+plot(ax,z0(indy)-zus(ind(1)+tdx),sy(indy),'.')                               % Plot Toleranced Sigma-y data
 plot(ax,z0s,ssx)                                                            % Plot average sigma-x
 plot(ax,z0s,ssy)                                                            % Plot average sigma-y
 
@@ -360,11 +363,12 @@ for i = 1:numel(zs) - 1
     xts = xt(ind1);
     yts = yt(ind1);
     zts = zt(ind1);
-    mx = mean(xts);
-    stx = std(xts);
-    my = mean(yts);
-    sty = std(yts);
-    ind2 = xts >= mx - 1*stx & xts <= mx +1*stx & yts >= my - 1*sty & yts <= my +1*sty;
+    rts = (xts.^2+yts.^2).^0.5;
+    mr = mean(rts);
+    str = std(rts);
+%     my = mean(yts);
+%     sty = std(yts);
+    ind2 = rts <= (mr + 0.5*str);
     xsel = [xsel;xts(ind2)];
     ysel = [ysel;yts(ind2)];
     zsel = [zsel;zts(ind2)];
