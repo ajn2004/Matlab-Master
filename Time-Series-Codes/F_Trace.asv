@@ -4,7 +4,7 @@ clearvars; clc;
 % series of images showing the average F over a user selected number of
 % boutons as well as a where cutoffs are to measure the noise associated
 % with that signal. This should work with any image file type
-figure
+
 %% USER VARIABLES
 im_type = 'tif';  % image extension currently either 'tif' or 'fits'
 stim_fr = 100;        % First frame stimulation occurs on

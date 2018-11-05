@@ -13,7 +13,7 @@ clearvars; close all; clc;
 
 %% USER VARIABLES
 molish = 1; % expected number of molecules
-q = 0.133;  % um/ pixel must be measured for experimental setup
+q = 0.128;  % um/ pixel must be measured for experimental setup
 pixw = 7;  % Window for cutting out region
 fps = 3;    % frames per set is the number of frames / tiff stack
 %% END USER INVOLVEMENT
@@ -109,8 +109,8 @@ dip2 = denoise_psf(dip1,2); % wavelet decomposition w/ watershed threshold @ 2xs
 surf(max(dip2,[],3));
 thrsh = input('What is the threshold?');
 % thrsh = max(max(max(dip2(:,:,1:2))));
-dps = get_das_peaks(dip2,thrsh);
-
+% dps = get_das_peaks(dip2,thrsh);
+dps = cpu_peaks(dip2,thrsh,pixw);
 for i = 1:o2
 %     dig(:,:,i) = imgaussfilt(rip1(:,:,i),1.5);
     imagesc(rip1(:,:,i));
@@ -163,13 +163,13 @@ end
 %     rat(numel(rat)+1) = rat_view(si1(:,:,[ind,ind+2]));
 % end
 % fnum = 1:numel(sdi1(1,1,:));
-% <<<<<<< HEAD
+
 load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Single-release-codes\z_calib.mat');
 % =======
 % cal = load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Single-release-codes\bead_astig_3dcal.mat');
 % cents = zeros(numel(sdi1(1,1,:)),2);
 % [xf_all,xf_crlb, yf_all,yf_crlb,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, iters] = da_splines(sdi1, fnum, cents, cal, pixw);
-% >>>>>>> 730d9b17f1dcce149517eda04abbd30f2b8f5031
+
 xf = [];
 yf = [];
 N = [];
@@ -215,15 +215,14 @@ fnumb = [];
     
 % end
 % lv = lv.';
-ind = N > 0 & N < 1500;
+ind = N > 0 & N < 3000;
 histogram(lv(ind)./N(ind));
 t = input('What Threshold?');
-% <<<<<<< HEAD
+
 ind = ind & lv./N > t;
 ind = ind & abs(sx)*2 > 1 & abs(sx) *2 <10;
 ind = ind & sy*2 > 1 & sy *2 < 20;
-% =======
-% <<<<<<< HEAD
+
 ind = ind & lv./N > t;
 ind = ind & sx*2 > 1.5 & sx *2 < 6;
 ind = ind & sy*2 > 1.5 & sy *2 < 6;
@@ -233,17 +232,17 @@ plot(xf(ind),yf(ind),'.')
 [x,y] = ginput(2);
 ind = ind & xf < max(x) & xf > min(x);
 ind = ind & yf < max(y) & yf > min(y);
-% =======
+
 ind = ind & lv./N > -1.5;
 ind = ind & abs(sx)*2 > 1.5 & abs(sx) *2 <10;
 ind = ind & sy*2 > 1.5 & sy *2 < 20;
-% >>>>>>> 730d9b17f1dcce149517eda04abbd30f2b8f5031
+
 ind = ind & xfc.^0.5*q < 0.1 & yfc.^0.5*q < 0.1;
 s0 = (sy.*sx).^0.5;
 lp2 = ((q*s0).^2+q^2/12)./N + 8*pi*(q*s0).^4.*O./(q^2*N.^2);
 lp = lp2.^0.5;
 
-% >>>>>>> 068cdbeba12f439e2ade83caab48adcea5cdf5f6
+
 % zf_all = zf_all/q;
 % zf_crlb = zf_crlb./q^2;
 % [~,~,o] = size(sdi1);

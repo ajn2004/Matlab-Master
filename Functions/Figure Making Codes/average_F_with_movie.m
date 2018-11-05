@@ -19,14 +19,14 @@ for i = 1:numel(x)
 end
 
 mflour = mean(tf,2); %take the mean value over all boutons
-
+t = (1:numel(mflour))*0.04;
 [m,n,o] = size(i1); % get size of i1
 
 for i = 1:o % loop over all frames
     
     % Image on the left is the raw camera image
     subplot(1,2,1);
-    set_scale(i1(:,:,i),0.133,6); % scales brightness to show fluorescent response
+    set_scale(i1(:,:,i),0.128,6); % scales brightness to show fluorescent response
     hold on
     draw_boxes([x,y],pix);
     title('Raw Camera image');

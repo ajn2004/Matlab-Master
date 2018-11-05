@@ -5,6 +5,6 @@ v.FrameRate = fps;
 [m,n,o] = size(ims);
 open(v);
 for i = 1:o
-    writeVideo(v,ims(:,:,i)./max(max(ims(:,:,i))));
+    writeVideo(v,ims(:,:,i)./max(max(ims(:,:,i)));
 end
 close(v);

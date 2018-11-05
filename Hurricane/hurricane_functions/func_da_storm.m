@@ -35,7 +35,9 @@ ifind = denoise_psf(iprod,2);
 % thrsh = 3*std(iprod(:)) + mean(iprod(:));
 % toc
 % thrsh = thresh/100*mean(max(max(diprod)));
-dps = get_das_peaks(ifind,10);
+surf(max(ifind,[],3));
+thrsh = input('What should the threshold be? ');
+dps = get_das_peaks(ifind,thrsh);
 % end
 sum(dps(:))
 
@@ -60,6 +62,7 @@ fnum(ind) = [];
 % [~,~, ~,~,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, iters, cex, cey] = da_splines(iloc, fnum, cents, cal, pixw);
 % i2 = reshape(iloc,m*n,o);
 [fits, crlbs, llv, framenumber] = slim_locs(iloc, fnum, cents, cal.ang);
+[cfits] = cen_locs(iloc,fnum,cents);
 zf = getdz(fits(:,4),fits(:,5),cal.z_cal)/q;
 coords = [fits(:,1:2),zf];
 [ncoords] = astig_tilt(coords,cal);
@@ -73,8 +76,14 @@ coords = [fits(:,1:2),zf];
 % if strcmp(sv_im,'Y') || strcmp(sv_im,'y')
 % save([an_dir,'\', fname(1:end-4),'_dast.mat'], 'cents','zf_all','zf_crlb','xf_all' , 'xf_crlb' , 'yf_all' , 'yf_crlb' , 'N' , 'N_crlb' ,'off_all' , 'off_crlb', 'framenum_all', 'llv','iters','pixw','q','pix2pho','ilocs');
 % else
-    
-save([an_dir,'\', fname(1:end-4),'_dast.mat'], 'cents','pixw','q','ncoords','fits','crlbs','llv','framenumber','cal');
+figure
+imagesc(mean(iprod,3));
+hold on
+plot(fits(:,1),fits(:,2),'rx')
+hold off
+colormap('gray');
+
+save([an_dir,'\', fname(1:end-4),'_dast.mat'], 'cfits','cents','pixw','q','ncoords','fits','crlbs','llv','framenumber','cal');
 % end
 % catch lsterr
 %      save([an_dir,'\', fname(1:end-4),'_dast.mat'], 'zf_all','sigx_all' ,'sigy_all','sigx_crlb','sigy_crlb','y','iloc','xf_all' , 'xf_crlb' , 'yf_all' , 'yf_crlb' , 'N' , 'N_crlb' ,'off_all' , 'off_crlb', 'framenum_all', 'llv','pixw','q','pix2pho');
