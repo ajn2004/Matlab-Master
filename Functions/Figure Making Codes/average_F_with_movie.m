@@ -19,7 +19,7 @@ for i = 1:numel(x)
 end
 
 mflour = mean(tf,2); %take the mean value over all boutons
-t = (1:numel(mflour))*0.04;
+t = (1:numel(mflour))*0.01930;
 [m,n,o] = size(i1); % get size of i1
 
 for i = 1:o % loop over all frames

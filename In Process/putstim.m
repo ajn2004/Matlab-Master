@@ -12,7 +12,7 @@ cflo = conv(glfo,-h,'same');
 cflo1 = conv(glfo,-h1,'same');
 mxfl = [min(cflo1),max(cflo1)];
 % mxfl = [min(mfluor),max(mfluor)];
-stim = 25;
+stim = 48;
 % plot(cflo);
 % hold on
 % plot(gausssmooth(cflo1,5,10))
