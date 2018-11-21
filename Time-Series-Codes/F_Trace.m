@@ -8,8 +8,8 @@ figure
 %% USER VARIABLES
 im_type = 'tif';  % image extension currently either 'tif' or 'fits'
 stim_fr = 100;        % First frame stimulation occurs on
-stims = 10;            % Total number of stimulations
-str = 10;            % Stimulation rate in Hz
+stims = 15;            % Total number of stimulations
+str = 30;            % Stimulation rate in Hz
 pixw = 7;           % Pixel width in radius (i.e. value of 7 gives 15x15 square window)
 %%%%%%%%%%%%%%%%%%%%%END USER CONTROL%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

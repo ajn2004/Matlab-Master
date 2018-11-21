@@ -35,7 +35,7 @@ figure
 nel = numel(stims(2:end-1));
 % histogram(cflo(stims(2:end-1)),2*round(nel^(2/3)))
 % hold on
-histogram(cflo1(stims(2:end-1)),2*ceil(nel^(1/3)))
+histogram(cflo1(stims(2:end-1)),2*round(nel^(2/3)))
 
 figure
 plot(mfluor);
