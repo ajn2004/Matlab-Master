@@ -1,4 +1,4 @@
-clearvars; clc; 
+clearvars; clc; close all;
 %% F_trace
 % This script will allow the user to select a number of points and create a
 % series of images showing the average F over a user selected number of
@@ -16,7 +16,7 @@ pixw = 7;           % Pixel width in radius (i.e. value of 7 gives 15x15 square 
 %% Analysis
 % c = scrub_config();  % reads camera configuration file
 [i1, mname, mpath] = read_im(im_type); % loads in an image and corrects
-i1 = i1/33.33;
+i1 = i1;
 [m,n,o] = size(i1); % get image size in [rows, cols, frames]
 try
     stim_fr = markerget(mname,'f');
@@ -72,6 +72,12 @@ plot(t,mfluor, 'color', 'k');  % make mean trace black
 for i = 1:stims
     plot([stim_fr*tex + (i-1)/str,stim_fr*tex + (i-1)/str],[min(mfluor),max(mfluor)],'r'); % plot a red line at stim_frame * s/frame + (stimnumber-1)/stimspersec
 end
+strt_max = stim_fr + ceil(stims/(tex*str));
+end_max = strt_max + ceil(2/tex);
+snr = (mean(mfluor(strt_max:end_max)) - mean(mfluor(1:stim_fr-1)))/std(mfluor(1:stim_fr-1));
+plot([1,stim_fr-1]*tex,[mean(mfluor(1:stim_fr-1)),mean(mfluor(1:stim_fr-1))],'r')
+plot([1,end_max]*tex,[mean(mfluor(strt_max:end_max)),mean(mfluor(strt_max:end_max))],'g')
+
 hold off
 xlabel('Time in [s]')
 ylabel('F in [A.U.]');

@@ -78,7 +78,7 @@ end
 i3 = i3/sum(df2>0);
 hd = uitab(h,'Title','Hist Df2');
 ax = axes(hd);
-histogram(ax,df2,'BinWidth',10)
+histogram(ax,df2,2*round(numel(df2)^1/3))
 thresh  = input('What should the threshold be?')
 ind = df2 > thresh;
 bt = uitab(h,'Title','Box Plots');

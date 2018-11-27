@@ -18,6 +18,7 @@ numvar = length(varargin);
 w = warning ('off','all');
 if numvar == 0 
     [fname, fpath] = uigetfile('*.tif');
+    fname = [fpath,fname];
 else
     fname = varargin{1};
 end
@@ -40,7 +41,7 @@ elseif numvar == 3
     end
 end
 
-InfoImage=imfinfo(fname);
+InfoImage=imfinfo([fname]);
 mImage=InfoImage(1).Width;
 nImage=InfoImage(1).Height;
 NumberImages=length(InfoImage);
