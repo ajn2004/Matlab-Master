@@ -13,7 +13,7 @@ clearvars; close all; clc;
 
 %% USER VARIABLES
 q = 0.128;  % um/ pixel must be measured for experimental setup
-pixw = 7;  % Window for cutting out region
+pixw = 4;  % Window for cutting out region
 fps = 6;    % frames per set is the number of frames / tiff stack
 bk_fms = 3;    % number of frames of background for measurement
 %% END USER INVOLVEMENT
@@ -92,10 +92,10 @@ for i = 1:(o-fps)/fps % loop over stimuli
         fms = [fms,ind + j]; % keep track of frame molecule may appear on
     end
 end
-rip1 = rollingball(dip1); % rolling ball the raw images
-
-% dip3 = bandpass(dip1,mins,maxs);
-dip2 = denoise_psf(dip1,2); % wavelet decomposition w/ watershed threshold @ 2xstd of the first wavelet plane
+rip1 = roball(dip1,6,4); % rolling ball the raw images
+% rip1 = dip1;
+dip2 = bandpass(dip1,mins,maxs);
+% dip2 = denoise_psf(rip1,2); % wavelet decomposition w/ watershed threshold @ 2xstd of the first wavelet plane
 
 % dps = get_das_peaks(wip1,2);
 %% remove negative values
@@ -122,7 +122,7 @@ end
 [sdi1, fnum, cents] = divide_up(rip1,pixw, dps);
 
 
-load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Single-release-codes\z_calib.mat');
+load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Hurricane\hurricane_functions\z_calib.mat');
 %% Fitting Section of code
 
 % Preallocate variables
@@ -161,6 +161,8 @@ syc = [syc;crlb(:,5)];
 llv = [llv;-abs(lv)];                                                   % Log Likelihood Value
 fnumb = [fnumb;fnout];                                          % Correct the Frame number based off correlation result
 zf = getdz(sx,sy,cal.z_cal)/q;  % get z values from sigma measurements
+coords = [fits(:,1:2),zf];
+[ncoords] = astig_tilt(coords,cal);
 %     icoords = [xf,yf,zf]; % icoords will contain the initial 'uncorrected' coordinates
 %     clear xf yf zf
 %     [coords] = astig_tilt(icoords,cal); % Correct tilt induced issues
@@ -181,6 +183,7 @@ ind = ind & sy*2 > 1 & sy *2 < 20;
 ind = ind & lv./N > t;
 ind = ind & sx*2 > 1.5 & sx *2 < 6;
 ind = ind & sy*2 > 1.5 & sy *2 < 6;
+ind = ind & zf*q < 0.6 & zf*q > -0.6;
 imagesc(mean(rip1,3))
 hold on
 plot(xf(ind),yf(ind),'.')
@@ -206,6 +209,10 @@ lp = lp2.^0.5;
 % ind = ind & zf_all*q < 0.5 & zf_all > -0.5;
 % ind = ind & q*xf_crlb.^0.5 < 1 & q*yf_crlb.^0.5 < 1;
 wave_trajectories;
-
+% figure
+xs = xf(ind)*q;
+ys = xf(ind)*q;
+zs = xf(ind)*q;
+% fs = fnum
 frate = sum(ind)/numel(ind);
 save('Analysis.mat');

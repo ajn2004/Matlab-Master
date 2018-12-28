@@ -9,15 +9,16 @@
 close all; clear all; clc;
 
 %% User Variables
-dmax = 100; % maximum distance in nm
+dmax = 1000; % maximum distance in nm
 
 %% Preliminary Jazz
 [fname, fpath] = uigetfile('*.mat'); % allows user to grab file
 load([fpath,fname]); % loads the file selected
-
+framenum_all = framenumber;
 trajec = struct('t',{[]}); % initialize trajectory variable
 foll = zeros(numel(framenum_all),1);
-
+xf_all = fits(:,1);
+yf_all = fits(:,2);
 % loop over all frames to build the connections
 for i = 1:max(framenum_all)
     clear dist
@@ -58,7 +59,8 @@ save([fname(1:end-4),'_traj.mat']);
 %% Represent trajectories
 figure
 hold on
+zf_nm = ncoords(:,3);
 for i = 1:numel(trajec)
-    plot3(xf_all(trajec(i).t), yf_all(trajec(i).t),zf_nm(trajec(i).t));
+    scatter3(xf_all(trajec(i).t), yf_all(trajec(i).t),(1:numel(trajec(i).t))*0+i,[],zf_nm(trajec(i).t));
 end
 hold off

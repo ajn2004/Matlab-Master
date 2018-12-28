@@ -17,7 +17,7 @@ stim = 25;
 % hold on
 % plot(gausssmooth(cflo1,5,10))
 % hold on
-plot(cflo1)
+plot((1:numel(mfluor))*tex,cflo1)
 
 % plot(mfluor)
 % gflur = gausssmooth(mfluor,500,200);
@@ -26,11 +26,15 @@ plot(cflo1)
 % mxfl = [min(nfluor),max(nfluor)];
 hold on
 for i = 1:floor(numel(mfluor)/stim)
-    plot([stim,stim]*i,mxfl,'r');
+    plot(tex*[stim,stim]*i,mxfl,'r');
     stims(i) = stim*(i);
 end
 hold off
+xlabel('Time in seconds')
+ylabel('F(t)*g(\tau) [au]')
+title('Trace of Fluorescent Transition')
 % ylim([min(cflo(stim:end-stim)) max(cflo(stim:end-stim))])
+ylim(mxfl)
 figure
 nel = numel(stims(2:end-1));
 % histogram(cflo(stims(2:end-1)),2*round(nel^(2/3)))
@@ -38,11 +42,15 @@ nel = numel(stims(2:end-1));
 histogram(cflo1(stims(2:end-1)),2*ceil(nel^(1/3)))
 
 figure
-plot(mfluor);
+plot((1:numel(mfluor))*tex,mfluor);
 mxfl = [min(mfluor),max(mfluor)];
 hold on
 for i = 1:floor(numel(mfluor)/stim)
-    plot([stim,stim]*i,mxfl,'r');
+    plot(tex*[stim,stim]*i,mxfl,'r');
     stims(i) = stim*(i);
 end
 hold off
+ylim(mxfl)
+xlabel('Time in seconds')
+ylabel('F [au]')
+title('F-Trace')

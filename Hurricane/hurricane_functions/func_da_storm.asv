@@ -20,7 +20,7 @@ i1 = i1.*(i1>0);
 % i1(:,n-30:n,:) = 0;
 % Rolling Ball Background Subtract
 % iprod = rollingball(i1);
-iprod = roball(i1,6,6);
+iprod = roball(i1,6,5);
 % iprod = bp_subtract(i1);
 % iprod = imgaussfilt(i1,0.8947);
 % iprod = i1;

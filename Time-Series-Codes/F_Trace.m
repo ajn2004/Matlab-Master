@@ -73,7 +73,7 @@ for i = 1:stims
     plot([stim_fr*tex + (i-1)/str,stim_fr*tex + (i-1)/str],[min(mfluor),max(mfluor)],'r'); % plot a red line at stim_frame * s/frame + (stimnumber-1)/stimspersec
 end
 strt_max = stim_fr + ceil(stims/(tex*str));
-end_max = strt_max + ceil(2/tex);
+end_max = strt_max + ceil(1/tex);
 snr = (mean(mfluor(strt_max:end_max)) - mean(mfluor(1:stim_fr-1)))/std(mfluor(1:stim_fr-1));
 plot([1,stim_fr-1]*tex,[mean(mfluor(1:stim_fr-1)),mean(mfluor(1:stim_fr-1))],'r')
 plot([1,end_max]*tex,[mean(mfluor(strt_max:end_max)),mean(mfluor(strt_max:end_max))],'g')
@@ -81,7 +81,7 @@ plot([1,end_max]*tex,[mean(mfluor(strt_max:end_max)),mean(mfluor(strt_max:end_ma
 hold off
 xlabel('Time in [s]')
 ylabel('F in [A.U.]');
-title('Trace of mean F with individuals');
+title(['Trace of mean F for ',num2str(stims),'AP @ ',num2str(str),'Hz']);
 % create new figure of just average fluorescence
 figure % make new figure
 
@@ -103,7 +103,7 @@ hold off
 xlabel('Time in [s]')
 % ylabel('F in [A.U.]');
 ylabel('dF/F_0');
-title('Trace of mean F');
+title(['Trace of mean F for ',num2str(stims),'AP @ ',num2str(str),'Hz']);
 
 
 save([mpath,mname(1:end-4),'_ROIlist.mat'],'x','y','ifluor','mfluor');

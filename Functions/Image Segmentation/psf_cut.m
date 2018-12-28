@@ -10,7 +10,7 @@ wind = -pixw:pixw;
 im1 = readtiff(fname);
 sim1 = sum(im1,3);
 imagesc(sim1, [min(sim1(:)), 0.75*max(sim1(:))])
-colormap('gray')
+colormap('jet')
 axis image
 [x,y] = ginput(psfs);
 % Center around the maximal pixel of the sum

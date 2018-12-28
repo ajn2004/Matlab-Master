@@ -70,15 +70,18 @@ for i = 1:numel(A)
     sf2(i,:) = reshape(sum(sum(i2)),1,fps);
     sf2(i,:) = sf2(i,:) - mean(sf2(i,:));
     
-    df2(i) = mean(sf2(i,4:6))-mean(sf2(i,1:3));
+    df2(i) = mean(sf2(i,stim+0.5:fps))-mean(sf2(i,1:stim-0.5));
     if df2(i) > 0
-        i3 = i3 + (i2(:,:,4) - mean(i2(:,:,1:3),3));
+        i3 = i3 + (i2(:,:,stim+0.5) - mean(i2(:,:,1:stim-0.5),3));
     end
 end
 i3 = i3/sum(df2>0);
 hd = uitab(h,'Title','Hist Df2');
 ax = axes(hd);
 histogram(ax,df2,2*round(numel(df2)^1/3))
+xlabel(ax,'Change in Photons')
+ylabel(ax,'Frequency')
+title(ax,'Probable release')
 thresh  = input('What should the threshold be?')
 ind = df2 > thresh;
 bt = uitab(h,'Title','Box Plots');
@@ -86,20 +89,25 @@ bg = uitabgroup(bt);
 rt = uitab(bg,'Title','Releases');
 nrt = uitab(bg,'Title','Non-Releases');
 ax = axes(rt);
-boxplot(ax,sf2(ind,:),1:6)
+boxplot(ax,sf2(ind,:),1:fps)
+xlabel(ax,'Frame')
+ylabel(ax,'&\delta&F (a.u.)','Interpreter','latex')
 title(ax,'Probable release')
 ax = axes(nrt)
-boxplot(ax,sf2(logical(1-ind),:),1:6)
+boxplot(ax,sf2(logical(1-ind),:),1:fps)
 title(ax,'Probable non-release')
-[h1,p] = ttest2(sf2(ind,1),sf2(logical(1-ind),1))
-[h2,p] = ttest2(sf2(ind,2),sf2(logical(1-ind),2))
-[h3,p] = ttest2(sf2(ind,3),sf2(logical(1-ind),3))
-[h4,p] = ttest2(sf2(ind,4),sf2(logical(1-ind),4))
-[h5,p] = ttest2(sf2(ind,5),sf2(logical(1-ind),5))
-[h6,p] = ttest2(sf2(ind,6),sf2(logical(1-ind),6))
+xlabel(ax,'Frame')
+ylabel(ax,'&\delta&F (a.u.)','Interpreter','latex')
+title(ax,'Probable release')
+% [h1,p] = ttest2(sf2(ind,1),sf2(logical(1-ind),1))
+% [h2,p] = ttest2(sf2(ind,2),sf2(logical(1-ind),2))
+% [h3,p] = ttest2(sf2(ind,3),sf2(logical(1-ind),3))
+% [h4,p] = ttest2(sf2(ind,4),sf2(logical(1-ind),4))
+% [h5,p] = ttest2(sf2(ind,5),sf2(logical(1-ind),5))
+% [h6,p] = ttest2(sf2(ind,6),sf2(logical(1-ind),6))
 sum(df2>thresh)/numel(df2)
 ext = uitab(h,'Title','Example Average Difference');
 ax = axes(ext)
 surf(ax,i3);
-axis image
+% axis image
  

@@ -18,9 +18,10 @@ numvar = length(varargin);
 w = warning ('off','all');
 if numvar == 0 
     [fname, fpath] = uigetfile('*.tif');
-    fname = [fpath,fname];
+    fnme = [fpath,fname];
 else
     fname = varargin{1};
+    fnme = fname;
 end
 if numvar > 3
     error('Too many optional inputs, please only specify n_start and n_end')
@@ -41,7 +42,7 @@ elseif numvar == 3
     end
 end
 
-InfoImage=imfinfo([fname]);
+InfoImage=imfinfo([fnme]);
 mImage=InfoImage(1).Width;
 nImage=InfoImage(1).Height;
 NumberImages=length(InfoImage);

@@ -5,12 +5,13 @@
 % yf = fits(:,2) + cents(:,2);
 % N = fits(:,3);
 
-dmax = 300;
+dmax = 1000;
 % ind  = fits(:,3) > 70;
 % ind  = N > 200;
 
 xf_all = xf(ind);
 yf_all = yf(ind);
+zf_all = zf(ind);
 framenum_all = fms(fnum(ind)); % convert to absolute framenumber
 trajec = struct('t',{[]}); % initialize trajectory variable
 foll = zeros(numel(framenum_all),1);
@@ -27,7 +28,7 @@ for i = 1:max(framenum_all)
     if ismember(i,stimdex) % special conditions for stimulus frames because we don't want to connect w/ a previous frame
         cind = find(framenum_all == i); % current index for loop i
         fodex = find(framenum_all == i+1); % index of all molecules on following stim frames
-        for j = 1:fps - bk_fms - 2
+        for j = 1:fps - bk_fms - 1
             fodex = [fodex,find(framenum_all == i +j+1)];
         end
         if ~isempty(cind) && ~isempty(fodex)
@@ -66,15 +67,24 @@ hold on
 [~, ind1,~] = intersect(framenum_all,stimdex);
 [~, ind2] = setdiff(framenum_all,stimdex);
 
-
-plot(xf_all(ind1),yf_all(ind1),'.g')
-plot(xf_all(ind2),yf_all(ind2),'.r')
+zf_all = zf_all - min(zf_all);
+plot3(xf_all(ind1),yf_all(ind1),zf_all(ind1),'.g')
+plot3(xf_all(ind2),yf_all(ind2),zf_all(ind2),'.r')
 for i = 1:numel(trajec)    
     inds = trajec(i).t;
-    d(i) = q*((xf_all(trajec(i).t(1)) - xf_all(trajec(i).t(2))).^2 + (yf_all(trajec(i).t(1)) - yf_all(trajec(i).t(2))).^2).^0.5;
-    plot(xf_all(inds),yf_all(inds),'b');
+    d(i) = q*((xf_all(trajec(i).t(1)) - xf_all(trajec(i).t(2))).^2 + (yf_all(trajec(i).t(1)) - yf_all(trajec(i).t(2))).^2 + (zf_all(trajec(i).t(1)) - zf_all(trajec(i).t(2))).^2).^0.5;
+    plot3(xf_all(inds),yf_all(inds),zf_all(inds),'b');
 end
 legend('Releases','Post-stims','Trajectory')
 hold off
 axis image
+figure
+plot3(xf_all(ind1)*q,q*yf_all(ind1),q*zf_all(ind1),'g.')
+hold on
+plot3(xf_all(ind2)*q,q*yf_all(ind2),q*zf_all(ind2),'r.')
+hold off
+axis equal
+xlabel('X-axis nm')
+ylabel('Y-axis nm')
+zlabel('Z-axisl nm')
 d = d.';
