@@ -6,6 +6,10 @@ function [fits, crlbs, llv, fnout] = slim_locs(i2, varargin)
 
 vars = nargin - 1;
 [m,n,o] = size(i2);
+for i = 1:o
+    mini(i) = min(min(i2(:,:,i)));
+    i2(:,:,i) = i2(:,:,i) - mini(i);
+end
 i2 = reshape(i2,m*n,o);
 thrds = 100;
 lpcnt = 10;
@@ -72,7 +76,7 @@ if n > maxi
        sxco = [sxco;sxc(ind)];
         syo = [syo;sy(ind)];
        syco = [syco;syc(ind)];
-       offo = [offo;off(ind)];
+       offo = [offo;off(ind)+mini(ind)];
       offco = [offco; offc(ind)];
         llv = [llv; lv(ind)];
         
@@ -80,6 +84,7 @@ if n > maxi
     i3 = i2(:,i*maxi+1:end);
     fna = fnum(i*maxi+1:end);
     cen = cents(i*maxi+1:end, :);
+    if ~isempty(i3)
     [xf, xc, yf, yc, Np, Nc, sx, sxc, sy, syc, off, offc, lv] = slim_chain_loc(i3, thrds, rads, lpcnt);
     
          yc = -yc;
@@ -100,6 +105,7 @@ if n > maxi
        offo = [offo;off(ind)];
       offco = [offco; offc(ind)];
         llv = [llv; lv(ind)];
+    end
 else
     try
         fna = fnum;

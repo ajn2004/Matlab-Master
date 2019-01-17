@@ -5,13 +5,13 @@
 % yf = fits(:,2) + cents(:,2);
 % N = fits(:,3);
 
-dmax = 1000;
+dmax = 500;
 % ind  = fits(:,3) > 70;
 % ind  = N > 200;
 
-xf_all = xf(ind);
-yf_all = yf(ind);
-zf_all = zf(ind);
+xf_all = dcd(ind,1);
+yf_all = dcd(ind,2);
+zf_all = dcd(ind,3);
 framenum_all = fms(fnum(ind)); % convert to absolute framenumber
 trajec = struct('t',{[]}); % initialize trajectory variable
 foll = zeros(numel(framenum_all),1);

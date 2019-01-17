@@ -1,4 +1,4 @@
-function [z] = getdz(sigx,sigy,z_cal)
+function [z,params] = getdz(sigx,sigy,z_cal)
 z =[];
 x = (-0.8:0.001:0.8).';
 
@@ -35,3 +35,4 @@ for i = 1:numel(sigx)
         z(i,1) = -300000;
     end
 end
+params = [x,sx,sy];

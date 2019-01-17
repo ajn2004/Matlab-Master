@@ -14,20 +14,20 @@ clc
 
 %% Initialization
 global xpix ypix wbox
-rbox = 4;
+rbox = 6;
 [xpix, ypix] = meshgrid(-rbox:rbox,-rbox:rbox);
 
 wbox = 2*rbox+1;
 i1 = xpix.*0;
 
 % variables of image
-B = 1;
-ntrue = 100;
-x0true = 2*(rand-0.5);
-y0true = 2*(rand - 0.5);
+B = 0;
+ntrue = 1000;
+x0true = (rand-0.5);
+y0true = (rand - 0.5);
 
 sigma2 = 1.75;   %this would be rayleigh radius in pixel space
-sigx = 1.18;   % sigma used for fitting
+sigx = 1.8;   % sigma used for fitting
 sigy = 1.24;
 
 r0t_um = .2;        % Rayleigh radius in um
@@ -35,7 +35,7 @@ pix2pho = 1;
 q = r0t_um / (sigma2);
 wbox_um = q*wbox;
 
-frames = 10000;
+frames = 1000;
 w2 = waitbar(0, ' Creating points');
 i1 = xpix.*0;
 % Create a gaussian
@@ -47,8 +47,9 @@ i1 = xpix.*0;
 %% Create Frames with noise
 for i = 1:frames
     waitbar(i/frames,w2, 'Creating points');
-    i2(:,:,i) = single(imnoise(uint16(i1), 'poisson'))+.00001;
-%     i2(:,:,i) = i1;
+    ib = single(imnoise(uint16(i1), 'poisson'))+.00001;
+    i2(:,:,i) = ib;
+    i4(:,i) = ib(:);
 end
 % imagesc(i2);
 % colormap(gray);
@@ -94,7 +95,7 @@ end
 peakguess = max(max(i3))/2*pi*(2*sigma2/2)^2;
 offguess = 0;
 
-beta0 = [ xguess, yguess, peakguess, sigma2/2, sigma2/2, offguess];
+beta0 = [ xguess, yguess, peakguess, 1.1, 1.1, offguess];
 % 
 % [beta,R,J,CovB,MSE] = nlinfit(xfake,zlin,@gaussguess, beta0);
 % elapsed_nlon = toc;
@@ -106,7 +107,7 @@ fittime(l) = 1;
 % while fittime(l) < 100
 
 for k = 1:10
-%     if beta0(5) <= 0
+%     if bet5a0(5) <= 0
 %         beta0(5) =0;
 %     end
 %Define psf and error function for each pixel
@@ -121,6 +122,8 @@ for k = 1:10
 
 
     u(:,:,k) = beta0(3).*Ex.*Ey + beta0(6);
+%     imagesc(i3-u(:,:,k))
+    drawnow;
 %     surf(U,:,:
     % partial derivatives of variables of interest
     dudx = beta0(3)*(2*pi*beta0(4)^2)^-0.5.*(exp(-(xpix -beta0(1) - 1/2).^2.*(2*beta0(4)^2)^-1)-exp(-(xpix -beta0(1) + 1/2).^2.*(2*beta0(4)^2)^-1)).*Ey;
@@ -132,11 +135,15 @@ for k = 1:10
     
     % Second partial derivatives of variables of interest
     d2udx2 = beta0(3)*(2*pi)^-0.5*beta0(4)^-3*((xpix - beta0(1) - 1/2).*exp(-(xpix -beta0(1) - 1/2).^2.*(2*beta0(4)^2)^-1) - (xpix - beta0(1) + 1/2) .*exp(-(xpix -beta0(1) + 1/2).^2.*(2*beta0(4)^2)^-1)).*Ey;
+   
+    
     d2udy2 = beta0(3)*(2*pi)^-0.5*beta0(5)^-3*((ypix - beta0(2) - 1/2).*exp(-(ypix -beta0(2) - 1/2).^2.*(2*beta0(5)^2)^-1) - (ypix - beta0(2) + 1/2) .*exp(-(ypix -beta0(2) + 1/2).^2.*(2*beta0(5)^2)^-1)).*Ex;
-        d2udsx2 = beta0(3).*Ey.*(2*pi)^-0.5.*((beta0(4)^-5.* ((xpix - beta0(1) - 1/2).^3.*exp(-(xpix -beta0(1) - 1/2).^2.*(2*beta0(4)^2)^-1) - (xpix - beta0(1) + 1/2).^3.*exp(-(xpix -beta0(1) + 1/2).^2.*(2*beta0(4)^2)^-1))) ...
+   
+    d2udsx2 = beta0(3).*Ey.*(2*pi)^-0.5.*((beta0(4)^-5.* ((xpix - beta0(1) - 1/2).^3.*exp(-(xpix -beta0(1) - 1/2).^2.*(2*beta0(4)^2)^-1) - (xpix - beta0(1) + 1/2).^3.*exp(-(xpix -beta0(1) + 1/2).^2.*(2*beta0(4)^2)^-1))) ...
             - 2.*beta0(4).^-3.*((xpix - beta0(1) - 1/2).*   exp(-(xpix -beta0(1) - 1/2).^2.*(2*beta0(4)^2)^-1) - (xpix - beta0(1) + 1/2) .*  exp(-(xpix -beta0(1) + 1/2).^2.*(2*beta0(4)^2)^-1)));
         % second partial for sigmay
-        d2udsy2 = beta0(3).*Ex.*(2*pi)^-0.5.*((beta0(5)^-5.* ((ypix - beta0(2) - 1/2).^3.*exp(-(ypix -beta0(2) - 1/2).^2.*(2*beta0(5)^2)^-1) - (ypix - beta0(2) + 1/2).^3.*exp(-(ypix -beta0(2) + 1/2).^2.*(2*beta0(5)^2)^-1))) ...
+    
+    d2udsy2 = beta0(3).*Ex.*(2*pi)^-0.5.*((beta0(5)^-5.* ((ypix - beta0(2) - 1/2).^3.*exp(-(ypix -beta0(2) - 1/2).^2.*(2*beta0(5)^2)^-1) - (ypix - beta0(2) + 1/2).^3.*exp(-(ypix -beta0(2) + 1/2).^2.*(2*beta0(5)^2)^-1))) ...
             - 2.*beta0(5).^-3.*((ypix - beta0(2) - 1/2).*   exp(-(ypix -beta0(2) - 1/2).^2.*(2*beta0(5)^2)^-1) - (ypix - beta0(2) + 1/2)   .*exp(-(ypix -beta0(2) + 1/2).^2.*(2*beta0(5)^2)^-1)));
 
     

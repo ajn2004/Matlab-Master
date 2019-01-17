@@ -8,7 +8,7 @@ clearvars;
 close all;
 clc;
 %% User variables
-pixw = 4;                                                                   % ROI 'radius'
+pixw = 5;                                                                   % ROI 'radius'
 q = 0.128;                                                                  % Pixel size in um
 step = 10;                                                                  % Steps between frames in nm
 CCs = 50;                                                                   % number of frames to x-correlate over
@@ -17,7 +17,7 @@ wind = -pixw:pixw;                                                          % cr
 %% END USER INPUT
 % Create display figure as a tab group
 % f = figure('units','Normalized','OuterPosition',[0 0 0.5 0.5]);                 % Initialize figure
-f = figure
+f = figure;
 tg = uitabgroup(f);                                                         % tg is the tabgroup to help reduce clutter of figures
 
 %% File loading and image segmentation
@@ -30,7 +30,13 @@ pind = 1;                                                                   % Co
 for i = 1:numel(files)                                                      % Loop over all files
 %     A{i} = roball(readtiff(files(i).name),6,4);                                         % store total images into variable
 %     A{i} = bandpass(readtiff(files(i).name),1.15,5);
+%     A{i} = imgaussfilt(readtiff(files(i).name),
     A{i} = readtiff(files(i).name);
+%     for j = 1:numel(A{i}(1,1,:))
+%         A{i}(:,:,j) = imgaussfilt(A{i}(:,:,j),0.18/q);
+%         A{i}(:,:,j) = band_pass(A{i}(:,:,j),2);
+%     end
+%     A{i} = bp_subtract(A{i});
     ax = axes(uitab(tg1,'Title',files(i).name(1:end-4)));                   % get axes for appropriate tab
     imagesc(ax,max(A{i},[],3))                                              % Represent maximal image
     psf = denoise_psf(max(A{i},[],3),2);                                    % use wavelet transform to identify molecules

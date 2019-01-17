@@ -13,7 +13,7 @@ clearvars; close all; clc;
 
 %% USER VARIABLES
 q = 0.128;  % um/ pixel must be measured for experimental setup
-pixw = 4;  % Window for cutting out region
+pixw = 5;  % Window for cutting out region
 fps = 6;    % frames per set is the number of frames / tiff stack
 bk_fms = 3;    % number of frames of background for measurement
 %% END USER INVOLVEMENT
@@ -56,6 +56,7 @@ clear i1
 % then concatenated into a single variable dip1 and the corresponding
 % framenumbers are saved in the fms variable
 mins = (0.61*0.525/1.4)/(2*q);
+mins = 1.18;
 maxs = 2*mins;
 
 % sigma = 1.2;
@@ -66,10 +67,15 @@ for i = 1:bk_fms
 end
 bkg = bkg / bk_fms;
 dip1(:,:,1) = ip1(:,:,bk_fms+1) - bkg;
+pip1(:,:,1) = ip1(:,:,bk_fms+1) - 0*bkg;
 fms = bk_fms+1;
+dims = mean(ip1(:,:,1:fps),3);
+dfms = 1;
 for j = 1:fps-bk_fms - 1
     dip1(:,:,j+1) = ip1(:,:,bk_fms + j+1) - bkg;
+    pip1(:,:,j+1) = ip1(:,:,bk_fms + j+1) - 0*bkg;
     fms = [fms, bk_fms + j+1];
+    dfms= [dfms,1];
 end
 % dsi1(:,:,1) = movsum(ip1(:,:,2),3) - movsum(ip1(:,:,1),3);
 % dsi1(:,:,2) = movsum(ip1(:,:,3),3) - movsum(ip1(:,:,1),3);
@@ -83,18 +89,26 @@ for i = 1:(o-fps)/fps % loop over stimuli
         bkg = bkg + imgaussfilt(ip1(:,:,ind - j),mins);
     end
     bkg = bkg / bk_fms;
-    
-    dip1 = cat(3,dip1, ip1(:,:,ind) - bkg);   % grab stim1 frame
+    dims(:,:,i+1) = mean(ip1(:,:,ind-bk_fms:ind+fps),3);
+    dip1 = cat(3,dip1, imgaussfilt(ip1(:,:,ind) - bkg,mins));   % grab stim1 frame
+%     pip1 = cat(3,pip1, imgaussfilt(ip1(:,:,ind) - bkg,mins));   % grab stim1 frame
+    pip1 = cat(3,pip1, ip1(:,:,ind) - 0*bkg);   % grab stim1 frame
     fms = [fms,ind]; % keep track of frame molecule was found on
+    dfms = [dfms,i+1];
     stimdex = [stimdex,ind];
     for j = 1:fps - bk_fms-1
-        dip1 = cat(3,dip1, ip1(:,:,ind+j) - bkg); % grab after stim frames
+        dip1 = cat(3,dip1, imgaussfilt(ip1(:,:,ind+j) - bkg,mins)); % grab after stim frames
+%         pip1 = cat(3,pip1, imgaussfilt(ip1(:,:,ind+j) - bkg,mins)); % grab after stim frames
+        pip1 = cat(3,pip1, ip1(:,:,ind+j) - 0*bkg); % grab after stim frames
         fms = [fms,ind + j]; % keep track of frame molecule may appear on
+        dfms = [dfms,i];
     end
 end
-rip1 = roball(dip1,6,4); % rolling ball the raw images
+% rip1 = roball(dip1,6,4); % rolling ball the raw images
+rip2 = roball(pip1,6,4);
 % rip1 = dip1;
-dip2 = bandpass(dip1,mins,maxs);
+dip2 = bp_subtract(dip1);
+% rip2= dip2;
 % dip2 = denoise_psf(rip1,2); % wavelet decomposition w/ watershed threshold @ 2xstd of the first wavelet plane
 
 % dps = get_das_peaks(wip1,2);
@@ -104,7 +118,7 @@ surf(max(dip2,[],3));
 thrsh = input('What is the threshold?');
 dps = cpu_peaks(dip2,thrsh,pixw);
 for i = 1:o2
-    imagesc(rip1(:,:,i));
+    imagesc(rip2(:,:,i));
     %     drawnow
     colormap('gray');
     hold on
@@ -119,8 +133,8 @@ for i = 1:o2
     %     waitforbuttonpress
 end
 
-[sdi1, fnum, cents] = divide_up(rip1,pixw, dps);
-
+[sdi1, fnum, cents] = divide_up(rip2,pixw, dps);
+[drifts] = get_drift_ims1(dims);
 
 load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Hurricane\hurricane_functions\z_calib.mat');
 %% Fitting Section of code
@@ -160,9 +174,11 @@ sxc = [sxc;crlb(:,4)];
 syc = [syc;crlb(:,5)];
 llv = [llv;-abs(lv)];                                                   % Log Likelihood Value
 fnumb = [fnumb;fnout];                                          % Correct the Frame number based off correlation result
-zf = getdz(sx,sy,cal.z_cal)/q;  % get z values from sigma measurements
+[zf,zscale] = getdz(sx,sy,cal.z_cal);  % get z values from sigma measurements
+zf = zf/q;
 coords = [fits(:,1:2),zf];
 [ncoords] = astig_tilt(coords,cal);
+dcd = [ncoords(:,1) + drifts(dfms(fnumb),1), ncoords(:,2) + drifts(dfms(fnumb),2), ncoords(:,3)];
 %     icoords = [xf,yf,zf]; % icoords will contain the initial 'uncorrected' coordinates
 %     clear xf yf zf
 %     [coords] = astig_tilt(icoords,cal); % Correct tilt induced issues
@@ -184,7 +200,7 @@ ind = ind & lv./N > t;
 ind = ind & sx*2 > 1.5 & sx *2 < 6;
 ind = ind & sy*2 > 1.5 & sy *2 < 6;
 ind = ind & zf*q < 0.6 & zf*q > -0.6;
-imagesc(mean(rip1,3))
+imagesc(mean(rip2,3))
 hold on
 plot(xf(ind),yf(ind),'.')
 [x,y] = ginput(2);
@@ -208,11 +224,23 @@ lp = lp2.^0.5;
 % ind = N < fluor;
 % ind = ind & zf_all*q < 0.5 & zf_all > -0.5;
 % ind = ind & q*xf_crlb.^0.5 < 1 & q*yf_crlb.^0.5 < 1;
+
+figure
+plot(zscale(:,1),zscale(:,2)*q)
+hold on
+plot(zscale(:,1),zscale(:,3)*q)
+plot(ncoords(ind,3)*q,fits(ind,4)*q,'.')
+plot(ncoords(ind,3)*q,fits(ind,5)*q,'.')
+hold off
+xlabel('Z position in um')
+ylabel('Width in um')
+legend('Ideal X','Ideal Y','X-width','Y-width')
+figure
 wave_trajectories;
 % figure
-xs = xf(ind)*q;
-ys = xf(ind)*q;
-zs = xf(ind)*q;
+xs = dcd(ind)*q;
+ys = dcd(ind)*q;
+zs = dcd(ind)*q;
 % fs = fnum
 frate = sum(ind)/numel(ind);
 save('Analysis.mat');

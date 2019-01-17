@@ -15,11 +15,11 @@ close all; clearvars; clc;
 emg = 0; % Enter the EM Gain value used on the camera
 pix2pho = em_gain(emg);    %Pixel to photon ratio
 q = 0.128;          % Pixel size in um
-pixw = 4;       % radius to localize (final image size is (2*pixw+1)^2 pixels)
+pixw = 5;       % radius to localize (final image size is (2*pixw+1)^2 pixels)
 an_dir = 'Analysis'; % name of analysis directory
 angle = 0; %approximate astig rotation in degrees
 sv_im = 'y'; % set to y/Y to save image of localizations
-thresh = 30;
+thresh = 10;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % END USER CONTROL JUST RUN IT AND SELECT A FILE

@@ -32,7 +32,7 @@ colormap('jet')
 [x,y] = ginput(1);
 x = round(x);
 y = round(y);
-pixw = 5;
+pixw = 2;
 wind = -pixw:pixw;
 hold on
 plot(ax,x+wind,(y+wind)*0+y+pixw,'m')
