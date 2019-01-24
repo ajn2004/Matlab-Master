@@ -76,7 +76,7 @@ if n > maxi
        sxco = [sxco;sxc(ind)];
         syo = [syo;sy(ind)];
        syco = [syco;syc(ind)];
-       offo = [offo;off(ind)+mini(ind)];
+       offo = [offo;off(ind)];
       offco = [offco; offc(ind)];
         llv = [llv; lv(ind)];
         

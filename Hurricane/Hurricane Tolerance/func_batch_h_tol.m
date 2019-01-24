@@ -12,6 +12,7 @@ ilv = llv(:)./fits(:,3);
 
 % Apply Tolerances
 ind = fits(:,3) > N_tol(1) & fits(:,3) < N_tol(2); % Photon Tolerance
+ind = ind & abs(ncoords(:,3)) < absz;
 ind = ind & fits(:,4) > s_tol(1) & fits(:,4) < s_tol(2); % Photon Tolerance
 ind = ind &fits(:,5) > s_tol(1) & fits(:,5) < s_tol(2); % Photon Tolerance
 ind = ind & q*crlbs(:,1).^.5 < lat_max & q*crlbs(:,2).^.5 < lat_max; % Lateral Uncertainty Tolerance

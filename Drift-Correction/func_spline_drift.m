@@ -27,6 +27,9 @@ gauss_std = 1.75; % width of gaussian to convolve with in pixels
 % randin = randperm(numel(finfo));
 
 load(fdname)
+framenum_all = framenumber;
+xf_all = ncoords(:,1);
+yf_all = ncoords(:,2);
 max_frames = framenum_all(end);
 % prepare variables for rendering
 xf_in = xf_all*q;

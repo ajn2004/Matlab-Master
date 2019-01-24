@@ -40,12 +40,12 @@ ifind = denoise_psf(iprod,2);
 % thrsh = input('What should the threshold be? ');
 thrsh = max(ifind(:))*thresh/100;
 dps = cpu_peaks(ifind,thrsh,pixw);
-for i = 1:o
-    imagesc(iprod(:,:,i))
-    [row,col] =find(dps(:,:,i) == 1);
-    draw_boxes([col,row],pixw);
-    drawnow
-end
+% for i = 1:o
+%     imagesc(iprod(:,:,i))
+%     [row,col] =find(dps(:,:,i) == 1);
+%     draw_boxes([col,row],pixw);
+%     drawnow
+% end
 % end
 sum(dps(:))
 
@@ -84,12 +84,12 @@ coords = [fits(:,1:2),zf];
 % if strcmp(sv_im,'Y') || strcmp(sv_im,'y')
 % save([an_dir,'\', fname(1:end-4),'_dast.mat'], 'cents','zf_all','zf_crlb','xf_all' , 'xf_crlb' , 'yf_all' , 'yf_crlb' , 'N' , 'N_crlb' ,'off_all' , 'off_crlb', 'framenum_all', 'llv','iters','pixw','q','pix2pho','ilocs');
 % else
-figure
-imagesc(mean(iprod,3));
-hold on
-plot(fits(:,1),fits(:,2),'rx')
-hold off
-colormap('gray');
+% figure
+% imagesc(mean(iprod,3));
+% hold on
+% plot(fits(:,1),fits(:,2),'rx')
+% hold off
+% colormap('gray');
 
 save([an_dir,'\', fname(1:end-4),'_dast.mat'], 'pixw','q','ncoords','fits','crlbs','llv','framenumber','cal');
 % end

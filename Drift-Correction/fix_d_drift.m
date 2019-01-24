@@ -14,7 +14,7 @@
 close all; clear all; clc;
 
 pix_size = 50; % Final pixel size in nanometers
-chunk_size = 2000; % number of frames to construct a partial render for correlation
+chunk_size = 1000; % number of frames to construct a partial render for correlation
 mkdir('DC');
 
 finfo = dir('*tol.mat');

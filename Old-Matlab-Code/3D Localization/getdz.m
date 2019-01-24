@@ -25,8 +25,8 @@ sy = ys*(1 + ((x-gy)./dy).^2 + ay*((x-gy)./dy).^3 + by*((x-gy)./dy).^4).^0.5;
 
 
 for i = 1:numel(sigx)
-    D = ((sigx(i).^0.5-sx.^0.5).^2 + (sigy(i).^0.5-sy.^0.5).^2).^0.5;
-%     D = ((sigx(i)-sx).^2 + (sigy(i)-sy).^2).^0.5;
+%     D = ((sigx(i).^0.5-sx.^0.5).^2 + (sigy(i).^0.5-sy.^0.5).^2).^0.5;
+    D = ((sigx(i)-sx).^2 + (sigy(i)-sy).^2).^0.5;
 %     D = ((sigx(i).^0.5-sx.^0.5).^2 + (sigy(i).^0.5-sy.^0.5).^2);
     ind = find(D == min(D), 1);
     try

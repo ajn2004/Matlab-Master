@@ -19,7 +19,7 @@ pixw = 5;       % radius to localize (final image size is (2*pixw+1)^2 pixels)
 an_dir = 'Analysis'; % name of analysis directory
 angle = 0; %approximate astig rotation in degrees
 sv_im = 'y'; % set to y/Y to save image of localizations
-thresh = 10;
+thresh = 5;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % END USER CONTROL JUST RUN IT AND SELECT A FILE
@@ -56,6 +56,7 @@ tic
     disp(['File number ' , num2str(i) , ' out of ', num2str(numel(files))]);
     t(i) = toc;
     ajn_wait(t,i,numel(files));
+    close all
 end
 
 

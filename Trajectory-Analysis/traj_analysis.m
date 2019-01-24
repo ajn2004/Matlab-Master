@@ -14,6 +14,9 @@ dmax = 1000; % maximum distance in nm
 %% Preliminary Jazz
 [fname, fpath] = uigetfile('*.mat'); % allows user to grab file
 load([fpath,fname]); % loads the file selected
+xf_all = ncoords(:,1);
+yf_all = ncoords(:,2);
+zf_all = ncoords(:,3);
 framenum_all = framenumber;
 trajec = struct('t',{[]}); % initialize trajectory variable
 foll = zeros(numel(framenum_all),1);
