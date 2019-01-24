@@ -14,7 +14,10 @@ Ytrain = Y(randind(1:split),:);
 options = optimset('MaxIter', it);
 disp('Training')
 
+% Show Progress
+
 % Adjust theta values to minimize t which is the cost
+
 [thetas] = fmincg(@(t)(neuralcostfunc(t, input_layer, hidden_layer, output, Xtrain, Ytrain, lambda)), int_thetas, options);
 disp('Complete')
 Theta1 = reshape(thetas(1: hidden_layer*(input_layer +1)), hidden_layer, input_layer + 1);

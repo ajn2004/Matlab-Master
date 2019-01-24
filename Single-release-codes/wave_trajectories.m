@@ -5,13 +5,14 @@
 % yf = fits(:,2) + cents(:,2);
 % N = fits(:,3);
 
-dmax = 300;
+dmax = 500;
 % ind  = fits(:,3) > 70;
 % ind  = N > 200;
 
-xf_all = xf(ind);
-yf_all = yf(ind);
-framenum_all = fnum(ind);
+xf_all = dcd(ind,1);
+yf_all = dcd(ind,2);
+zf_all = dcd(ind,3);
+framenum_all = fms(fnum(ind)); % convert to absolute framenumber
 trajec = struct('t',{[]}); % initialize trajectory variable
 foll = zeros(numel(framenum_all),1);
 % xc = fits(ind,1);
@@ -22,10 +23,14 @@ foll = zeros(numel(framenum_all),1);
 % loop over all frames to build the connections
 for i = 1:max(framenum_all)
     clear dist
-    % i is the framenumber, so we want to look at
-    if mod(i,2) == 1 % special conditions for frame 1 because there is no previous
+    % This is a modified trajectory analysis. We know the frame the 'first'
+    % molecule will appear on, and want to only look at subsquent ones
+    if ismember(i,stimdex) % special conditions for stimulus frames because we don't want to connect w/ a previous frame
         cind = find(framenum_all == i); % current index for loop i
-        fodex = find(framenum_all == i+1); % index of all molecules on following frame
+        fodex = find(framenum_all == i+1); % index of all molecules on following stim frames
+        for j = 1:fps - bk_fms - 1
+            fodex = [fodex,find(framenum_all == i +j+1)];
+        end
         if ~isempty(cind) && ~isempty(fodex)
             for j = 1:numel(cind)
                 for k = 1:numel(fodex)
@@ -59,40 +64,27 @@ end
 set_scale(std(dip1,1,3),q,4);
 colormap('gray');
 hold on
-ind1 = mod(framenum_all,2) == 1;
+[~, ind1,~] = intersect(framenum_all,stimdex);
+[~, ind2] = setdiff(framenum_all,stimdex);
 
-
-plot(xf_all(ind1),yf_all(ind1),'.g')
-plot(xf_all(logical(1-ind1)),yf_all(logical(1-ind1)),'.r')
+zf_all = zf_all - min(zf_all);
+plot3(xf_all(ind1),yf_all(ind1),zf_all(ind1),'.g')
+plot3(xf_all(ind2),yf_all(ind2),zf_all(ind2),'.r')
 for i = 1:numel(trajec)    
     inds = trajec(i).t;
-    d(i) = q*((xf_all(trajec(i).t(1)) - xf_all(trajec(i).t(2))).^2 + (yf_all(trajec(i).t(1)) - yf_all(trajec(i).t(2))).^2).^0.5;
-    plot(xf_all(inds),yf_all(inds),'b');
+    d(i) = q*((xf_all(trajec(i).t(1)) - xf_all(trajec(i).t(2))).^2 + (yf_all(trajec(i).t(1)) - yf_all(trajec(i).t(2))).^2 + (zf_all(trajec(i).t(1)) - zf_all(trajec(i).t(2))).^2).^0.5;
+    plot3(xf_all(inds),yf_all(inds),zf_all(inds),'b');
 end
 legend('Releases','Post-stims','Trajectory')
 hold off
 axis image
+figure
+plot3(xf_all(ind1)*q,q*yf_all(ind1),q*zf_all(ind1),'g.')
+hold on
+plot3(xf_all(ind2)*q,q*yf_all(ind2),q*zf_all(ind2),'r.')
+hold off
+axis equal
+xlabel('X-axis nm')
+ylabel('Y-axis nm')
+zlabel('Z-axisl nm')
 d = d.';
-% % show all localizations that got through the threshold
-% f = figure;
-% tg = uitabgroup(f);
-% t5 = uitab(tg,'Title','Frames');
-% t55 = uitabgroup(t5);
-% o = numel(xc);
-% [m,n] = size(sdi1(:,:,1));
-% for i = 1:o
-%     ax = axes(uitab(t55,'Title',['F ', num2str(i)]));
-%     imagesc(ax,sdi1(:,:,i));
-%     hold on
-% %     wind = -3:3;
-%     colormap(ax,'gray')
-% %     [xf,yf,sx,sy,Neat,O] = mle_Gauss(sdi1((m+1)/2+wind,(n+1)/2+wind,i),110*pi/180);
-% %     xfm(i) = xf + cents(i,1);
-% %     yfm(i) = yf + cents(i,2);
-% %         plot(ax,xf_all(i) - cents(i,1),yf_all(i)- cents(i,2),'bx');
-%     plot(ax,xc(i)+(n+1)/2,yc(i)+ (m+1)/2,'rx');
-% %     plot(xc(i)+,yc(i),'r.')
-% %     title(['Sx = ', num2str(sx),' Sy = ', num2str(sy), 'N = ', num2str(Neat),' O = ', num2str(O)]);
-%     hold off
-%     axis image
-% end

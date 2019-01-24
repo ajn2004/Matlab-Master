@@ -19,14 +19,16 @@ for i = 1:numel(x)
 end
 
 mflour = mean(tf,2); %take the mean value over all boutons
-
+t = (1:numel(mflour))*0.01930;
 [m,n,o] = size(i1); % get size of i1
 
 for i = 1:o % loop over all frames
     
     % Image on the left is the raw camera image
     subplot(1,2,1);
-    imagesc(i1(:,:,i),[min(i1(:))*1.2, 0.8*max(i1(:))]); % scales brightness to show fluorescent response
+    set_scale(i1(:,:,i),0.128,6); % scales brightness to show fluorescent response
+    hold on
+    draw_boxes([x,y],pix);
     title('Raw Camera image');
     axis image
     
@@ -35,14 +37,14 @@ for i = 1:o % loop over all frames
     if i < 200
         plot(t(1:300),mfluor(1:300));
         hold on
-        plot([t(i),t(i)],[min(mfluor),350],'r');
-        ylim([min(mfluor),350])
+        plot([t(i),t(i)],[min(mfluor),max(mfluor)],'r');
+        ylim([min(mfluor),max(mfluor)])
     else
         plot(t(i-100:i+100),mfluor(i-100:i+100))
         hold on
-        plot([t(i),t(i)],[min(mfluor),350],'r');
+        plot([t(i),t(i)],[min(mfluor),max(mfluor)],'r');
         xlim([t(i-100), t(i+100)]);
-        ylim([min(mfluor),350])
+        ylim([min(mfluor),max(mfluor)])
     end
     hold on
     title('average F over buotons');

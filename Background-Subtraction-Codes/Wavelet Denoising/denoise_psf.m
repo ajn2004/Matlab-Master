@@ -7,7 +7,7 @@ for i = 1:o
 % Thresholding
 [m,n,o] = size(W);
 % [fits] = fit_hist_gauss(W(:,:,1));
-lvls = o;
+lvls = 3;
 % Thresholding the components
 % Thresholding is done to the W matrix
 thrsh = 2;

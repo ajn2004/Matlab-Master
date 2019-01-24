@@ -10,7 +10,7 @@ trajs = zeros(numel(files),1);
 trajl = [];
 dms = trajs;
 for i = 1:numel(files)
-    load(files(i).name,'trajec','dmax','total_molecules');
+    load(files(i).name,'trajec','dmax','llv');
     trajs(i) = numel(trajec);
     trajl(i) = 0;
     for j = 1:trajs(i)
@@ -18,7 +18,7 @@ for i = 1:numel(files)
     end
     trajl(i) = trajl(i)/trajs(i);
     dms(i) = dmax;
-    trajp(i) = trajs(i)./total_molecules;
+    trajp(i) = trajs(i)./numel(llv);
     clear trajec dmax
 end
 

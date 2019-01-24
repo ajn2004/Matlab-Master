@@ -54,17 +54,18 @@ else                                                % If memory of image is too 
                 clear iprod_temp
             else
                 iprod = cat(3,iprod, iprod_temp);
-                ibkgn = cat(3,ibkgn, ibkgn_temp);
+                ibkgn = cat(3,ibkgn, bkgn_temp);
             
                 clear iprod_temp atemp
             end
         else
-            [iprod_temp,bkgn_temp] = image_process(i1(:,:,1+(i-1)*chunkim:end),i_gauss, i_ball);
-            
+            imx = min([ims, i*chunkim]);
+            [iprod_temp,bkgn_temp] = image_process(i1(:,:,1+(i-1)*chunkim:imx),i_gauss, i_ball);
             iprod = cat(3,iprod,iprod_temp);
-            ibkgn = cat(3,ibkgn, ibkgn_temp);
-            
+            ibkgn = cat(3,ibkgn, bkgn_temp);
             clear iprod_temp
+
+            
         end
     end
 end

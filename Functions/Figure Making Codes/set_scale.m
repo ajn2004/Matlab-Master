@@ -6,7 +6,7 @@ function set_scale(i1,q,x)
 [m,n,o] = size(i1);
 xtix = floor(n/x);
 ytix = floor(m/x);
-clims = [min(i1(:)),max(i1(:))];
+clims = [min(i1(:)),700];
 
 for i = 1:o
 %     figure

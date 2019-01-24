@@ -4,19 +4,19 @@ clearvars; clc; close all;
 % series of images showing the average F over a user selected number of
 % boutons as well as a where cutoffs are to measure the noise associated
 % with that signal. This should work with any image file type
-
+figure
 %% USER VARIABLES
 im_type = 'tif';  % image extension currently either 'tif' or 'fits'
 stim_fr = 100;        % First frame stimulation occurs on
-stims = 10;            % Total number of stimulations
-str = 10;            % Stimulation rate in Hz
-pixw = 7;           % Pixel width in radius (i.e. value of 7 gives 15x15 square window)
+stims = 15;            % Total number of stimulations
+str = 30;            % Stimulation rate in Hz
+pixw = 3;           % Pixel width in radius (i.e. value of 7 gives 15x15 square window)
 %%%%%%%%%%%%%%%%%%%%%END USER CONTROL%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 %% Analysis
 % c = scrub_config();  % reads camera configuration file
 [i1, mname, mpath] = read_im(im_type); % loads in an image and corrects
-i1 = i1/33.33;
+i1 = i1;
 [m,n,o] = size(i1); % get image size in [rows, cols, frames]
 try
     stim_fr = markerget(mname,'f');
@@ -72,33 +72,38 @@ plot(t,mfluor, 'color', 'k');  % make mean trace black
 for i = 1:stims
     plot([stim_fr*tex + (i-1)/str,stim_fr*tex + (i-1)/str],[min(mfluor),max(mfluor)],'r'); % plot a red line at stim_frame * s/frame + (stimnumber-1)/stimspersec
 end
+strt_max = stim_fr + ceil(stims/(tex*str));
+end_max = strt_max + ceil(1/tex);
+snr = (mean(mfluor(strt_max:end_max)) - mean(mfluor(1:stim_fr-1)))/std(mfluor(1:stim_fr-1));
+plot([1,stim_fr-1]*tex,[mean(mfluor(1:stim_fr-1)),mean(mfluor(1:stim_fr-1))],'r')
+plot([1,end_max]*tex,[mean(mfluor(strt_max:end_max)),mean(mfluor(strt_max:end_max))],'g')
+
 hold off
 xlabel('Time in [s]')
 ylabel('F in [A.U.]');
-title('Trace of mean F with individuals');
+title(['Trace of mean F for ',num2str(stims),'AP @ ',num2str(str),'Hz']);
 % create new figure of just average fluorescence
 figure % make new figure
-<<<<<<< HEAD
+
 dfluor = (mfluor - mean(mfluor(1:90)))/mean(mfluor(1:90));
 plot(t,dfluor,'k');  % plot only average trace
 hold on
 % plot stims
 for i = 1:stims
     plot([stim_fr*tex + (i-1)/str,stim_fr*tex + (i-1)/str],[min(dfluor),max(dfluor)],'r'); % plot a red line at stim_frame * s/frame + (stimnumber-1)/stimspersec
-=======
 df = (mfluor - mean(mfluor(1:90)))/mean(mfluor(1:90));
 plot(t,df,'k');  % plot only average trace
 hold on
+end
 % plot stims
 for i = 1:stims
     plot([stim_fr*tex + (i-1)/str,stim_fr*tex + (i-1)/str],[min(df),max(df)],'r'); % plot a red line at stim_frame * s/frame + (stimnumber-1)/stimspersec
->>>>>>> 306ac6cd665346f72d554508c8ac28d3e3530487
 end
 hold off
 xlabel('Time in [s]')
 % ylabel('F in [A.U.]');
 ylabel('dF/F_0');
-title('Trace of mean F');
+title(['Trace of mean F for ',num2str(stims),'AP @ ',num2str(str),'Hz']);
 
 
 save([mpath,mname(1:end-4),'_ROIlist.mat'],'x','y','ifluor','mfluor');

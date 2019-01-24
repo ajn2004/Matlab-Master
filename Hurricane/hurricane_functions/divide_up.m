@@ -25,6 +25,8 @@ for j = 1:o % loop over all frames
             %now segment area with updated values
             if col(i) - pixw > 0 && col(i) + pixw <= n && row(i) - pixw > 0 &&  row(i) + pixw < m  % if cut out region is within the image, cut it out
                 isub = i1(row(i) + wind, col(i) + wind,j); % cut out image
+                sim = sort(isub);
+%                 isub = isub-mean(sim(1:24));
                 i2 = cat(3, i2,isub); % linearize into array for subsequent imaging.
                 fnum = [fnum;j]; % build framenum_all variable
                 cents = [cents;[col(i), row(i)]]; % build centers found variables

@@ -8,41 +8,52 @@ clearvars;
 close all;
 clc;
 %% User variables
-pixw = 4;                                                                   % ROI 'radius'
-q = 0.133;                                                                  % Pixel size in um
+pixw = 5;                                                                   % ROI 'radius'
+q = 0.128;                                                                  % Pixel size in um
 step = 10;                                                                  % Steps between frames in nm
 CCs = 50;                                                                   % number of frames to x-correlate over
 wind = -pixw:pixw;                                                          % create window for segmentation
 
 %% END USER INPUT
 % Create display figure as a tab group
-f = figure('units','Normalized','OuterPosition',[0 0 1 1]);                 % Initialize figure
+% f = figure('units','Normalized','OuterPosition',[0 0 0.5 0.5]);                 % Initialize figure
+f = figure;
 tg = uitabgroup(f);                                                         % tg is the tabgroup to help reduce clutter of figures
 
 %% File loading and image segmentation
-files = dir('scan*');
+files = dir('*tif');
 t1 = uitab(tg,'Title','Mean Images');                                       % Create tab for image representation
 tg1 = uitabgroup(t1);                                                       % Make tabgroup object
 A= {};                                                                      % Saving images as a double cell variable
 psfs = {};                                                                  % Saving scans of PSF as double cell variable
 pind = 1;                                                                   % Counting variable for populating psfs
 for i = 1:numel(files)                                                      % Loop over all files
-    A{i} = rollingball(readtiff(files(i).name),5,4);                                         % store total images into variable
+%     A{i} = roball(readtiff(files(i).name),6,4);                                         % store total images into variable
+%     A{i} = bandpass(readtiff(files(i).name),1.15,5);
+%     A{i} = imgaussfilt(readtiff(files(i).name),
+    A{i} = readtiff(files(i).name);
+%     for j = 1:numel(A{i}(1,1,:))
+%         A{i}(:,:,j) = imgaussfilt(A{i}(:,:,j),0.18/q);
+%         A{i}(:,:,j) = band_pass(A{i}(:,:,j),2);
+%     end
+%     A{i} = bp_subtract(A{i});
     ax = axes(uitab(tg1,'Title',files(i).name(1:end-4)));                   % get axes for appropriate tab
     imagesc(ax,max(A{i},[],3))                                              % Represent maximal image
     psf = denoise_psf(max(A{i},[],3),2);                                    % use wavelet transform to identify molecules
     dps = das_peaks(psf,10);                                                % Peak finder
     [row,col] = find(dps == 1);                                             % Find peaks in dps
-    ind = find_dupes([col,row],1.5*pixw);                                   % remove overlapping molecules
+%     ind = find_dupes([col,row],1.5*pixw);                                   % remove overlapping molecules
     % Remove duplicate entries
-    row(ind) = [];
-    col(ind) = [];
+%     row(ind) = [];
+%     col(ind) = [];
     for j = 1:numel(row)                                                    % loop over all locations, but attempt to center the maximum pixel on each sub image
         draw_boxes([col,row],pixw);                                         % Show location of found regions on representation
         try
             for k = 1:numel(A{i}(1,1,:))
                 [r,c] = find(A{i}(row(j) + wind, col(j) + wind,k) == max(max(A{i}(row(j) + wind, col(j) + wind,k)))); % find maxima pixel in subregion
+                psf_off{pind}(k,:) = [c(j),r(j)];
                 psfs{pind}(:,:,k) = A{i}((row(j) - pixw - 1) + r(1) + wind, col(j) - pixw - 1 + c(1) + wind,k); % Store psfs in their own variable
+                
             end
             pind = pind +1;
         catch lsterr
@@ -108,8 +119,14 @@ fms = 1:o; % input framenum
 for i = 1:numel(psfs)                                                       % Loop over all identified ROIs
     [fits, crlb, lv,fnout] = slim_locs(psfs{i},fms,zeros(o,2),ang,50,100);  % Perform Fit
     fnout = fnout.';                                                        % Save frame number which corresponds to Z-position
-    xf = [xf;fits(:,1)];                                                    % X-Position
-    yf = [yf;fits(:,2)];                                                    % Y-Position
+    xa = fits(:,1)+psf_off{i}(fnout,1);                                     % define 'assignment' variable for x 
+    ya = fits(:,2)+psf_off{i}(fnout,2);                                     % define 'assignment' variable for y this allows centering around distribution
+%     xa = fits(:,1);
+%     ya = fits(:,2);
+    xf = [xf;xa-mean(xa)];                                                    % X-Position
+    yf = [yf;ya-mean(ya)];                                                    % Y-Position
+%     xf = [xf;xa];                                                    % X-Position
+%     yf = [yf;ya];                                                    % Y-Position
     N = [N; fits(:,3)];                                                     % Number of Photons
     sx = [sx;fits(:,4)];                                                    % Sigma in x' direction
     sy = [sy;fits(:,5)];                                                    % Sigma in y' direction
@@ -124,6 +141,7 @@ for i = 1:numel(psfs)                                                       % Lo
     psf = [psf; fits(:,1)*i./fits(:,1)];                                            % Log the PSF the fit is associated with
     llv = [llv;-abs(lv)];                                                   % Log Likelihood Value
 %     fnum = [fnum;fnout - disp(i)];                                          % Correct the Frame number based off correlation result
+
     fnum = [fnum;fnout]; 
 end
 z1 = fnum*step/1000;                                                        % Populate Z-positions
@@ -274,7 +292,7 @@ z_cal = get_z_params(z0s(ind),ssx(ind),ssy(ind));                           % Fi
 % Display results of Z-calibration
 yx = z_cal_fit(z0s(ind),z_cal(1:5));                                        % Determine ideal fitted Sig-x Values
 yy = z_cal_fit(z0s(ind),z_cal(6:end));                                      % Determine ideal fitted Sig-y values
-% Overlay result on scatted / average sig-x plot
+% Overlay result on scattered / average sig-x plot
 plot(ax,z0s(ind),yx,'gx')
 plot(ax,z0s(ind),yy,'gx')
 hold off
@@ -285,7 +303,7 @@ legend('Sig-X','Sigy-Y','Location','North');
 % exists over the Z direction, in this section we'll address that
 
 zf_um = getdz(sx,sy,z_cal);                                                 % Get Z-values
-indy = indy & abs(zf_um) <0.5;                                              % Limit view to fitted region listed above
+indy = indy & abs(zf_um) <0.8;                                              % Limit view to fitted region listed above
 d3 = uitab(tg4,'Title','3-D Positions');
 ax = axes(d3);
 scatter3(xf(indy),yf(indy),zf_um(indy)/q,[],psf(indy));
@@ -357,20 +375,24 @@ end
 xsel = [];
 ysel = [];
 zsel = [];
-for i = 1:numel(zs) - 1
-    ind1 = zt >= zs(i) & zt <=zs(i+1);
-    ind1 = ind1 & (xt.^2+yt.^2).^0.5 < 0.5;
+for i = 1:numel(zs) - 1 % Loop over a variety of height windows for averaging of points
+    ind1 = zt >= zs(i) & zt <=zs(i+1);  % grab all points within height window
+    ind1 = ind1 & (xt.^2+yt.^2).^0.5 < 0.5; % grab all points who lie within a half pixel radius of center (at this point all scans have a 0 mean in XY)
+    % Subsets
     xts = xt(ind1);
     yts = yt(ind1);
     zts = zt(ind1);
-    mx = mean(xts);
-    stx = std(xts);
-    my = mean(yts);
-    sty = std(yts);
-    ind2 = xts >= mx - 1*stx & xts <= mx +1*stx & yts >= my - 1*sty & yts <= my +1*sty;
+    rts = (xts.^2+yts.^2).^0.5; % convert subsetted xy to R
+    mr = mean(rts); % grab mean of R
+    str = std(rts); % grab stdev of R
+%     my = mean(yts);
+%     sty = std(yts);
+    ind2 = rts <= (mr + 0.325*str); % Inclusion criteria is based on mean and std deviation
+    % record subset
     xsel = [xsel;xts(ind2)];
     ysel = [ysel;yts(ind2)];
     zsel = [zsel;zts(ind2)];
+    % make final measurement of averaged points
     xfm(i) = mean(xts(ind2));
     yfm(i) = mean(yts(ind2));
     zfm(i) = mean(zts(ind2));
@@ -418,4 +440,7 @@ cal.tilt.x = xtilt;
 cal.tilt.y = ytilt;
 cal.ang = ang;
 cal.tilt.zs = zs;
+
+%% Calibration Handling
+disp(['Distance between Minima is ', num2str(1000*(cal.z_cal(2)-cal.z_cal(7))),'nm']);
 save('z_calib.mat','cal')

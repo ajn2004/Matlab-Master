@@ -4,8 +4,11 @@ function [trajec] = func_traj_analysis(bname,dmax)
 load([bname]); % loads the file selected
 mkdir('traj');
 trajec = struct('t',{[]}); % initialize trajectory variable
+framenum_all = framenumber;
 foll = zeros(numel(framenum_all),1);
-
+xf_all = ncoords(:,1);
+yf_all = ncoords(:,2);
+zf_all = ncoords(:,3);
 % loop over all frames to build the connections
 for i = 1:max(framenum_all)
     clear dist
@@ -46,5 +49,7 @@ for i = 1:numel(foll)
     end
     
 end
+clear flag fodex i j k disto foll cind xf_all yf_all zf_all traj framenum_all
+clear fname count
 save(['traj\',bname(1:end-4),'_',num2str(dmax),'nm_traj.mat']);
 end

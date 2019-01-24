@@ -13,10 +13,11 @@ clc
 load('z_cal.mat');
 %% Initialization
 global xpix ypix wbox
-rbox = 6;
+load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Hurricane\hurricane_functions\z_calib.mat');
+rbox = 9;
 [xpix, ypix] = meshgrid(-rbox:rbox,-rbox:rbox);
-xpix = single(xpix);
-ypix = single(ypix);
+% xpix = single(xpix);
+% ypix = single(ypix);
 % xpix = gpuArray(xpix);
 % ypix = gpuArray(ypix);
 wbox = 2*rbox+1;
@@ -31,47 +32,59 @@ i1 = xpix.*0;
 % gyo = gy/1000;
 % dxo = dx/1000;
 % dyo = dy/1000;
-sxo = 1.08;
-syo = 1.01;
-axo = -0.0708;
-bxo = -0.073;
-ayo = 0.164;
-byo = 0.0417;
-gxo = 0.389;
-gyo = -0.389;
-dxo = 0.531;
-dyo = 0.531;
-zcurve = single([sxo, syo, axo, ayo, bxo, byo, dxo, dyo, gxo, gyo]);
+% xs = 1.08;
+% ys = 1.01;
+% ax = -0.0708;
+% bx = -0.073;
+% ay = 0.164;
+% by = 0.0417;
+% gx = 0.389;
+% gy = -0.389;
+% dx = 0.531;
+% dy = 0.531;
+
+xs = z_cal(1);
+gx = z_cal(2);
+dx = z_cal(3);
+ax = z_cal(4);
+bx = z_cal(5);
+
+ys = z_cal(6);
+gy = z_cal(7);
+dy = z_cal(8);
+ay = z_cal(9);
+by = z_cal(10);
+zcurve = ([xs, ys, ax, ay, bx, by, dx, dy, gx, gy]);
 % gxo = -(gx*0.5+gy*0.5)/1000;
 % gyo = (gx*0.5+gy*0.5)/1000;
 % dxo = (dx*0.5 + dy*0.5)/1000;
 % dyo = (dx*0.5 + dy*0.5)/1000;
 % variables of image
-B = 6;
-ntrue = 1700;
-x0true = 2*(rand-0.5);
-y0true = 2*(rand - 0.5);
+B = 0;
+ntrue = 1000;
+x0true = (rand-0.5);
+y0true = (rand - 0.5);
 % x0true = 0;
 % y0true = 0;
 z(1) = 0;
 z(2) = 0;
-frames = 10000;
+frames = 1;
 
-z0true = 0.218;
+zs = -1:0.01:1;
 % zs = 0.155;
 % Zfin = cell(numel(z),1);
-%  for op = 1:numel(zs)
-%     z0true = zs(op);
-    sigx = sxo*(1 + ((z0true - gxo)/dxo).^2 + axo*((z0true - gxo)/dxo).^3 + bxo*((z0true - gxo)/dxo).^4).^0.5;
-    sigy = syo*(1 + ((z0true - gyo)/dyo).^2 + ayo*((z0true - gyo)/dyo).^3 + byo*((z0true - gyo)/dyo).^4).^0.5;
+ for op = 1:numel(zs)
+    z0true = zs(op);
+    sigx = xs*(1 + ((z0true - gx)/dx).^2 + ax*((z0true - gx)/dx).^3 + bx*((z0true - gx)/dx).^4).^0.5;
+    sigy = ys*(1 + ((z0true - gy)/dy).^2 + ay*((z0true - gy)/dy).^3 + by*((z0true - gy)/dy).^4).^0.5;
     % r0t_pix = 2*sigma; % 1/e^2 radius
     sigma2 = (1.9773);
     r0t_um = 0.61*0.581/(1.4);        % Rayleigh radius in um
     pix2pho = 1;
-    q = r0t_um / (sigma2);
+    q = 0.128;
     wbox_um = q*wbox;
     Ns = 1000;
- op = 1  
+%  op = 1;  
         tic
 
         for i = 1:frames % create psf frames
@@ -79,14 +92,15 @@ z0true = 0.218;
             i1 = xpix.*0;
             % Create a gaussian
             % i1 = ntrue.*(2*pi*sigma^2)^-1.*exp(-((xpix-x0true).^2 +(ypix-y0true).^2)./(2*sigma.^2))+B;
-            i1x = 1/2.*(erf((xpix - x0true + 1/2)./(2*sigx^2)^0.5)-erf((xpix - x0true - 1/2)./(2*sigx^2)^0.5)); % error function of x integration over psf for each pixel
-            i1y = 1/2.*(erf((ypix - y0true + 1/2)./(2*sigy^2)^0.5)-erf((ypix - y0true - 1/2)./(2*sigy^2)^0.5)); % error function of y integration over psf for each pixel
+            i1x = 0.5*(erf((xpix - x0true + 1/2)./(2*sigx^2)^0.5)-erf((xpix - x0true - 1/2)./(2*sigx^2)^0.5)); % error function of x integration over psf for each pixel
+            i1y = 0.5*(erf((ypix - y0true + 1/2)./(2*sigy^2)^0.5)-erf((ypix - y0true - 1/2)./(2*sigy^2)^0.5)); % error function of y integration over psf for each pixel
             i1 = ntrue * i1x.*i1y+B;
             
             %% Create Frames with noise
             
             %     waitbar(i/frames,w2, 'Creating points');
-            i2(:,:,i) = single(imnoise(uint16(i1), 'poisson'))+.00001;
+            i2(:,:,i) = double(imnoise(uint16(i1), 'poisson'));
+%             i2 = i1;
             i3 = i2(:,:,i);
             il(:,i) = i3(:);
             %     i2(:,:,i) = i1;
@@ -101,7 +115,7 @@ z0true = 0.218;
             % i3 = i1;
             
             N = sum(i3(:));
-            offguess = min(i3(:));
+            offguess = 0;
             xguess = sum(sum(xpix.*i3./N));
             yguess = sum(sum(ypix.*i3./N));
             
@@ -111,37 +125,46 @@ z0true = 0.218;
             % elapsed_nlon = toc;
             %% MLE approximation
             % sigma = sx;
-            xf = single(xguess);
+            xf = (xguess);
             yf = yguess;
             zf = 0;
+            sx = 1.5;
+            sy = 1.5;
             offs = offguess;
             % u = gpuArray(zeros(wbox,wbox,frames));
             % while fittime(l) < 100
             flag = 0;
-            for k = 1:40
+            for k = 1:20
                 
                 %Define psf and error function for each pixel
-                if abs(zf) > 1 || flag == 1
-                    zf = 0;
-                    flag = 1;
-                end
-                sx = single(sxo*(1 + ((zf - gxo)/dxo).^2 + axo*((zf - gxo)/dxo).^3 + bxo*((zf - gxo)/dxo).^4).^0.5);
-                sy = single(syo*(1 + ((zf - gyo)/dyo).^2 + ayo*((zf - gyo)/dyo).^3 + byo*((zf - gyo)/dyo).^4).^0.5);
-                
-                Ex = 1/2.*(erf((xpix - xf + 1/2)./(2*sx^2)^0.5)-erf((xpix - xf - 1/2)./(2*sx^2)^0.5)); % error function of x integration over psf for each pixel
-                Ey = 1/2.*(erf((ypix - yf + 1/2)./(2*sy^2)^0.5)-erf((ypix - yf - 1/2)./(2*sy^2)^0.5)); % error function of y integration over psf for each pixel
+%                 if abs(zf) > 10 || flag == 1
+%                     zf = 0;
+%                     flag = 1;
+%                 end
+%                 sx = (xs*(1 + ((zf - gx)/dx).^2 + ax*((zf - gx)/dx).^3 + bx*((zf - gx)/dx).^4).^0.5);
+%                 sy = (ys*(1 + ((zf - gy)/dy).^2 + ay*((zf - gy)/dy).^3 + by*((zf - gy)/dy).^4).^0.5);
+%                 if k == 1
+%                     sx = 1.2;
+%                     sy = 1.2;
+%                 end
+                Ex = 1/2*(erf((xpix - xf + 1/2)./(2*sx^2)^0.5)-erf((xpix - xf - 1/2)./(2*sx^2)^0.5)); % error function of x integration over psf for each pixel
+                Ey = 1/2*(erf((ypix - yf + 1/2)./(2*sy^2)^0.5)-erf((ypix - yf - 1/2)./(2*sy^2)^0.5)); % error function of y integration over psf for each pixel
                 
                 u(:,:,k) = N.*Ex.*Ey + offs; % The underlying image is being created identical to
-                
+                imagesc(i3-u(:,:,k));
+                drawnow
                 % partial derivatives of variables of interest
-                dudx = N*(2*pi*sx^2)^-0.5.*(exp(-(xpix -xf - 1/2).^2.*(2*sx^2)^-1)-exp(-(xpix -xf + 1/2).^2.*(2*sx^2)^-1)).*Ey;
+                dudx = N*(2*pi*sx^2)^-0.5.*(exp(-(xpix -xf - 1/2).^2.*(2*sx^2)^-1)-exp(-(xpix -xf + 1/2).^2.*(2*sx^2)^-1)).*Ey; % these derivatives are correct
                 dudy = N*(2*pi*sy^2)^-0.5.*(exp(-(ypix -yf - 1/2).^2.*(2*sy^2)^-1)-exp(-(ypix -yf + 1/2).^2.*(2*sy^2)^-1)).*Ex;
                
+                %these derivatives are correct
                 dudsx = N*(2*pi)^(-1/2)*sx^(-2).*((xpix - xf - 1/2).*exp(-(xpix -xf - 1/2).^2.*(2*sx^2)^-1) - (xpix - xf + 1/2) .*exp(-(xpix -xf + 1/2).^2.*(2*sx^2)^-1)).*Ey; % pd sigx
                 dudsy = N*(2*pi)^(-1/2)*sy^(-2).*((ypix - yf - 1/2).*exp(-(ypix -yf - 1/2).^2.*(2*sy^2)^-1) - (ypix - yf + 1/2) .*exp(-(ypix -yf + 1/2).^2.*(2*sy^2)^-1)).*Ex; % pd sigy
                
-                dsxdz = sxo*(2 * (zf - gxo) / (dxo*dxo) + axo * 3 * ((zf-gxo)^2/dxo^3) + bxo*4*((zf-gxo)^3/dxo^4))/ (2*(1 + ((zf - gxo)/dxo).^2 + axo*((zf - gxo)/dxo).^3 + bxo*((zf - gxo)/dxo).^4).^0.5);
-                dsydz = syo*(2 * (zf - gyo) / (dyo*dyo) + ayo * 3 * ((zf-gyo)^2/dyo^3) + byo*4*((zf-gyo)^3/dyo^4))/ (2*(1 + ((zf - gyo)/dyo).^2 + ayo*((zf - gyo)/dyo).^3 + byo*((zf - gyo)/dyo).^4).^0.5);
+                dsxdz = xs*(2 * (zf - gx) / (dx*dx) + ax * 3 * ((zf-gx)^2/dx^3) + bx*4*((zf-gx)^3/dx^4))/ (2*(1 + ((zf - gx)/dx).^2 + ax*((zf - gx)/dx).^3 + bx*((zf - gx)/dx).^4).^0.5);
+                dsydz = ys*(2 * (zf - gy) / (dy*dy) + ay * 3 * ((zf-gy)^2/dy^3) + by*4*((zf-gy)^3/dy^4))/ (2*(1 + ((zf - gy)/dy).^2 + ay*((zf - gy)/dy).^3 + by*((zf - gy)/dy).^4).^0.5);
+%                 dsxdz = xs*(2 * (zf - gx) / (dx*dx) + ax * 3 * ((zf-gx)^2/dx^2) + bx*4*((zf-gx)^3/dx^2))/ (2*(1 + ((zf - gx)/dx).^2 + ax*((zf - gx)^3/dx^2) + bx*((zf - gx)^4/dx^2)).^0.5);
+%                 dsydz = ys*(2 * (zf - gy) / (dy*dy) + ay * 3 * ((zf-gy)^2/dy^2) + by*4*((zf-gy)^3/dy^2))/ (2*(1 + ((zf - gy)/dy).^2 + ay*((zf - gy)^3/dy^2) + by*((zf - gy)^4/dy^2)).^0.5);
                 
                 dudz = dudsx.*dsxdz + dudsy.*dsydz;
                 % It was noticed in the current GPU codes that there was a parentheses
@@ -152,6 +175,7 @@ z0true = 0.218;
                 
                 
                 % Second partial derivatives of variables of interest
+                %these derivatives are fine
                 d2udx2 = N*(2*pi)^-0.5*sx^-3*((xpix - xf - 1/2).*exp(-(xpix -xf - 1/2).^2.*(2*sx^2)^-1) - (xpix - xf + 1/2) .*exp(-(xpix -xf + 1/2).^2.*(2*sx^2)^-1)).*Ey;
                 d2udy2 = N*(2*pi)^-0.5*sy^-3*((ypix - yf - 1/2).*exp(-(ypix -yf - 1/2).^2.*(2*sy^2)^-1) - (ypix - yf + 1/2) .*exp(-(ypix -yf + 1/2).^2.*(2*sy^2)^-1)).*Ex;
                 
@@ -159,12 +183,12 @@ z0true = 0.218;
                     - 2.*sx.^-3.*((xpix - xf - 1/2).*   exp(-(xpix -xf - 1/2).^2.*(2*sx^2)^-1) - (xpix - xf + 1/2) .*  exp(-(xpix -xf + 1/2).^2.*(2*sx^2)^-1)));
                 % second partial for sigmay
                 d2udsy2 = N.*Ex.*(2*pi)^-0.5.*((sy^-5.* ((ypix - yf - 1/2).^3.*exp(-(ypix -yf - 1/2).^2.*(2*sy^2)^-1) - (ypix - yf + 1/2).^3.*exp(-(ypix -yf + 1/2).^2.*(2*sy^2)^-1))) ...
-                    - 2.*sy.^-3.*((ypix - yf - 1/2).*   exp(-(ypix -yf - 1/2).^2.*(2*sy^2)^-1) - (ypix - yf + 1/2)   .*exp(-(ypix -yf + 1/2).^2.*(2*sy^2)^-1)));
+                    - 2.*sy.^-3.*((ypix - yf - 1/2).*   exp(-(ypix -yf - 1/2).^2.*(2*sy^2)^-1) - (ypix - yf + 1/2) .*  exp(-(ypix -yf + 1/2).^2.*(2*sy^2)^-1)));
                 
-                d2sxdz2 = sxo*(2/(dxo)^2 + axo*6*(zf-gxo)/(dxo)^3 + bxo*12*(zf-gxo)^2/(dxo)^4)/ (2*(1 + ((zf - gxo)/dxo).^2 + axo*((zf - gxo)/dxo).^3 + bxo*((zf - gxo)/dxo).^4).^0.5)...
-                    - sxo*(2 * (zf - gxo) / (dxo*dxo) + axo * 3 * ((zf-gxo)^2/dxo^3) + bxo*4*((zf-gxo)^3/dxo^4))^2/ (4*(1 + ((zf - gxo)/dxo).^2 + axo*((zf - gxo)/dxo).^3 + bxo*((zf - gxo)/dxo).^4).^1.5);
-                d2sydz2 = syo*(2/(dyo)^2 + ayo*6*(zf-gyo)/(dyo)^3 + byo*12*(zf-gyo)^2/(dyo)^4)/ (2*(1 + ((zf - gyo)/dyo).^2 + ayo*((zf - gyo)/dyo).^3 + byo*((zf - gyo)/dyo).^4).^0.5)...
-                    - syo*(2 * (zf - gyo) / (dyo*dyo) + ayo * 3 * ((zf-gyo)^2/dyo^3) + byo*4*((zf-gyo)^3/dyo^4))^2/ (4*(1 + ((zf - gyo)/dyo).^2 + ayo*((zf - gyo)/dyo).^3 + byo*((zf - gyo)/dyo).^4).^1.5);
+                d2sxdz2 = xs*(2/(dx)^2 + ax*6*(zf-gx)/(dx)^3 + bx*12*(zf-gx)^2/(dx)^4)/ (2*(1 + ((zf - gx)/dx).^2 + ax*((zf - gx)/dx).^3 + bx*((zf - gx)/dx).^4).^0.5)...
+                    - xs*(2 * (zf - gx) / (dx*dx) + ax * 3 * ((zf-gx)^2/dx^3) + bx*4*((zf-gx)^3/dx^4))^2/ (4*(1 + ((zf - gx)/dx).^2 + ax*((zf - gx)/dx).^3 + bx*((zf - gx)/dx).^4).^1.5);
+                d2sydz2 = ys*(2/(dy)^2 + ay*6*(zf-gy)/(dy)^3 + by*12*(zf-gy)^2/(dy)^4)/ (2*(1 + ((zf - gy)/dy).^2 + ay*((zf - gy)/dy).^3 + by*((zf - gy)/dy).^4).^0.5)...
+                    - ys*(2 * (zf - gy) / (dy*dy) + ay * 3 * ((zf-gy)^2/dy^3) + by*4*((zf-gy)^3/dy^4))^2/ (4*(1 + ((zf - gy)/dy).^2 + ay*((zf - gy)/dy).^3 + by*((zf - gy)/dy).^4).^1.5);
                 
                 d2udz2 = d2udsx2.*dsxdz.^2 + dudsx.*d2sxdz2 + d2udsy2.*dsydz.^2 + dsydz.*d2sydz2;
                 d2udi2 = 0;
@@ -181,7 +205,8 @@ z0true = 0.218;
                 zf = zf - sum(sum(dudz.*((i3./u(:,:,k))-1)))/(sum(sum(d2udz2.*((i3./u(:,:,k))-1) - dudz.^2.*i3./(u(:,:,k).^2))));
                 N = N - sum(sum(dudi.*((i3./u(:,:,k))-1)))/(sum(sum(d2udi2.*((i3./u(:,:,k))-1) - dudi.^2.*i3./(u(:,:,k).^2))));
                 offs = offs - sum(sum(dudb.*((i3./u(:,:,k))-1)))/(sum(sum(d2udb2.*((i3./u(:,:,k))-1) - dudb.^2.*i3./(u(:,:,k).^2))));
-                
+                sx = sx - sum(sum(dudsx.*((i3./u(:,:,k))-1)))/(sum(sum(d2udsx2.*((i3./u(:,:,k))-1) - dudsx.^2.*i3./(u(:,:,k).^2))));
+                sy = sy - sum(sum(dudsy.*((i3./u(:,:,k))-1)))/(sum(sum(d2udsy2.*((i3./u(:,:,k))-1) - dudsy.^2.*i3./(u(:,:,k).^2))));
                 
                 
             end
@@ -209,7 +234,13 @@ z0true = 0.218;
         end
         t(op) = toc;
 %         ajn_wait(t, op, numel(zs))
-
+ end
+ind = abs(zfa) < 1;
+histogram((zfa(ind)-zf0(ind)))
+std(zfa(ind))
+figure
+plot(zfa)
+ylim([-1.5, 1.5])
 %     [xmf, xmc, ymf, ymc, zmf, zmc, Npm, Ncm, omff, ofmfc, lmv] = chain_d_loc13(single(il), single(zcurve), 100, single(0));    
 %     disp(num2str([xmf,ymf,zmf,Npm,omff,lmv]));
 %     Zfin{op} = (zlap(end,:));
