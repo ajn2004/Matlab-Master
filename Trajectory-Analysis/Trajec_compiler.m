@@ -6,16 +6,17 @@ close all;
 clc;
 exp_tm = 0.04;
 files = dir('*traj.mat');
-D_step =[];
+dx =[];
+dy =[];
+dz =[];
 for p = 1:numel(files)
     load(files(p).name);
     for i = 1:numel(trajec)
-        for k = 1:numel(trajec(i).t)-1
-            id = trajec(i).t(k);
-            id2 = trajec(i).t(k+1);
-            D_step(numel(D_step)+1) = q^2*((ncoords(id,1) - ncoords(id2,1))^2 +(ncoords(id,2) - ncoords(id2,2))^2 + (ncoords(id,3) - ncoords(id2,3))^2);
-        end
+        ind = trajec(i).t;
+        dx = [dx;q*(ncoords(ind,1)-mean(ncoords(ind,1)))];
+        dy = [dy;q*(ncoords(ind,2)-mean(ncoords(ind,2)))];
+        dz = [dz;q*(ncoords(ind,3)-mean(ncoords(ind,3)))];
     end
 end
-histogram(D_step/(4*exp_tm));
+% histogram(D_step/(4*exp_tm));
         
