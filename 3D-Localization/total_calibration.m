@@ -50,10 +50,12 @@ for i = 1:numel(files)                                                      % Lo
         draw_boxes([col,row],pixw);                                         % Show location of found regions on representation
         try
             for k = 1:numel(A{i}(1,1,:))
+                [m,n,o] = size(A{i});
+                if row(j)-pixw > 0 && row(j)+ pixw < m && col(j)-pixw > 0 && col(j)+ pixw < n 
                 [r,c] = find(A{i}(row(j) + wind, col(j) + wind,k) == max(max(A{i}(row(j) + wind, col(j) + wind,k)))); % find maxima pixel in subregion
-                psf_off{pind}(k,:) = [c(j),r(j)];
+                psf_off{pind}(k,:) = [c(1),r(1)];
                 psfs{pind}(:,:,k) = A{i}((row(j) - pixw - 1) + r(1) + wind, col(j) - pixw - 1 + c(1) + wind,k); % Store psfs in their own variable
-                
+                end
             end
             pind = pind +1;
         catch lsterr

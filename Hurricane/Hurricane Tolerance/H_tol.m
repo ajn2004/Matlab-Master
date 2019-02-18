@@ -4,12 +4,12 @@
 clearvars; close all; clc;
 
 %Tolerance data
-absz = 6; % Limit of the absolute value of z-data in pixels
+absz = 60; % Limit of the absolute value of z-data in pixels
 lat_max = 0.1; % Maximum lateral uncertainty in micrometers
-N_tol = [0, 10000]; % Tolerance on N
-s_tol = [0,4]; % sigma tolerances
+N_tol = [40000, 100000]; % Tolerance on N
+s_tol = [0,8]; % sigma tolerances
 iln = -1;  % lower bound on llv/N
-frac_lim = 0.2; % Limit on the fractional uncertainty of any value
+frac_lim = 0.5; % Limit on the fractional uncertainty of any value
 
 [fname, fpath] = uigetfile('*dast.mat');
 cd(fpath)
