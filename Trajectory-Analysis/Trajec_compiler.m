@@ -6,9 +6,9 @@ close all;
 clc;
 exp_tm = 0.04;
 % files = dir('*traj.mat');
-% dx =[];
-% dy =[];
-% dz =[];
+dx =[];
+dy =[];
+dz =[];
 % for p = 1:numel(files)
 %     load(files(p).name);
     for i = 1:numel(trajec)
@@ -18,9 +18,9 @@ exp_tm = 0.04;
             dy = [dy; q*((ncoords(ind(j),2) - ncoords(ind(j+1),2))^2)^0.5];
             dz = [dz; q*((ncoords(ind(j),3) - ncoords(ind(j+1),3))^2)^0.5];
         end
-%         dx = [dx;q*(ncoords(ind,1)-mean(ncoords(ind,1)))];
-%         dy = [dy;q*(ncoords(ind,2)-mean(ncoords(ind,2)))];
-%         dz = [dz;q*(ncoords(ind,3)-mean(ncoords(ind,3)))];
+        dx = [dx;q*(ncoords(ind,1)-mean(ncoords(ind,1)))];
+        dy = [dy;q*(ncoords(ind,2)-mean(ncoords(ind,2)))];
+        dz = [dz;q*(ncoords(ind,3)-mean(ncoords(ind,3)))];
 %         dx = 
     end
 % end
