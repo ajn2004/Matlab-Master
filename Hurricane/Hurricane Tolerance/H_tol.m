@@ -4,35 +4,49 @@
 clearvars; close all; clc;
 
 %Tolerance data
-absz = 60; % Limit of the absolute value of z-data in pixels
+absz = 4; % Limit of the absolute value of z-data in pixels
 lat_max = 0.1; % Maximum lateral uncertainty in micrometers
-N_tol = [1000, 100000]; % Tolerance on N
-s_tol = [0.8,8]; % sigma tolerances
-iln = -1;  % lower bound on llv/N
+N_tol = [200, 100000]; % Tolerance on N
+
+iln = -2;  % lower bound on llv/N
 frac_lim = 0.5; % Limit on the fractional uncertainty of any value
+off_frac = 0.15;
+
+
 
 [fname, fpath] = uigetfile('*dast.mat');
 cd(fpath)
 load([fpath,fname]);
-
+[~, p] = getdz(1,1,cal.z_cal);
+mine = min(p(:,2)./p(:,3));
+maxe = max(p(:,2)./p(:,3));
+s_tol = [min(min([p(:,2),p(:,3)])),max(max([p(:,2),p(:,3)]))]; % sigma tolerances
+% s_tol = [0.8, 8]; % sigma tolerances
+fits(:,4) = abs(fits(:,4));
+fits(:,5) = abs(fits(:,5));
 %Define fractionals
 fr_N =  crlbs(:,3).^0.5./fits(:,3);
 fr_sx = crlbs(:,4).^0.5./fits(:,4);
 fr_sy = crlbs(:,5).^0.5./fits(:,5);
 fr_o =  crlbs(:,6).^0.5./fits(:,6);
 ilv = llv(:)./fits(:,3);
+eps = abs(fits(:,4)./fits(:,5));
 
 % Apply Tolerances
-ind = fits(:,3) > N_tol(1) & fits(:,3) < N_tol(2); % Photon Tolerance
+ind = start_w_z(ncoords(:,3)*q,eps, cal.z_cal);
+
+
+ind = ind & fits(:,3) > N_tol(1) & fits(:,3) < N_tol(2); % Photon Tolerance
 ind = ind & abs(ncoords(:,3)) < absz;
-ind = ind & fits(:,4) > s_tol(1) & fits(:,4) < s_tol(2); % Photon Tolerance
-ind = ind &fits(:,5) > s_tol(1) & fits(:,5) < s_tol(2); % Photon Tolerance
+ind = ind & (abs(fits(:,4)).*abs(fits(:,5))).^0.5 > s_tol(1) & (abs(fits(:,4)).*abs(fits(:,5))).^0.5 < s_tol(2); % Photon Tolerance
+% ind = ind & fits(:,5) > s_tol(1) & fits(:,5) < s_tol(2); % Photon Tolerance
 ind = ind & q*crlbs(:,1).^.5 < lat_max & q*crlbs(:,2).^.5 < lat_max; % Lateral Uncertainty Tolerance
 ind = ind & ilv > iln; % llv tolerance
-ind = ind & fr_N < frac_lim & abs(fr_o) < frac_lim; % Fraction photon tolerance
+ind = ind & fr_N < frac_lim & abs(fr_o) < off_frac; % Fraction photon tolerance
 ind = ind & fr_sx < frac_lim & fr_sy < frac_lim; % Fraction width tolerance
+ind = ind & eps <= maxe & eps >= mine;
 
-save('Tolfile.mat','absz','lat_max','N_tol','s_tol','iln','frac_lim');
+save('Tolfile.mat','absz','lat_max','N_tol','s_tol','iln','frac_lim','off_frac','mine','maxe');
 % Setting up our figure
 f = figure;
 tg = uitabgroup(f);

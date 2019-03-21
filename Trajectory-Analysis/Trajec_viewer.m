@@ -1,12 +1,12 @@
 % Trajec Viewer
 % close all
-% xf_all = ncoords(:,1);
-% yf_all = ncoords(:,2);
-% zf_all = ncoords(:,3);
-scl = 1;
-xf_all = xf_fixed;
-yf_all = yf_fixed;
+xf_all = ncoords(:,1);
+yf_all = ncoords(:,2);
 zf_all = ncoords(:,3);
+scl = 1;
+% xf_all = xf_fixed;
+% yf_all = yf_fixed;
+% zf_all = ncoords(:,3);
 
 % s = scatter3(xf_all*q,yf_all*q,zf_all*q,-scl*llv./fits(:,3));
 
@@ -29,13 +29,13 @@ for i = 1:numel(trajec)
 %     plot3(q*xf_all(ind),q*yf_all(ind),q*zf_all(ind));
 %     si = scatter3(q*xf_all(ind),q*yf_all(ind),q*zf_all(ind),-scl*llv(ind)./fits(ind,3),rgb);
 %     si.MarkerFaceColor = si.MarkerEdgeColor;
-%     plot3(q*(xf_all(ind)-xf_all(ind(1))),q*(yf_all(ind)-yf_all(ind(1))),i+q*(zf_all(ind)-zf_all(ind(1))))
+    plot3(q*(xf_all(ind)-xf_all(ind(1))),q*(yf_all(ind)-yf_all(ind(1))),i+q*(zf_all(ind)-zf_all(ind(1))))
     hold on
 end
 hold off
 % axis equal
 
-for i = 1:numel(N)
-    plot(N{i})
-    hold on
-end
+% for i = 1:numel(N)
+%     plot(N{i})
+%     hold on
+% end

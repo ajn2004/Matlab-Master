@@ -1,2 +1,2 @@
 function y = relu(x)
-y = log(1 + exp(x));
+y = max(0,x);

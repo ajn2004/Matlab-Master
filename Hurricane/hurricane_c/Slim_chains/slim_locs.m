@@ -51,6 +51,7 @@ offo = [];
 offco = [];
 llv = [];
 fnout = [];
+zfo = [];
 n = o;
 if n > maxi
     rounds = floor(n/maxi);    
@@ -70,6 +71,11 @@ if n > maxi
         yfo = [yfo; ys(ind)];
         xfc = [xfc; xc(ind)];
         yfc = [yfc; yc(ind)];
+        try
+        zs = get_nn_z(i3(:,ind));
+        zfo = [zfo;zs];
+        catch lsterr
+        end
           N = [N;Np(ind)];
         Nco = [Nco; Nc(ind)];
         sxo = [sxo;sx(ind)];
@@ -96,6 +102,11 @@ if n > maxi
         yfo = [yfo; ys(ind)];
         xfc = [xfc; xc(ind)];
         yfc = [yfc; yc(ind)];
+        try
+         zs = get_nn_z(i3(:,ind));
+        zfo = [zfo;zs];
+        catch lsterr
+        end
           N = [N;Np(ind)];
         Nco = [Nco; Nc(ind)];
         sxo = [sxo;sx(ind)];
@@ -121,6 +132,11 @@ else
         yfo = [yfo; ys(ind)];
         xfc = [xfc; xc(ind)];
         yfc = [yfc; yc(ind)];
+        try
+        zs = get_nn_z(i3(:,ind));
+        zfo = [zfo;zs];
+        catch lsterr
+        end
           N = [N;Np(ind)];
         Nco = [Nco; Nc(ind)];
         sxo = [sxo;sx(ind)];
@@ -133,7 +149,11 @@ else
     catch lsterr
     end
 end
-fits = [xfo(:,1),yfo(:,1),N,sxo,syo,offo]; %consolidate fits
+try
+fits = [xfo(:,1),yfo(:,1),N,sxo,syo,offo,zfo]; %consolidate fits
+catch
+    fits = [xfo(:,1),yfo(:,1),N,sxo,syo,offo]; %consolidate fits
+end
 crlbs = abs([xfc,yfc,Nco,sxco,syco,offco]); % consolidate errors
 end
 

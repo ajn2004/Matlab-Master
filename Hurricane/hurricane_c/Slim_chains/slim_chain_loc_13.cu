@@ -108,8 +108,8 @@ __global__ void  localize(double *d_iall,
 		d_beta1[0] = 0.0;
 		d_beta1[1] = 0.0;
 		d_beta1[2] = 0.0;
-		d_beta1[3] = ((double)pix-1)/4;						 // guess on sigma widths
-		d_beta1[4] = ((double)pix-1)/4;						 // guess on sigma widths
+		d_beta1[3] = 1.1;						 // guess on sigma widths
+		d_beta1[4] = 1.1;						 // guess on sigma widths
 		d_beta1[5] = 100000;
 		for (int i = 0; i <pix*pix; i++) {
 			d_i2[i] = d_iall[i + index*pix*pix];	         // this buffers [49] pixels into each d_i2, the thread index determines which image is analyzed

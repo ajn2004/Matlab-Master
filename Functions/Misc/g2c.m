@@ -1,3 +1,3 @@
 function g2c()
-cd('C:\Users\andre\Documents\GitHub\');
+cd('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master');
 clc

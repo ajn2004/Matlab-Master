@@ -11,7 +11,7 @@ x0 = [1.2, 0, 0.5, 0, 0];
 fx = lsqcurvefit(fun,x0,x(:),sigx(:));
 fy = lsqcurvefit(fun,x0,x(:),sigy(:));
 
-z_cal = [fx,fy];
+z_cal = [real(fx),real(fy)];
 
 % yx = z_cal_fit(x,z_cal(1:5));
 % yy = z_cal_fit(x,z_cal(6:end));

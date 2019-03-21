@@ -11,13 +11,13 @@
 close all; clearvars; clc;
 mkdir('Render')
 % Image settings
-dz = 50;
+dz = 60;
 smooth = 0.75;
 grid = 0;
 finw = 5; % final width in microns
 thresh = 500; % threshold for NN representation
 nn_on = 'n';
-grayscale = 'n';
+grayscale = 'y';
 %% Movie Resolution Settings
 % % 720p movie settings
 pixw = 1280;
