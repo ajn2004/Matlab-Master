@@ -14,12 +14,12 @@ close all; clearvars; clc;
 %% User Controlled Area
 emg = 0; % Enter the EM Gain value used on the camera
 pix2pho = em_gain(emg);    %Pixel to photon ratio
-q = 0.131;          % Pixel size in um
-pixw = 6;       % radius to localize (final image size is (2*pixw+1)^2 pixels)
+q = 0.128;          % Pixel size in um
+pixw = 5;       % radius to localize (final image size is (2*pixw+1)^2 pixels)
 an_dir = 'Analysis'; % name of analysis directory
 angle = 0; %approximate astig rotation in degrees
 sv_im = 'y'; % set to y/Y to save image of localizations
-thresh = 10;
+thresh = 5;
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % END USER CONTROL JUST RUN IT AND SELECT A FILE
@@ -32,9 +32,8 @@ addpath(fpath);
 addpath([fpath,'\da_c']);
 addpath([fpath,'\da_functions']);
 
-% [dname, dpath] = uigetfile('*.tif');
-% cd(dpath); % we change to the path we are going to use
-dpath = pwd;
+[dname, dpath] = uigetfile('*.tif');
+cd(dpath); % we change to the path we are going to use
 
 try
 load('back_subtract.mat');
@@ -51,8 +50,8 @@ mkdir(an_dir);
 % thresh = findathresh(files,pix2pho,mi1);
 % mi1 = 0;
 for i = 1:numel(files)
-    tic
-   func_da_storm(files(i).name, dpath, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1);
+tic
+        func_da_storm(files(i).name, dpath, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1);
     clc;
     disp(['File number ' , num2str(i) , ' out of ', num2str(numel(files))]);
     t(i) = toc;

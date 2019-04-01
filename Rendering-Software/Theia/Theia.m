@@ -12,9 +12,9 @@ close all; clearvars; clc;
 mkdir('Render')
 % Image settings
 dz = 50;
-smooth = 1;
+smooth = 0.5;
 grid = 0;
-finw = 5; % final width in microns
+finw = 9; % final width in microns
 thresh = 500; % threshold for NN representation
 nn_on = 'n';
 grayscale = 'n';
@@ -48,14 +48,12 @@ vid = VideoWriter('theia_film.avi','Uncompressed AVI');
 [fname, fpath] = uigetfile('*tol*');
 cd(fpath);
 
-load(fname, 'xf_fixed','yf_fixed','ncoords','q','crlbs','framenumber');
-build_ramp
+load(fname, 'xf_fixed','yf_fixed','zf_all','q','xf_crlb','yf_crlb');
 try
 xf_all = xf_fixed;
 yf_all = yf_fixed;
-zf_all = dcoords;
 catch lsterr
-    load(fname, 'xf_all','yf_all','zf_all','q','crlbs');
+    load(fname, 'xf_all','yf_all','zf_all','q','xf_crlb','yf_crlb');
 end
 fin_im = zeros(pixh,pixw,3);
 % the basic thought is that we are going to zoom in and rotate around various

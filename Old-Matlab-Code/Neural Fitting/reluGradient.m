@@ -1,6 +1,2 @@
 function y = reluGradient(x)
-if x > 0
-    y = 1;
-else
-    y=0;
-end
+y = exp(x)./(exp(x)+1);

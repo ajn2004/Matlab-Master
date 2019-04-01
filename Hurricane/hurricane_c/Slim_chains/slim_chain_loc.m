@@ -16,9 +16,7 @@ function [xf, xc, yf, yc, Np, Nc, sx, sxc, sy, syc, off, offc, lv] = slim_chain_
             case 169
                 [xf, xc, yf, yc, Np, Nc, sx, sxc, sy, syc, off, offc, lv] = slim_chain_loc_13(i2, thrds, rads, lpcnt);
             case 225
-                [xf, xc, yf, yc, Np, Nc, sx, sxc, sy, syc, off, offc, lv] = slim_chain_loc_15(i2, thrds, rads, lpcnt);   
-            case 529
-                [xf, xc, yf, yc, Np, Nc, sx, sxc, sy, syc, off, offc, lv] = slim_chain_loc_23(i2, thrds, rads, lpcnt);   
+                [xf, xc, yf, yc, Np, Nc, sx, sxc, sy, syc, off, offc, lv] = slim_chain_loc_15(i2, thrds, rads, lpcnt);         
             otherwise
                 xf = [];
                 xc = [];

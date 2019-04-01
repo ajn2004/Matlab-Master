@@ -8,8 +8,8 @@ clearvars;
 close all;
 clc;
 %% User variables
-pixw = 6;                                                                   % ROI 'radius'
-q = 0.131;                                                                  % Pixel size in um
+pixw = 5;                                                                   % ROI 'radius'
+q = 0.128;                                                                  % Pixel size in um
 step = 10;                                                                  % Steps between frames in nm
 CCs = 50;                                                                   % number of frames to x-correlate over
 wind = -pixw:pixw;                                                          % create window for segmentation
@@ -31,12 +31,7 @@ for i = 1:numel(files)                                                      % Lo
 %     A{i} = roball(readtiff(files(i).name),6,4);                                         % store total images into variable
 %     A{i} = bandpass(readtiff(files(i).name),1.15,5);
 %     A{i} = imgaussfilt(readtiff(files(i).name),
-    A{i} = gpu_rball(readtiff(files(i).name));
-%     A{i} = readtiff(files(i).name);
-    A{i}(:,1:4,:) = 0;
-    A{i}(end-4:end,:,:) = 0;
-    A{i}(:,end-4:end,:) = 0;
-    A{i}(1:4,:,:) = 0;
+    A{i} = readtiff(files(i).name);
 %     for j = 1:numel(A{i}(1,1,:))
 %         A{i}(:,:,j) = imgaussfilt(A{i}(:,:,j),0.18/q);
 %         A{i}(:,:,j) = band_pass(A{i}(:,:,j),2);
@@ -45,7 +40,7 @@ for i = 1:numel(files)                                                      % Lo
     ax = axes(uitab(tg1,'Title',files(i).name(1:end-4)));                   % get axes for appropriate tab
     imagesc(ax,max(A{i},[],3))                                              % Represent maximal image
     psf = denoise_psf(max(A{i},[],3),2);                                    % use wavelet transform to identify molecules
-    dps = das_peaks(psf,50);                                                % Peak finder
+    dps = das_peaks(psf,10);                                                % Peak finder
     [row,col] = find(dps == 1);                                             % Find peaks in dps
 %     ind = find_dupes([col,row],1.5*pixw);                                   % remove overlapping molecules
     % Remove duplicate entries
@@ -55,12 +50,10 @@ for i = 1:numel(files)                                                      % Lo
         draw_boxes([col,row],pixw);                                         % Show location of found regions on representation
         try
             for k = 1:numel(A{i}(1,1,:))
-                [m,n,o] = size(A{i});
-                if row(j)-pixw > 0 && row(j)+ pixw < m && col(j)-pixw > 0 && col(j)+ pixw < n 
                 [r,c] = find(A{i}(row(j) + wind, col(j) + wind,k) == max(max(A{i}(row(j) + wind, col(j) + wind,k)))); % find maxima pixel in subregion
-                psf_off{pind}(k,:) = [c(1),r(1)];
+                psf_off{pind}(k,:) = [c(j),r(j)];
                 psfs{pind}(:,:,k) = A{i}((row(j) - pixw - 1) + r(1) + wind, col(j) - pixw - 1 + c(1) + wind,k); % Store psfs in their own variable
-                end
+                
             end
             pind = pind +1;
         catch lsterr
@@ -89,12 +82,9 @@ clear A dps psf row col files pind
 ang = [];
 %% Fitting Analysis
 % Get Eliptical Angle
-for i = round(o/2) + (-CCs:-10)      % Perform eliptical Angle determination over several frames
-    try
+for i = round(o/2) + (-CCs:-10)                                             % Perform eliptical Angle determination over several frames
     [a] = get_elip_ang(psfs{1}(:,:,i),2.5,1.5);                             % Find optimal eliptical angle
     ang = [ang;a];                                                          % Save result to an array
-    catch
-    end
 end
 ang = mean(ang);                                                            % take mean angle
 
@@ -126,7 +116,7 @@ psf = [];
 % Sigma-x/y corresponds to the prime axis and not the camera
 % axis
 fms = 1:o; % input framenum
-for i = 1:numel(psfs)          % Loop over all identified ROIs
+for i = 1:numel(psfs)                                                       % Loop over all identified ROIs
     [fits, crlb, lv,fnout] = slim_locs(psfs{i},fms,zeros(o,2),ang,50,100);  % Perform Fit
     fnout = fnout.';                                                        % Save frame number which corresponds to Z-position
     xa = fits(:,1)+psf_off{i}(fnout,1);                                     % define 'assignment' variable for x 
@@ -296,7 +286,7 @@ plot(ax,z0s,ssx)                                                            % Pl
 plot(ax,z0s,ssy)                                                            % Plot average sigma-y
 
 % Determining Z parameters
-ind = abs(z0s) < 1.2;                                                       % Limit height over which to fit sigmas
+ind = abs(z0s) < 1;                                                       % Limit height over which to fit sigmas
 z_cal = get_z_params(z0s(ind),ssx(ind),ssy(ind));                           % Fit sigma curves to data and return result
 
 % Display results of Z-calibration
@@ -306,16 +296,14 @@ yy = z_cal_fit(z0s(ind),z_cal(6:end));                                      % De
 plot(ax,z0s(ind),yx,'gx')
 plot(ax,z0s(ind),yy,'gx')
 hold off
-xlim(ax,[-1.2,1.2]);
+xlim(ax,[-1,1]);
 legend('Sig-X','Sigy-Y','Location','North');
 %% Determine Necessary x-y-z correction
 % It's known that in astigmatism there may be a slight slant that
 % exists over the Z direction, in this section we'll address that
 
-zf_um = getdz(sx,sy,z_cal);   % Get Z-values
-upz = 0.9;
-dnz = -0.2;
-indy = indy & zf_um <upz & zf_um > dnz;                                              % Limit view to fitted region listed above
+zf_um = getdz(sx,sy,z_cal);                                                 % Get Z-values
+indy = indy & abs(zf_um) <0.8;                                              % Limit view to fitted region listed above
 d3 = uitab(tg4,'Title','3-D Positions');
 ax = axes(d3);
 scatter3(xf(indy),yf(indy),zf_um(indy)/q,[],psf(indy));
@@ -346,12 +334,12 @@ end
 
 % grab subsets
 dist = 0.5;
-% indy = indy & abs(zf_um) < dist;
+indy = indy & abs(zf_um) < dist;
 xfs = xf(indy);
 yfs = yf(indy);
 zfs = zf_um(indy)/q;
 pfs = psf(indy);
-zs = (min(zfs*q):0.040:max(zfs*q))/q;  % zfs is in pixels, are values are in pixels right now
+zs = (min(zfs*q):0.02:max(zfs*q))/q;  % zfs is in pixels, are values are in pixels right now
 for i = 1:numel(zs)-1 % Attempt to grab the magnification curve of stage versus fit
     id = zf_um >= zs(i)*q & zf_um < zs(i+1)*q;
     zcm = mean(zc(id));
@@ -366,7 +354,7 @@ plot(ax,zc(indy),zf_um(indy),'.');
 hold on
 plot(ax,zc(indy),a(1)*zc(indy)+a(2),'g')
 legend('Data','Fit','Location','North');
-ylim(ax,[dnz,upz])
+ylim(ax,[-0.5,0.5])
 hold off
 xlabel('Stage Position');
 ylabel('Found Position');
@@ -410,7 +398,7 @@ for i = 1:numel(zs) - 1 % Loop over a variety of height windows for averaging of
     zfm(i) = mean(zts(ind2));
 end
 
-splz = (min(zf_um(indy)):0.001:max(zf_um(indy)))/q;
+splz = (-dist:0.001:dist)/q;
 xtilt = gausssmooth(xfm,5,10);
 ytilt = gausssmooth(yfm,5,10);
 splx = spline(zs(1:end-1) + mean(diff(zs))/2,xtilt,splz);

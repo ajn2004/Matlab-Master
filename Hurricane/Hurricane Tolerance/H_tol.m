@@ -4,66 +4,36 @@
 clearvars; close all; clc;
 
 %Tolerance data
-zlims= [-0.1941, 0.75]; % Limit of the absolute value of z-data in pixels
-flims = [0,-1];
+absz = 6; % Limit of the absolute value of z-data in pixels
 lat_max = 0.1; % Maximum lateral uncertainty in micrometers
-N_tol = [1400, 1400000]; % Tolerance on N
-offlim = [0, 1250];
-
-iln = -2;  % lower bound on llv/N
-frac_lim = 0.15; % Limit on the fractional uncertainty of any value
-off_frac = 0.3;
-
-
+N_tol = [0, 10000]; % Tolerance on N
+s_tol = [0,4]; % sigma tolerances
+iln = -1;  % lower bound on llv/N
+frac_lim = 0.2; % Limit on the fractional uncertainty of any value
 
 [fname, fpath] = uigetfile('*dast.mat');
 cd(fpath)
 load([fpath,fname]);
-if flims(2) == -1
-    flims(2) = max(framenumber);
-end
-[~, p] = getdz(1,1,cal.z_cal);
 
-s_tol = [min(min([p(:,2),p(:,3)])),max(max([p(:,2),p(:,3)]))]; % sigma tolerances
-% s_tol = [0.8, 8]; % sigma tolerances
-fits(:,4) = abs(fits(:,4));
-fits(:,5) = abs(fits(:,5));
 %Define fractionals
 fr_N =  crlbs(:,3).^0.5./fits(:,3);
 fr_sx = crlbs(:,4).^0.5./fits(:,4);
 fr_sy = crlbs(:,5).^0.5./fits(:,5);
 fr_o =  crlbs(:,6).^0.5./fits(:,6);
 ilv = llv(:)./fits(:,3);
-eps = abs(fits(:,4)./fits(:,5));
 
 % Apply Tolerances
-% ind = start_w_z(ncoords(:,3)*q,eps, cal.z_cal);
-
-
 ind = fits(:,3) > N_tol(1) & fits(:,3) < N_tol(2); % Photon Tolerance
-
-ind = ind & abs(framenumber - mean(flims)) <= diff(flims)/2;
-
-ind = ind & abs(ncoords(:,3)*q-mean(zlims)) <= diff(zlims)/2;
-
-ind = ind & abs(fits(:,6)-mean(offlim)) <= diff(offlim)/2;
-
-ind = ind & (abs(fits(:,4)).*abs(fits(:,5))).^0.5 > s_tol(1) & (abs(fits(:,4)).*abs(fits(:,5))).^0.5 < s_tol(2); % Photon Tolerance
-% ind = ind & fits(:,5) > s_tol(1) & fits(:,5) < s_tol(2); % Photon Tolerance
-
+ind = ind & abs(ncoords(:,3)) < absz;
+ind = ind & fits(:,4) > s_tol(1) & fits(:,4) < s_tol(2); % Photon Tolerance
+ind = ind &fits(:,5) > s_tol(1) & fits(:,5) < s_tol(2); % Photon Tolerance
 ind = ind & q*crlbs(:,1).^.5 < lat_max & q*crlbs(:,2).^.5 < lat_max; % Lateral Uncertainty Tolerance
-
 ind = ind & ilv > iln; % llv tolerance
-
-ind = ind & fr_N < frac_lim & abs(fr_o) < off_frac; % Fraction photon tolerance
-
+ind = ind & fr_N < frac_lim & abs(fr_o) < frac_lim; % Fraction photon tolerance
 ind = ind & fr_sx < frac_lim & fr_sy < frac_lim; % Fraction width tolerance
 
-% ind = ind & eps <= maxe & eps >= mine;
-
-save('Tolfile.mat','flims','zlims','lat_max','N_tol','s_tol','iln','frac_lim','off_frac','offlim');
+save('Tolfile.mat','absz','lat_max','N_tol','s_tol','iln','frac_lim');
 % Setting up our figure
-zf = func_build_ramp(ncoords(:,3)*q,framenumber,40,5,0);
 f = figure;
 tg = uitabgroup(f);
 t1 = uitab(tg,'Title','Localizations');
@@ -82,7 +52,7 @@ ylabel(ax,'microns');
 axis equal
 t3 = uitab(tg1,'Title','Post-Tolerance 3D');
 ax = axes(t3);
-plot3(ax, ncoords(ind,1)*q,ncoords(ind,2)*q,zf(ind),'.');
+plot3(ax, ncoords(ind,1)*q,ncoords(ind,2)*q,ncoords(ind,3)*q,'.');
 xlabel(ax,'microns');
 ylabel(ax,'microns');
 zlabel(ax,'microns');
@@ -94,7 +64,7 @@ t2 = uitab(tg,'Title','Fit-Histograms');
 tg2 = uitabgroup(t2);
 t21 = uitab(tg2,'Title','Z-Histogram');
 ax = axes(t21);
-histogram(ax,zf(ind));
+histogram(ax,ncoords(ind,3)*q);
 xlabel('Z-position(um)')
 ylabel('Frequency')
 title('Z-Position Histogram')

@@ -63,6 +63,5 @@ for i=n_start:n_end
 end
 TifLink.close();
 w = warning ('on','all');
-im2 = double(im1);
-% im2 = im1;
+im2 = single(im1);
 end
