@@ -41,7 +41,7 @@ ifind = gpu_waves(iprod);
 % thrsh = input('What should the threshold be? ');
 % thrsh = min(iprod(:))*thresh/100;
 dps = cpu_peaks(ifind,thresh,pixw);
-% in_d_eye(iprod, dps, pixw);
+in_d_eye(iprod, dps, pixw);
 
 clear ip ipf i1
 
@@ -71,7 +71,7 @@ fits(:,5) = abs(fits(:,5));
 zf = getdz(abs(fits(:,4)),abs(fits(:,5)),cal.z_cal)/q;
 coords = [fits(:,1:2),zf];
 [ncoords] = astig_tilt(coords,cal);
-save('results_of_bump.mat','fnum','q','iloc','cal','cents');
+% save('results_of_bump.mat','fnum','q','iloc','cal','cents');
 
 % save('for_trial.mat','iloc'
 

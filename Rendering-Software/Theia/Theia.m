@@ -11,13 +11,13 @@
 close all; clearvars; clc;
 mkdir('Render')
 % Image settings
-dz = 60;
-smooth = 0.75;
+dz = 50;
+smooth = 1;
 grid = 0;
 finw = 5; % final width in microns
 thresh = 500; % threshold for NN representation
 nn_on = 'n';
-grayscale = 'y';
+grayscale = 'n';
 %% Movie Resolution Settings
 % % 720p movie settings
 pixw = 1280;
@@ -48,11 +48,12 @@ vid = VideoWriter('theia_film.avi','Uncompressed AVI');
 [fname, fpath] = uigetfile('*tol*');
 cd(fpath);
 
-load(fname, 'xf_fixed','yf_fixed','ncoords','q','crlbs');
+load(fname, 'xf_fixed','yf_fixed','ncoords','q','crlbs','framenumber');
+build_ramp
 try
 xf_all = xf_fixed;
 yf_all = yf_fixed;
-zf_all = ncoords(:,3);
+zf_all = dcoords;
 catch lsterr
     load(fname, 'xf_all','yf_all','zf_all','q','crlbs');
 end
