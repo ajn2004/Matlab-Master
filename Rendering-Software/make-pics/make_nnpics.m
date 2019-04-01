@@ -14,7 +14,9 @@ elseif numvar >= 2
     dz = varargin{2};
 end
 
-
+xf_all = xf_fixed;
+yf_all = yf_fixed;
+zf_all = ncoords(:,3);
     nn = xf_all*0;
     indy = [];
     for i = 1:numel(xf_all)
