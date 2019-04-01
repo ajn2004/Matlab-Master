@@ -10,6 +10,12 @@ elseif numvar >= 1
 end
 %% Figuring out pixel size
 q = q*1000; % convert q to nm
+xf_crlb = crlbs(:,1);
+yf_crlb = crlbs(:,2);
+xf_all = xf_fixed;
+yf_all = yf_fixed;
+zf_all = ncoords(:,3);
+
 rad = mean((xf_crlb.*yf_crlb).^0.25)*q; % all distances in this are determined off of loc_unc
 grid_size = 0.5*rad; % pixwidth in nm/pix
 mag = q/grid_size; % Sam's 'expansion' factor, effectively zoom between pix and grid

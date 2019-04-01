@@ -8,12 +8,12 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 clearvars; close all; clc;
 
-dmax = 120;
+dmax = 100;
 
 % i = 3;
 files = dir('*.mat');
 % ds = 10.^([0 0.5 1 1.5 2 2.5 3 3.5 4]);
-% for dmax = 20:20:200
+% for dmax = 10:10:100
     for i = 1:numel(files)
         func_traj_analysis(files(i).name,dmax);  
     end

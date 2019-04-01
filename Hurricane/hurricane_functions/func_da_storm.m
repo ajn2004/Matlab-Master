@@ -2,7 +2,7 @@ function func_da_storm(fname,data_d, an_dir, q, pix2pho, pixw,thresh, angle, sv_
 
 % Convert Variabls
 % pix2pho = single(pix2pho);
-q = single(q);
+q = double(q);
 load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Hurricane\hurricane_functions\z_calib.mat')
 % if exist([data_d, 'z_calib.mat'])
 %     cal = load([data_d 'z_calib.mat']);
@@ -12,7 +12,7 @@ load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Hurricane\hurricane_functi
 % mi1 = 0
 % Load file and dark current background subtraction
 i1 = (readtiff(fname) - mi1);
-i1 = i1.*(i1>0);
+% i1 = i1.*(i1>0);
 [m,n,o] = size(i1);
 % i1(1:30,:,:) = 0;
 % i1(m-30:m,:,:) = 0;
@@ -20,7 +20,7 @@ i1 = i1.*(i1>0);
 % i1(:,n-30:n,:) = 0;
 % Rolling Ball Background Subtract
 % iprod = rollingball(i1);
-iprod = roball(i1,6,6);
+iprod = gpu_rball(i1);
 % iprod = bp_subtract(i1);
 % iprod = imgaussfilt(i1,0.8947);
 % iprod = i1;
@@ -30,7 +30,8 @@ iprod = roball(i1,6,6);
 % thrsh = 300/pix2pho;
 % diprod = diff(iprod,3);
 % for i = 1:o
-ifind = denoise_psf(iprod,2);
+% ifind = denoise_psf(iprod,2);
+ifind = gpu_waves(iprod);
 % thrsh = thresh/100*mean(max(max(iprod)));
 % tic
 % thrsh = 3*std(iprod(:)) + mean(iprod(:));
@@ -38,20 +39,14 @@ ifind = denoise_psf(iprod,2);
 % thrsh = thresh/100*mean(max(max(diprod)));
 % surf(max(ifind,[],3));
 % thrsh = input('What should the threshold be? ');
-thrsh = max(ifind(:))*thresh/100;
-dps = cpu_peaks(ifind,thrsh,pixw);
-% for i = 1:o
-%     imagesc(iprod(:,:,i))
-%     [row,col] =find(dps(:,:,i) == 1);
-%     draw_boxes([col,row],pixw);
-%     drawnow
-% end
-% end
-sum(dps(:))
+% thrsh = min(iprod(:))*thresh/100;
+dps = cpu_peaks(ifind,thresh,pixw);
+in_d_eye(iprod, dps, pixw);
 
 clear ip ipf i1
 
 % divide up the data
+
 [iloc, fnum, cents] = divide_up(iprod, pixw, dps);
 [m,n,o] = size(iloc);
 % remove duplicate data
@@ -69,15 +64,16 @@ fnum(ind) = [];
 % [xf_all,xf_crlb, yf_all,yf_crlb,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, iters, cex, cey] = da_splines(iloc, fnum, cents, cal, pixw);
 % [~,~, ~,~,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, iters, cex, cey] = da_splines(iloc, fnum, cents, cal, pixw);
 % i2 = reshape(iloc,m*n,o);
+% save('thisbit.mat','iloc','cents','fnum','cal');
 [fits, crlbs, llv, framenumber] = slim_locs(iloc, fnum, cents, cal.ang);
-[cfits] = cen_locs(iloc,fnum,cents);
-zf = getdz(fits(:,4),fits(:,5),cal.z_cal)/q;
+fits(:,4) = abs(fits(:,4));
+fits(:,5) = abs(fits(:,5));
+zf = getdz(abs(fits(:,4)),abs(fits(:,5)),cal.z_cal)/q;
 coords = [fits(:,1:2),zf];
 [ncoords] = astig_tilt(coords,cal);
+% save('results_of_bump.mat','fnum','q','iloc','cal','cents');
 
-%% Find all molecules that pass the initial localization requirements
-
-
+% save('for_trial.mat','iloc'
 
 % Save the Analysis
 %  save([an_dir,'\', fname(1:end-4),'_dast.mat'], 'zf_all','sigx_all' ,'sigy_all','sigx_crlb','sigy_crlb','y','iloc','xf_all' , 'xf_crlb' , 'yf_all' , 'yf_crlb' , 'N' , 'N_crlb' ,'off_all' , 'off_crlb', 'framenum_all', 'llv','pixw','q','pix2pho');

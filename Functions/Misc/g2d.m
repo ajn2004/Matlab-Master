@@ -1,2 +1,2 @@
 function g2d()
-cd('G:\Dropbox\Data')
+cd('C:\Users\AJN Lab\Dropbox\Data')
