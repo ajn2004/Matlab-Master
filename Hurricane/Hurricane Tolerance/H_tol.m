@@ -4,10 +4,10 @@
 clearvars; close all; clc;
 
 %Tolerance data
-zlims= [-0.1941, 0.75]; % Limit of the absolute value of z-data in pixels
-flims = [0,-1];
+zlims= [-0.2, 0.8]; % Limit of the absolute value of z-data in pixels
+flims = [5,-1];
 lat_max = 0.1; % Maximum lateral uncertainty in micrometers
-N_tol = [1400, 1400000]; % Tolerance on N
+N_tol = [200, 1400000]; % Tolerance on N
 offlim = [0, 1250];
 
 iln = -2;  % lower bound on llv/N
@@ -63,7 +63,8 @@ ind = ind & fr_sx < frac_lim & fr_sy < frac_lim; % Fraction width tolerance
 
 save('Tolfile.mat','flims','zlims','lat_max','N_tol','s_tol','iln','frac_lim','off_frac','offlim');
 % Setting up our figure
-zf = func_build_ramp(ncoords(:,3)*q,framenumber,40,5,0);
+r = str2num(fname(strfind(fname,'_r')+2));
+zf = func_shift_correct(ncoords(:,3)*q,framenumber,r);
 f = figure;
 tg = uitabgroup(f);
 t1 = uitab(tg,'Title','Localizations');

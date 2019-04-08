@@ -41,7 +41,7 @@ ifind = gpu_waves(iprod);
 % thrsh = input('What should the threshold be? ');
 % thrsh = min(iprod(:))*thresh/100;
 dps = cpu_peaks(ifind,thresh,pixw);
-in_d_eye(iprod, dps, pixw);
+% in_d_eye(iprod, dps, pixw);
 
 clear ip ipf i1
 
