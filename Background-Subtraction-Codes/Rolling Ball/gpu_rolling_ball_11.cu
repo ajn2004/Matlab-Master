@@ -14,7 +14,7 @@ we expect a format of [im_conv] = image_process [i1, i_gauss, i_ball];
 #include <math.h>
 #include <stdio.h>
 #define PI 3.14159265358979323846
-#define O_TILE_WIDTH 20								// variable to determine how many output tiles will be considered in a block
+#define O_TILE_WIDTH 32								// variable to determine how many output tiles will be considered in a block
 #define pix 11
 # define BLOCK_WIDTH (O_TILE_WIDTH + (pix-1))		// block width needs to be output tiles + mask_width - 1 to ensure enough pixels are covered for calculation
 

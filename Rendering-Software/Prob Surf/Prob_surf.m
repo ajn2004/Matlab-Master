@@ -10,6 +10,7 @@ clc;
 [m,n] = hd_stats(720);
 m = 245;
 n = 268;
+flat = 1000;
 bin = 70; % bin size in nm
 
 
@@ -57,7 +58,7 @@ mag = max([nmag,mmag]);
 L = -100;
 lp = -L/mag;
 
-zsp = (1:o0) + lp+100;
+zsp = (1:o0)/flat + lp+100;
 zs = 1:o0;
 % X is being defined as the column-coordinate of the output image
 % Y is defined as the row-coordinate
