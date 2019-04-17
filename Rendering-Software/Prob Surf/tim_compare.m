@@ -3,32 +3,50 @@ close all;
 clearvars;
 clc;
 
+pnts = 4000;
 cd('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Rendering-Software\Prob Surf');
 load('C:\Users\AJN Lab\Dropbox\Data\4-2-19 hek-3d-trial\Analysis\toleranced4thru8\DC\hek5_r2_dz20_dast_tol_dc.mat')
 xf = xf_fixed*q;
 yf = yf_fixed*q;
 zf = ncoords(:,3)*q;
 zf = func_shift_correct(ncoords(:,3)*q,framenumber,2).';
+%% Generate Simulation Data
+% R = 1; % Radius in microns
+% for i = 1:pnts
+%     theta = rand*2*pi;
+%     phi = rand*pi;
+%     xf(i,1) = R*cos(theta)*sin(phi);
+%     yf(i,1) = R*sin(theta)*sin(phi);
+%     zf(i,1) = R*cos(phi);
+% end
 xf = xf - mean(xf);
 yf = yf - mean(yf);
 zf = zf - mean(zf);
+% for i = 1:90
 [rx,ry,rz] = rot_mat(deg2rad(0));
 rots = rx*[xf,yf,zf].';
+
 % sizes = [500, 400, 300, 200, 100, 90, 80, 70, 60, 50, 40, 30, 25]; 
 % for kk = 1:numel(sizes)
-for i = 1:100
+% for i = 1:100
     tic
 % disp('GOING!')
 % try
-    i1 = func_3D_dens(single(rots).',30,0.06);
+    [ix] = func_3D_dens(single([rots]).',30,0.04);
 % catch lsterr
 % end
-    gpu_t(i) = toc
+    
+%     gpu_t(1) = toc
+%    i1(1,1,1)
 % toc
 % %     
-end
+% imagesc(max(ix,[],3))
+% drawnow
+% axis image
+% M(i) = getframe(gcf);
+% end
 
-% [m,n,o] = size(i1);
+[m,n,o] = size(ix);
 % pixes(kk) = m*n*o;
 % gputim(kk) = mean(gpu_t);
 % for tm = 1:100
@@ -42,19 +60,30 @@ end
 
 %     for i = 1:o
 %         imagesc(i1(:,:,i));
-imagesc(mean(i1,3));
+% imagesc(mean(i1,3));
+% subplot(1,3,1);
+% imagesc(mean(ix,3));
+% axis image
+% title('DX')
+% subplot(1,3,2);
+% imagesc(mean(iy,3));
+% axis image
+% title('DY')
+% subplot(1,3,3);
+% imagesc(mean(iz,3));
 %     imagesc(i1(:,:,2));
-        axis image
+%         axis image
+%         title('DZ')
         drawnow
 %         M(i) = getframe(gcf);
 %     end
-%     for i = numel(M):-1:1
-%         imagesc(i1(:,:,i));
-%         axis image
-%         drawnow
-%         M(numel(M)+1) = getframe(gcf);
-%     end
-%     movie2gif(M,'diffraction_roll_image.gif','Delaytime', 0.05,'LoopCount',Inf);
+    for i = 1:o
+        imagesc(abs(ix(:,:,i)));
+        axis image
+        drawnow
+        M(i) = getframe(gcf);
+    end
+    movie2gif(M,'diffraction_roll_image.gif','Delaytime', 0.05,'LoopCount',Inf);
 %     plot3(rots(1,:),rots(2,:),rots(3,:),'.')
 %     xlim([-10 10])
 %     ylim([-10 10])
