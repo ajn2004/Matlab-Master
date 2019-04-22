@@ -11,14 +11,14 @@ yf = yf_fixed*q;
 zf = ncoords(:,3)*q;
 zf = func_shift_correct(ncoords(:,3)*q,framenumber,2).';
 %% Generate Simulation Data
-% R = 1; % Radius in microns
-% for i = 1:pnts
-%     theta = rand*2*pi;
-%     phi = rand*pi;
-%     xf(i,1) = R*cos(theta)*sin(phi);
-%     yf(i,1) = R*sin(theta)*sin(phi);
-%     zf(i,1) = R*cos(phi);
-% end
+R = 4; % Radius in microns
+for i = 1:pnts
+    theta = rand*2*pi;
+    phi = rand*pi;
+    xf(i,1) = R*cos(theta)*sin(phi);
+    yf(i,1) = R*sin(theta)*sin(phi);
+    zf(i,1) = R*cos(phi);
+end
 xf = xf - mean(xf);
 yf = yf - mean(yf);
 zf = zf - mean(zf);
@@ -32,7 +32,7 @@ rots = rx*[xf,yf,zf].';
     tic
 % disp('GOING!')
 % try
-    [ix] = func_3D_dens(single([rots]).',30,0.04);
+    [ix] = func_3D_dens(single([rots]).',70,0.25);
 % catch lsterr
 % end
     
