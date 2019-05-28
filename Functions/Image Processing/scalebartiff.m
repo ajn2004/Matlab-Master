@@ -1,4 +1,6 @@
-% scalebar tiff
+
+3
+.% scalebar tiff
 % add a scale bar to a tiff series
 mkdir('Bar');
 scb = 10; % um

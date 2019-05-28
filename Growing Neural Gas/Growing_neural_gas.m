@@ -18,8 +18,8 @@ file = ['C:\Users\AJN Lab\Dropbox\Data\4-2-19 hek-3d-trial\Analysis\toleranced4t
 fname = 'hek6_r2_dz20_dast_tol_dc_100nm_traj.mat';
 load(file,'ncoords','framenumber','q');
 
-% shows = [1:20:1000,1000:200:10000,10000:2000:50000];
-shows = [];
+shows = [1:20:1000,1000:200:10000,10000:2000:50000];
+% shows = [];
 % Localization based preallocation
 r = str2num(fname(strfind(fname,'_r')+2));
 zf = func_shift_correct(ncoords(:,3)*q,framenumber,r).';
@@ -227,9 +227,9 @@ while true
     end
 end
 % movie2gif(M,'Results_of_GNG.gif','DelayTime',0.1);
-for i = 1:360
-    view([-183+i,38])
-    drawnow
-    M(i) = getframe(gcf);
-end
+% for i = 1:360
+%     view([-183+i,38])
+%     drawnow
+%     M(i) = getframe(gcf);
+% end
 % movie2gif(M,'Final_gng.gif','DelayTime',0.1);

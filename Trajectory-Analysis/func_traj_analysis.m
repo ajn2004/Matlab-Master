@@ -8,7 +8,8 @@ framenum_all = framenumber;
 foll = zeros(numel(framenum_all),1);
 xf_all = ncoords(:,1);
 yf_all = ncoords(:,2);
-zf_all = ncoords(:,3);
+zf_all = func_shift_correct(ncoords(:,3)*q,framenumber,1);
+% zf_all = ncoords(:,3);
 % loop over all frames to build the connections
 for i = 1:max(framenum_all)
     clear dist
