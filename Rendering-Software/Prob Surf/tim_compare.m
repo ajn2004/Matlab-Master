@@ -1,27 +1,27 @@
 %% Speed Test
 close all;
-clearvars;
+% clearvars;
 clc;
 radi = 10;
 pnts = 100000;
 % cd('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Rendering-Software\Prob Surf');
 % load('C:\Users\AJN Lab\Dropbox\Data\4-26-19 HEK Cell data\Analysis\toleranced\DC\HEK CELL 3_1_dast_tol_dc.mat')
-% xf = xf_fixed*q;
-% yf = yf_fixed*q;
-% zf = ncoords(:,3)*q;
+xf = xf_fixed*q;
+yf = yf_fixed*q;
+zf = ncoords(:,3)*q;
 % zf = func_shift_correct(ncoords(:,3)*q,framenumber,2).';
 %% Generate Simulation Data
 R = 1; % Radius in microns
-for i = 1:pnts
-    theta = rand*2*pi;
-    phi = rand*pi;
-    xf(i,1) = R*cos(theta)*sin(phi);
-    yf(i,1) = R*sin(theta)*sin(phi);
-    zf(i,1) = R*cos(phi);
-end
-xf = xf - mean(xf);
-yf = yf - mean(yf);
-zf = zf - mean(zf);
+% for i = 1:pnts
+%     theta = rand*2*pi;
+%     phi = rand*pi;
+%     xf(i,1) = R*cos(theta)*sin(phi);
+%     yf(i,1) = R*sin(theta)*sin(phi);
+%     zf(i,1) = R*cos(phi);
+% end
+% xf = xf - mean(xf);
+% yf = yf - mean(yf);
+% zf = zf - mean(zf);
 % for i = 1:90
 [rx,ry,rz] = rot_mat(deg2rad(0));
 rots = rx*[xf,yf,zf].';
@@ -32,7 +32,7 @@ rots = rx*[xf,yf,zf].';
     tic
 % disp('GOING!')
 % try
-    [ix] = func_3D_dens(single([rots]).',10,0.001*radi);
+    [ix] = func_3D_dens(single([rots]).',100,0.1);
 % catch lsterr
 % end
     

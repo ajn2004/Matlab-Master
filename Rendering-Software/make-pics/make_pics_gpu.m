@@ -24,7 +24,7 @@ end
 
 xf = ((xf - xl(1))*scale);
 yf = ((yf - yl(1))*scale);
-xf = xf + 960/2;
+xf = xf;
 
 m = int64(m);
 n = int64(n);

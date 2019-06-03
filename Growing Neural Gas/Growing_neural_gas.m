@@ -14,7 +14,7 @@ alpha = 0.5;
 decr = 0.995;
 vangle = [00, 90];
 % [fname, fpath] = uigetfile('*mat');
-file = ['C:\Users\AJN Lab\Dropbox\Data\4-2-19 hek-3d-trial\Analysis\toleranced4thru8\DC\traj\hek5_r2_dz20_dast_tol_dc_100nm_traj.mat'];
+file = ['C:\Users\AJN Lab\Dropbox\Data\5-22-19 Storm Neurons\Analysis\toleranced\DC\traj\Cell3_dz0_r0_10mw_dast_tol_dc_150nm_traj.mat'];
 fname = 'hek6_r2_dz20_dast_tol_dc_100nm_traj.mat';
 load(file,'ncoords','framenumber','q');
 
