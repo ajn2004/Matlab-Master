@@ -6,9 +6,9 @@ close all; clearvars; clc; % clean up
 
 %% User Settings
 % SNRs = 10.^(1:0.1:5); % these will enter the N to offset calculation via the equation snr = N/offset^0.5
-frames = 1000; % Number of molecules to create at each setting
-pixw = 5;   % size of total image molecule is created on
-q = 0.128;
+frames = 10000; % Number of molecules to create at each setting
+pixw = 6;   % size of total image molecule is created on
+q = 0.122;
 % End User Settings
 
 %% PSF Developement
@@ -19,7 +19,7 @@ q = 0.128;
 
 x0 = rand(1) - 0.5; % Center the Molecule somewhere in the first pixel
 y0 = rand(1) - 0.5; % Center the Molecule somewhere in the first pixel
-N = 1200; % SNR will be created from setting the offset relative to the N
+N = 800; % SNR will be created from setting the offset relative to the N
 phalp = 21;
 
 % Allow user to 'choose' a sigma value based on height of the molecule
@@ -36,19 +36,20 @@ clear zs
 % id = round(x); % Choose molecule index determined by user
 % sx = fits(id,4); % assign sigma values from molecule id
 % sy = fits(id,5);
-sx = 1.978;
-sy = 1.069;
+
 ind = find(parms(:,1) == 0);
 sx = parms(ind,2);
 sy = parms(ind,3);
-B = 53;
+% B = 25;
 [xpix,ypix] = meshgrid(-pixw:pixw); % Create mesh grids for desired window
 Ns = 100:100:10000;
 % for lk = 1:numel(Ns)
 %     N = Ns(lk);
-    SNRs = 1:(N/N^0.5);
+%     SNRs = (N/N^0.5);
+SNRs = 26;
 for i = 1:numel(SNRs) % Loop over SNRs
-    
+%     x0 = rand(1) - 0.5; % Center the Molecule somewhere in the first pixel
+% y0 = rand(1) - 0.5; % Center the Molecule somewhere in the first pixel
     % Variables to Loop Over
 %     i1x = 1/2.*(erf((xpix - x0 + 1/2)./(2*3.92^2)^0.5)-erf((xpix - x0 - 1/2)./(2*3.92^2)^0.5)); % error function of x integration over psf for each pixel
 %     i1y = 1/2.*(erf((ypix - y0 + 1/2)./(2*3.92^2)^0.5)-erf((ypix - y0 - 1/2)./(2*3.92^2)^0.5)); % error function of y integration over psf for each pixel
@@ -69,7 +70,7 @@ for i = 1:numel(SNRs) % Loop over SNRs
 %           im1(:,:,j) = double(imnoise(uint16(i1),'poisson')) - imgaussfilt(B,1.5);
           imj = im1(:,:,j);
           sim = sort(imj(:));
-          im1(:,:,j) = im1(:,:,j) - min(min(im1(:,:,j)));
+          im1(:,:,j) = im1(:,:,j);
 %         surf(im1(:,:,j))
 %         drawnow
     end
@@ -104,7 +105,7 @@ for i = 1:numel(A)
        ystd(i) = std(coords(:,2)*q*1000);
        sxstd(i) = q*mean((fits(:,4)-sx).^2).^0.5;
        systd(i) = q*mean((fits(:,5)-sy).^2).^0.5;
-       zstd(i) = std(coords(:,3)*q*1000);
+       zstd(i) = std(coords(:,3)*q*1000)
    catch
    end
 end     

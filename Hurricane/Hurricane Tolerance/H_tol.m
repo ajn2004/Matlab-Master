@@ -4,14 +4,15 @@
 clearvars; close all; clc;
 
 %Tolerance data
-zlims= [-0.2, 0.8]; % Limit of the absolute value of z-data in pixels
-flims = [5,-1];
+mwidth = 6; %marker width for visualization, does not affect data
+zlims= [-0.49, 0.49]; % Limit of the absolute value of z-data in pixels
+flims = [2,-1];
 lat_max = 0.1; % Maximum lateral uncertainty in micrometers
 N_tol = [200, 1400000]; % Tolerance on N
 offlim = [0, 1250];
-
-iln = -2;  % lower bound on llv/N
-frac_lim = 0.15; % Limit on the fractional uncertainty of any value
+minsnr = 10;
+iln = -10;  % lower bound on llv/N
+frac_lim = 0.3; % Limit on the fractional uncertainty of any value
 off_frac = 0.3;
 
 
@@ -24,7 +25,8 @@ if flims(2) == -1
 end
 [~, p] = getdz(1,1,cal.z_cal);
 
-s_tol = [min(min([p(:,2),p(:,3)])),max(max([p(:,2),p(:,3)]))]; % sigma tolerances
+s_tol = [min(min([p(:,2),p(:,3)])),3*max(max([p(:,2),p(:,3)]))]; % sigma tolerances
+snr =(fits(:,3)./(fits(:,3)+(2*6+1)^2*fits(:,6)).^0.5);
 % s_tol = [0.8, 8]; % sigma tolerances
 fits(:,4) = abs(fits(:,4));
 fits(:,5) = abs(fits(:,5));
@@ -41,6 +43,8 @@ eps = abs(fits(:,4)./fits(:,5));
 
 
 ind = fits(:,3) > N_tol(1) & fits(:,3) < N_tol(2); % Photon Tolerance
+
+ind = ind & snr >= minsnr;
 
 ind = ind & abs(framenumber - mean(flims)) <= diff(flims)/2;
 
@@ -61,17 +65,22 @@ ind = ind & fr_sx < frac_lim & fr_sy < frac_lim; % Fraction width tolerance
 
 % ind = ind & eps <= maxe & eps >= mine;
 
-save('Tolfile.mat','flims','zlims','lat_max','N_tol','s_tol','iln','frac_lim','off_frac','offlim');
+save('Tolfile.mat','flims','minsnr','zlims','lat_max','N_tol','s_tol','iln','frac_lim','off_frac','offlim');
+notind = logical(1-ind);
 % Setting up our figure
 r = str2num(fname(strfind(fname,'_r')+2));
-zf = func_shift_correct(ncoords(:,3)*q,framenumber,r);
+% zf = func_shift_correct(ncoords(:,3)*q,framenumber,r);
+zf = ncoords(:,3)*q;
+% zf = getdz(abs(fits(:,4)),abs(fits(:,5)),cal.z_cal);
 f = figure;
 tg = uitabgroup(f);
 t1 = uitab(tg,'Title','Localizations');
 tg1 = uitabgroup(t1);
 t21 = uitab(tg1,'Title','Pre-Tolerance');
 ax = axes(t21);
-plot(ax, ncoords(:,1)*q,ncoords(:,2)*q,'.');
+s = scatter3(ax, ncoords(:,1)*q,ncoords(:,2)*q,zf,mwidth,framenumber);
+s.MarkerFaceColor = s.MarkerEdgeColor;
+colormap('jet')
 xlabel(ax,'microns');
 ylabel(ax,'microns');
 axis equal
@@ -83,13 +92,14 @@ ylabel(ax,'microns');
 axis equal
 t3 = uitab(tg1,'Title','Post-Tolerance 3D');
 ax = axes(t3);
-plot3(ax, ncoords(ind,1)*q,ncoords(ind,2)*q,zf(ind),'.');
+s = scatter3(ax, ncoords(ind,1)*q,ncoords(ind,2)*q,zf(ind),mwidth, framenumber(ind));
 xlabel(ax,'microns');
 ylabel(ax,'microns');
 zlabel(ax,'microns');
 axis equal
 clear t1 t2 t3 t21 ax
-
+s.MarkerFaceColor = s.MarkerEdgeColor;
+colormap('jet');
 t2 = uitab(tg,'Title','Fit-Histograms');
 
 tg2 = uitabgroup(t2);
@@ -125,7 +135,14 @@ xlabel(ax,'Offset (photons)')
 ylabel(ax,'Frequency')
 title('Offset Histogram')
 
-clear t2 tg2 t21 t22 t23 t24
+t25 = uitab(tg2,'Title','SNR-Histogram');
+ax = axes(t25);
+histogram(ax,snr(ind));
+xlabel(ax,'SNR')
+ylabel(ax,'Frequency')
+title('SNR Histogram')
+
+clear t2 tg2 t21 t22 t23 t24 t25
 
 t2 = uitab(tg,'Title','CRlB-Histograms');
 tg2 = uitabgroup(t2);

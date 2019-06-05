@@ -25,5 +25,8 @@ if isempty(finfo)
 end
 
 for i = 1:numel(finfo)
+    try
     func_spline_drift(finfo(i).name,pix_size,chunk_size);
+    catch
+    end
 end
