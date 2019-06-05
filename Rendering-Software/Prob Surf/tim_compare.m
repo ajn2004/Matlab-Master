@@ -3,22 +3,23 @@ close all;
 clearvars;
 clc;
 
-pnts = 4000;
-cd('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Rendering-Software\Prob Surf');
-load('C:\Users\AJN Lab\Dropbox\Data\4-2-19 hek-3d-trial\Analysis\toleranced4thru8\DC\hek5_r2_dz20_dast_tol_dc.mat')
-xf = xf_fixed*q;
-yf = yf_fixed*q;
-zf = ncoords(:,3)*q;
-zf = func_shift_correct(ncoords(:,3)*q,framenumber,2).';
+pnts = 20000;
+%cd('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Rendering-Software\Prob Surf');
+% load('C:\Users\AJN Lab\Dropbox\Data\4-2-19 hek-3d-trial\Analysis\toleranced4thru8\DC\hek5_r2_dz20_dast_tol_dc.mat')
+% xf = xf_fixed*q;
+% yf = yf_fixed*q;
+% zf = ncoords(:,3)*q;
+% zf = func_shift_correct(ncoords(:,3)*q,framenumber,2).';
 %% Generate Simulation Data
-% R = 1; % Radius in microns
-% for i = 1:pnts
-%     theta = rand*2*pi;
-%     phi = rand*pi;
-%     xf(i,1) = R*cos(theta)*sin(phi);
-%     yf(i,1) = R*sin(theta)*sin(phi);
-%     zf(i,1) = R*cos(phi);
-% end
+R = 1; % Radius in microns
+for i = 1:pnts
+    phi = rand*pi;
+    theta = rand*2*pi;
+    
+    xf(i,1) = R*cos(theta)*sin(phi);
+    yf(i,1) = R*sin(theta)*sin(phi);
+    zf(i,1) = R*cos(phi);
+end
 xf = xf - mean(xf);
 yf = yf - mean(yf);
 zf = zf - mean(zf);
