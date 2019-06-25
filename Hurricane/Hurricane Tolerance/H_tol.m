@@ -69,8 +69,8 @@ save('Tolfile.mat','flims','minsnr','zlims','lat_max','N_tol','s_tol','iln','fra
 notind = logical(1-ind);
 % Setting up our figure
 r = str2num(fname(strfind(fname,'_r')+2));
-% zf = func_shift_correct(ncoords(:,3)*q,framenumber,r);
-zf = ncoords(:,3)*q;
+zf = func_shift_correct(ncoords(:,3)*q,framenumber,r);
+% zf = ncoords(:,3)*q;
 % zf = getdz(abs(fits(:,4)),abs(fits(:,5)),cal.z_cal);
 f = figure;
 tg = uitabgroup(f);

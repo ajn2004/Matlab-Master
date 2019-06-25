@@ -5,7 +5,7 @@ azstrt = 0;
 azend = 360;
 elstrt = 90;
 step = 1;
-elend = 30;
+elend = 0;
 % M = [];
 clear Mvy
 
@@ -35,4 +35,4 @@ for el = elend:step:elstrt
         Mvy(numel(Mvy)+1) = getframe(gcf);
 
 end
-movie2gif(Mvy,[fname,'.gif'],'DelayTime',0.02);
+movie2gif(Mvy,[fname,'.gif'],'DelayTime',0.02,'LoopCount', Inf);
