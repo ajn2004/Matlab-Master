@@ -8,26 +8,31 @@ clearvars;
 clc;
 
 % Grab a test set
-fname = 'Cell2_dz10_r1_1_dast_tol_dc_150nm_traj.mat';
-fpath = 'C:\Users\AJN Lab\Dropbox\Data\6-3-19 cono-halo Neurons\Analysis\toleranced\DC\traj\';
+[fname, fpath] = uigetfile('*mat');
 file = [fpath, fname];
 load(file,'ncoords','xf_fixed','yf_fixed','q','framenumber');
 
-eps = 0.2;
-minpts = 4;
+eps = 0.225;
+minpts = 7;
+scle = 0.8;
 
 % Setup Position
 xf = xf_fixed*q;
 yf = yf_fixed*q;
-zf = func_shift_correct(ncoords(:,3)*q,framenumber,1).';
+zf = func_shift_correct(ncoords(:,3)*q,framenumber,1);
 C = 1;
 visit = (1:numel(xf))*0;
 clust = visit;
+% plot(xf,yf,'.k');
+% hold on
 for i = 1:numel(xf)
     if visit(i) == 0 % If we haven't visited the point yet, perform analysis
         visit(i) = 1; % mark as visited
         N = func_range_scan([xf(i),yf(i),zf(i)],[xf,yf,zf],eps); % Find mols in neighborhood
         N = N(:);
+%         plot(xf(i),yf(i),'.r','MarkerSize',5)
+%         plot(xf(N),yf(N),'.g','MarkerSize',3);
+%         drawnow
         if numel(N) >= minpts  % noise criteria
             clust(i) = C;
             C = C + 1;
@@ -38,6 +43,8 @@ for i = 1:numel(xf)
                 ID = N(ind(1));
                 visit(ID) = 1; % mark point as visited
                 ns = func_range_scan([xf(ID),yf(ID),zf(ID)],[xf,yf,zf],eps);
+%                 plot(xf(ns),yf(ns),'.g','MarkerSize',3);
+%                 drawnow
                 if numel(ns) >= minpts  % noise criteria
                     N = [N;ns(:)];
                     
@@ -51,13 +58,12 @@ for i = 1:numel(xf)
     end
 end
 
-plot3(xf,yf,zf,'.k','MarkerSize',4)
+scatter3(xf,yf,zf,ones(numel(zf),1)*4,clust,'Filled')
 hold on
 
 for i = 1:max(clust)
     ind = find(clust == i);
-    plot3(xf(ind),yf(ind),zf(ind),'.','MarkerSize',10);
-    bound = boundary(xf(ind),yf(ind),zf(ind));
+    bound = boundary(xf(ind),yf(ind),zf(ind),scle);
     cluster(i).bound = ind(bound);
 end
 
@@ -65,7 +71,7 @@ hold off
 axis equal
 figure
 for i = 1:numel(cluster)
-    if ~isempty(cluster(i).bound)
+    if ~isempty(cluster(i).bound) %&& i == 2 || i == 8
     for j = 1:numel(cluster(i).bound(:,1))
         ind = [cluster(i).bound(j,:),cluster(i).bound(j,1)];
         plot3(xf(ind),yf(ind),zf(ind),'k')
@@ -73,9 +79,13 @@ for i = 1:numel(cluster)
     end
     end
 end
-hold off 
+ 
+scatter3(xf,yf,zf,ones(numel(zf),1)*4,clust,'Filled')
 axis equal
-
+hold off
+xlabel('Microns')
+ylabel('Microns')
+zlabel('Microns')
 function ids = func_range_scan(me, them, eps)
 dists = them(:,1)*0;
 for i = 1:numel(them(1,:))

@@ -5,7 +5,7 @@ azstrt = 0;
 azend = 360;
 elstrt = 90;
 step = 1;
-elend = 0;
+elend = 22;
 % M = [];
 clear Mvy
 

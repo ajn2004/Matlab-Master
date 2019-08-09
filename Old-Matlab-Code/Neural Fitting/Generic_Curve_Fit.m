@@ -6,7 +6,7 @@
 %
 % AJN 12/21/16
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% clearvars; clc;
+clearvars; clc; close all;
 % hold off
 %% Use this section to create your data set 
 % load('composit.mat','x','drifts')
@@ -15,9 +15,11 @@ clear yf theta1 theta2 xsub ysub
 %% 
 % load('3d_data.mat');
 % ind = absz < 1000;
-x=z;
+x=1:0.01:10;
+x = x(:);
+y = [x+2,mod(x,3)];
 xsub = x;
-ysub = y.';
+ysub = y;
 for i = 1:numel(ysub(1,:))
 plot(x,y(:,i),'.')
 hold on
@@ -27,11 +29,11 @@ end
 % Layer information
 inputs = numel(xsub(1,:));
 outputs = numel(ysub(1,:));
-hiddens = 20;
-it = 10000;
+hiddens = 30;
+it = 5000;
 
 % Fitting Stuff
-lambda = 02;
+lambda = 0.0;
 trainper = 1;
 epsint = 0.12;
 
@@ -49,7 +51,7 @@ end
 [theta1, theta2] = func_lorax_neural_teach(theta1, theta2, xsub, ys, lambda, it, trainper);
 
 % trained neural calc
-x = (-1000:1000).';
+% x = (1:100).';
 a3 = func_eval_NN(x,theta1,theta2);
 % x = x(:);
 % X1 = [ ones(numel(x(:,1)),1), x];
