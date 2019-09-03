@@ -18,8 +18,17 @@ q = 0.122;          % Pixel size in um
 pixw = 6;       % radius to localize (final image size is (2*pixw+1)^2 pixels)
 an_dir = 'Analysis'; % name of analysis directory
 angle = 0; %approximate astig rotation in degrees
-sv_im = 'y'; % set to y/Y to save image of localizations
-thresh = 10;
+sv_im = 'n'; % set to y/Y to save image of localizations
+thresh = 20;
+
+%% Optionals
+  % This section is dedicated to a list of variables for the user to select
+  % 1 indicates go 0 indicates do not
+  savewaves = 0;
+  showlocs = 1;
+  savepsfs = 0;
+  saverb = 0;
+  varys = [savewaves, showlocs, savepsfs, saverb];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % END USER CONTROL JUST RUN IT AND SELECT A FILE
@@ -50,9 +59,16 @@ mkdir(an_dir);
 %% Localize the files with the thresholds found
 % thresh = findathresh(files,pix2pho,mi1);
 % mi1 = 0;
-for i = 1:numel(files)
+if varys(1) == 1
+    mkdir('Waves');
+elseif varys(3) == 1
+    mkdir('psfs');
+elseif varys(4) == 1
+    mkdir('Rolling_Ball');
+end
+for i = 2:numel(files)
     tic
-   func_da_storm(files(i).name, dpath, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1);
+   func_da_storm(files(i).name, dpath, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1, varys);
     clc;
     disp(['File number ' , num2str(i) , ' out of ', num2str(numel(files))]);
     t(i) = toc;

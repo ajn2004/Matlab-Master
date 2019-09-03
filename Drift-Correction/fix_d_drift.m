@@ -24,7 +24,7 @@ if isempty(finfo)
     finfo  = dir('*tol.mat');
 end
 
-for i = 8%1:numel(finfo)
+for i = 1:numel(finfo)
     try
     func_spline_drift(finfo(i).name,pix_size,chunk_size);
     catch
