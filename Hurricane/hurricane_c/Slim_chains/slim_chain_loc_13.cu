@@ -384,6 +384,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	// verify that the input variables are what was expected
 	if (irow != 169){
 		printf("Images are of incorrect size. There must be a square number of rows in the entry.\n");
+		printf("We measured %d pixels \n",irow)
 		mexErrMsgTxt("See Error above!\n");
 	}
 

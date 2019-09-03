@@ -17,7 +17,7 @@ grid = 0;
 finw = 5; % final width in microns
 thresh = 500; % threshold for NN representation
 nn_on = 'n';
-grayscale = 'n';
+grayscale = 'y';
 %% Movie Resolution Settings
 % % 720p movie settings
 pixw = 1280;
@@ -33,7 +33,7 @@ pixh = 720;
 
 %% Zoom Settings
 zm_s = 2; % seconds of zoom
-fps = 33; % frames per second rate
+fps = 21; % frames per second rate
 
 %% Rotation Settings
 tilt = pi/6;  % Tilt around x axis before rotation around y
@@ -49,11 +49,11 @@ vid = VideoWriter('theia_film.avi','Uncompressed AVI');
 cd(fpath);
 
 load(fname, 'xf_fixed','yf_fixed','ncoords','q','crlbs','framenumber');
-build_ramp
+zf = func_build_ramp(ncoords(:,3)*q,framenumber,-20,20,197);
 try
 xf_all = xf_fixed;
 yf_all = yf_fixed;
-zf_all = dcoords;
+zf_all = zf/q;
 catch lsterr
     load(fname, 'xf_all','yf_all','zf_all','q','crlbs');
 end

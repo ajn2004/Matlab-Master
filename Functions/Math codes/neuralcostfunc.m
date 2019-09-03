@@ -36,7 +36,7 @@ a3 = sigmoid(z3);
 
 % Regularized cost function
 J = (1/m)*sum(sum( -y.* log(a3) - (1-y).*log(1 - a3))) + lambda/(2*m)*(sum(sum(Theta1(:,2:end).^2)) + sum(sum(Theta2(:,2:end).^2)));
-
+% J = (1/m)*sum(sum( (y - a3).^2)) + lambda/(2*m)*(sum(sum(Theta1(:,2:end).^2)) + sum(sum(Theta2(:,2:end).^2)));
 % Gradient of thetas
 del3 = a3 - y ;
 d2 = del3*Theta2(:,2:end);

@@ -1,6 +1,6 @@
 function [z,params] = getdz(sigx,sigy,z_cal)
 z =[];
-x = (-0.2:0.001:1.2).';
+x = (-0.5:0.001:0.5).';
 z_cal = double(z_cal);
 xs = z_cal(1);
 gx = z_cal(2);

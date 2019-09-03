@@ -283,7 +283,7 @@ plot(ax,abs(ds))
 xlabel(ax,'Index')
 ylabel(ax,'Difference between average sx and sy')
 tdx = input('Choose an Index to grab minimum of the DS curve');
-ind = find(abs(ds(tdx:tdx+50)) == min(abs(ds(tdx:tdx+50))));                  % Find minimum of absolute value
+ind = find(abs(ds(tdx:end)) == min(abs(ds(tdx:end))));                  % Find minimum of absolute value
 z0s = zus - zus(ind(1)+tdx);                                                 % Call the found index the 0 point
 
 % Data Representation of Sigma and Z space
@@ -313,8 +313,8 @@ legend('Sig-X','Sigy-Y','Location','North');
 % exists over the Z direction, in this section we'll address that
 
 zf_um = getdz(sx,sy,z_cal);   % Get Z-values
-upz = 0.9;
-dnz = -0.2;
+upz = 0.5;
+dnz = -0.5;
 indy = indy & zf_um <upz & zf_um > dnz;                                              % Limit view to fitted region listed above
 d3 = uitab(tg4,'Title','3-D Positions');
 ax = axes(d3);

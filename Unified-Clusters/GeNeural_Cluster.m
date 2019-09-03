@@ -26,7 +26,7 @@ graph = 'Y'; % set to 'Y' or 'y' if you want to see a final graph
 % names will contain the strings of all variables to be loaded from the
 % data set must be used as a names = {  ' name 1', 'name 2', ... ,' name
 % n'} for n-dimensional data
-names = {'xf_all', 'yf_all','q'};
+names = {'ncoords','q','framenumber'};
 dim = 3; % dimensionality of data
 
 % Neural Gas Variables
@@ -54,7 +54,7 @@ lifetf = 80;   % This variable controls how connected the web is in the end, if 
 % too low you will not have connected structure
 % reasonable values are lifeti = 20 lifetf = 80
 
-tmax = 40000;   % this is the final iteration  reasonable: 40000
+tmax = 4000;   % this is the final iteration  reasonable: 40000
 ng_params0 = [epsilon_i,epsilon_f, lambdai,lambdaf, lifeti, lifetf, nodes];
 % Analysis Variables
 
@@ -66,7 +66,7 @@ rmax = 500;
 % cd(fpath)
 % % fname = 'well 1 cell 6_frames_1_10000_t_neuro_tol.mat';
 
-finfo = dir('*dc.mat');
+finfo = dir('*.mat');
 if f_end == 0
     f_end = numel(finfo);
 end
@@ -79,7 +79,9 @@ for j = f_start:f_end
     % this section allows the user to specify the process of creating a
     % data matrix which must take the form of data(datapoint,
     % datadimension)
-    data = [xf_all*q, yf_all*q];
+    r = str2num(fname(strfind(finfo(j).name,'_r')+2));
+    zf = func_shift_correct(ncoords(:,3)*q,framenumber,r).';
+    data = [ncoords(:,1)*q, ncoords(:,2)*q,zf];
     
     
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -93,7 +95,7 @@ for j = f_start:f_end
     %% Neural Gas Section
     set(0,'RecursionLimit',5000)
     % Run the neural gas algorithm
-    [w, C, T] = func_neural_gas(data, nodes, epsilon_i, epsilon_f, lambdai, lambdaf, lifeti, lifetf, tmax, graph);
+%     [w, C, T] = func_neural_gas(data, nodes, epsilon_i, epsilon_f, lambdai, lambdaf, lifeti, lifetf, tmax, graph);
     % w is a matrix containing the 'positions' of the neural nodes
     % C is a matrix showing connectivity between node i and node j at
     % C(i,j) where C(i,j) is 1 if i and j are connected and 0 if not

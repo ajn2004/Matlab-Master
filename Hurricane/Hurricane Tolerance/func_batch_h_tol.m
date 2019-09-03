@@ -9,10 +9,12 @@ fr_sx = crlbs(:,4).^0.5./fits(:,4);
 fr_sy = crlbs(:,5).^0.5./fits(:,5);
 fr_o =  crlbs(:,6).^0.5./fits(:,6);
 ilv = llv(:)./fits(:,3);
+snr = fits(:,3)./(fits(:,3) + (2*pixw +1)^2*fits(:,6)).^0.5;
 % eps = abs(fits(:,4)./fits(:,5));
 
 ind = fits(:,3) > N_tol(1) & fits(:,3) < N_tol(2); % Photon Tolerance
 
+ind = ind & snr >= minsnr;
 ind = ind & abs(framenumber - mean(flims)) <= diff(flims)/2;
 
 ind = ind & abs(ncoords(:,3)*q-mean(zlims)) <= diff(zlims)/2;
