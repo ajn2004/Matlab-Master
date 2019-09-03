@@ -1,4 +1,4 @@
-function func_da_storm(fname,data_d, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1)
+function func_da_storm(fname,data_d, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1, choices)
 
 % Convert Variabls
 % pix2pho = single(pix2pho);
@@ -12,6 +12,7 @@ load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Hurricane\hurricane_functi
 % mi1 = 0
 % Load file and dark current background subtraction
 i1 = (readtiff(fname) - mi1);
+% i1 = sum(i1,3);
 % i1 = i1.*(i1>0);
 [m,n,o] = size(i1);
 % i1(1:30,:,:) = 0;
@@ -21,6 +22,9 @@ i1 = (readtiff(fname) - mi1);
 % Rolling Ball Background Subtract
 % iprod = rollingball(i1);
 iprod = gpu_rball(i1);
+if choices(4) == 1
+    writetiff(iprod,[data_d,'\Rolling_Ball\',fname(1:end-4),'_rb.tif']);
+end
 % iprod = bp_subtract(i1);
 % iprod = imgaussfilt(i1,0.8947);
 % iprod = i1;
@@ -31,7 +35,12 @@ iprod = gpu_rball(i1);
 % diprod = diff(iprod,3);
 % for i = 1:o
 % ifind = denoise_psf(iprod,2);
-ifind = gpu_waves(iprod);
+iwaves = gpu_waves(iprod);
+se = strel('Disk',1);
+ifind = imerode(iwaves,se);
+if choices(1) == 1
+    writetiff(ifind,[data_d,'\Waves\',fname(1:end-4),'_waves.tif']);
+end
 % thrsh = thresh/100*mean(max(max(iprod)));
 % tic
 % thrsh = 3*std(iprod(:)) + mean(iprod(:));
@@ -40,8 +49,11 @@ ifind = gpu_waves(iprod);
 % surf(max(ifind,[],3));
 % thrsh = input('What should the threshold be? ');
 % thrsh = min(iprod(:))*thresh/100;
+% excerpt = 1;
 dps = cpu_peaks(ifind,thresh,pixw);
-in_d_eye(iprod, dps, pixw);
+if choices(2) == 1
+    in_d_eye(iprod, dps, pixw);
+end
 
 clear ip ipf i1
 
@@ -65,6 +77,9 @@ fnum(ind) = [];
 % [~,~, ~,~,zf_all, zf_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, iters, cex, cey] = da_splines(iloc, fnum, cents, cal, pixw);
 % i2 = reshape(iloc,m*n,o);
 % save('thisbit.mat','iloc','cents','fnum','cal');
+if choices(3) == 1
+    writetiff(iloc,[data_d,'\psfs\',fname(1:end-4),'_psfs.tif']);
+end
 [fits, crlbs, llv, framenumber] = slim_locs(iloc, fnum, cents, cal.ang);
 fits(:,4) = abs(fits(:,4));
 fits(:,5) = abs(fits(:,5));

@@ -4,6 +4,7 @@
 clearvars; close all; clc;
 
 %Tolerance data
+<<<<<<< Updated upstream
 zlims= [-0.1941, 0.75]; % Limit of the absolute value of z-data in pixels
 flims = [0,-1];
 lat_max = 0.1; % Maximum lateral uncertainty in micrometers
@@ -13,6 +14,18 @@ offlim = [0, 1250];
 iln = -2;  % lower bound on llv/N
 frac_lim = 0.15; % Limit on the fractional uncertainty of any value
 off_frac = 0.3;
+=======
+mwidth = 6; %marker width for visualization, does not affect data
+zlims= 10*[-0.49, 0.49]; % Limit of the absolute value of z-data in pixels
+flims = [1,-1];
+lat_max = 0.01; % Maximum lateral uncertainty in micrometers
+N_tol = [5000, 140000000]; % Tolerance on N
+offlim = [1, 125000];
+minsnr = 70;
+iln = -0.7;  % lower bound on llv/N
+frac_lim = 0.02; % Limit on the fractional uncertainty of any value
+off_frac = 0.5;
+>>>>>>> Stashed changes
 
 
 

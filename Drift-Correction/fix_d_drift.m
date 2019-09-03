@@ -25,5 +25,9 @@ if isempty(finfo)
 end
 
 for i = 1:numel(finfo)
+<<<<<<< Updated upstream
+=======
+    try
+>>>>>>> Stashed changes
     func_spline_drift(finfo(i).name,pix_size,chunk_size);
 end
