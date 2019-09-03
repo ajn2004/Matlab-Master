@@ -14,7 +14,7 @@ close all; clearvars; clc;
 %% User Controlled Area
 emg = 0; % Enter the EM Gain value used on the camera
 pix2pho = em_gain(emg);    %Pixel to photon ratio
-q = 0.131;          % Pixel size in um
+q = 0.122;          % Pixel size in um
 pixw = 6;       % radius to localize (final image size is (2*pixw+1)^2 pixels)
 an_dir = 'Analysis'; % name of analysis directory
 angle = 0; %approximate astig rotation in degrees

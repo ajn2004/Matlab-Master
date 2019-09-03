@@ -30,10 +30,13 @@ load(fdname)
 framenum_all = framenumber;
 xf_all = ncoords(:,1);
 yf_all = ncoords(:,2);
+zf_all = func_shift_correct(ncoords(:,3)*q,framenumber,1);
 max_frames = framenum_all(end);
 % prepare variables for rendering
 xf_in = xf_all*q;
 yf_in = yf_all*q;
+zf_in = zf_all*q;
+
 % max_frames = max(framenum_all);
 chunks = floor((max_frames -1)/chunk_size)+1;
 [X, Y] = meshgrid(-10:10,-10:10);
@@ -46,12 +49,15 @@ for j = 1: chunks
     ind = framenum_all >= frame1 & framenum_all <= frame2;
     xf_part = xf_in(ind);
     yf_part = yf_in(ind);
-    
+    zf_part = zf_in(ind);
     % determine maximum plotted position in microns
     max_x = ceil(max(xf_in)/p)*p+p;
     max_y = ceil(max(yf_in)/p)*p+p;
+    max_z = ceil(max(zf_in)/p)*p+p;
     [Xgrid, Ygrid] = meshgrid(0:p: max_x,0:p: max_y);
     dens = zeros(size(Xgrid));
+    
+    
     [m, n] = size(Xgrid);
     for i = 1:numel(xf_part)
         x_ind = find(Xgrid(1,:) > xf_part(i), 1, 'first') - 1;
@@ -71,7 +77,7 @@ end
 % perform cross correlations and find shift
 drifts = [0,0];
 for i = 1:chunks-1 % start on frame i and correlate with frame i+1
-    cmd_str = ['the_coords = xcorr2(im',num2str(i), ', im',num2str(i+1),');'];
+    cmd_str = ['the_coords = xcorr2(im',num2str(1), ', im',num2str(i+1),');'];
     eval(cmd_str);
 %     sub_coords = the_coords(m-10:m+10,n-10:n+10);
     imgf = imgaussfilt(the_coords,2);

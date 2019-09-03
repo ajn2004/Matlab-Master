@@ -26,7 +26,7 @@ for i = 1:o % loop over all frames
     
     % Image on the left is the raw camera image
     subplot(1,2,1);
-    set_scale(i1(:,:,i),0.128,6); % scales brightness to show fluorescent response
+    set_scale(i1(:,:,i),0.133,6); % scales brightness to show fluorescent response
     hold on
     draw_boxes([x,y],pix);
     title('Raw Camera image');

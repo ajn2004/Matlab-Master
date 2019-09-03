@@ -110,7 +110,7 @@ while true
    [cols] = find(C(i0,:) > 0); % this gives the connections of the nodes
    [rows] = find(C(:,i0) > 0); % this gives the connections of the nodes
    
-   if ~isempty(cols) && sum(cols > numel(C(1,:))) < 1
+   if ~isempty(cols) 
        for ii = 1:numel(cols)
            if cols(ii) <= numel(C(1,:)) && cols(ii) > 0  % Ensure the row / col variable stays within range
                T(i0,cols(ii)) = T(i0,cols(ii)) + 1; % increment each connection age by 1
@@ -128,7 +128,7 @@ while true
    C(rows,i0) = 0;
    
    if sum(dex == t) == 1
-   % This will be used only for creating the figure for munc13
+   % This will be used only for creating the figure 
    s = plot(data(:,1),data(:,2),'.k');
    hold on
    plot(w(:,1),w(:,2),'.r')

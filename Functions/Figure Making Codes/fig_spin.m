@@ -1,11 +1,16 @@
 % Spin Frames
 % A script to rotate and spin a figure by adjusting viewing angles
-az = 0;
-% el = 90;
+function fig_spin(fname)
+azstrt = 0;
+azend = 360;
+elstrt = 90;
+step = 1;
+elend = 22;
 % M = [];
 clear Mvy
-for el = 90:-1:30
-    view([az,el]);
+
+for el = elstrt:-step:elend
+    view([azstrt,el]);
     drawnow
     if exist('Mvy')
         Mvy(numel(Mvy)+1) = getframe(gcf);
@@ -14,16 +19,20 @@ for el = 90:-1:30
     end
 end
 
-for az = 0:360
-    view([az,el])
+for az = azstrt:step:azend
+    view([az,elend])
     drawnow
-    Mvy(numel(Mvy)+1) = getframe(gcf);
+    if exist('Mvy')
+        Mvy(numel(Mvy)+1) = getframe(gcf);
+    else
+    Mvy = getframe(gcf);
+    end
 end
 
-for el = 30:90
+for el = elend:step:elstrt
     view([az,el]);
     drawnow
         Mvy(numel(Mvy)+1) = getframe(gcf);
 
 end
-movie2gif(Mvy,'maximum_proj_wavelet_spin.gif','DelayTime',0.02,'LoopCount',Inf);
+movie2gif(Mvy,[fname,'.gif'],'DelayTime',0.02,'LoopCount', Inf);
