@@ -5,14 +5,14 @@ clearvars; close all; clc;
 
 %Tolerance data
 mwidth = 6; %marker width for visualization, does not affect data
-zlims= 10*[-0.49, 0.49]; % Limit of the absolute value of z-data in pixels
+zlims= [-0.49, 0.49]; % Limit of the absolute value of z-data in pixels
 flims = [1,-1];
 lat_max = 0.01; % Maximum lateral uncertainty in micrometers
-N_tol = [5000, 140000000]; % Tolerance on N
-offlim = [1, 125000];
-minsnr = 70;
-iln = -0.7;  % lower bound on llv/N
-frac_lim = 0.02; % Limit on the fractional uncertainty of any value
+N_tol = [50, 140000000]; % Tolerance on N
+offlim = [-10, 125000];
+minsnr = 0;
+iln = -1;  % lower bound on llv/N
+frac_lim = 0.2; % Limit on the fractional uncertainty of any value
 off_frac = 0.5;
 
 
@@ -68,7 +68,7 @@ ind = ind & fr_sx < frac_lim & fr_sy < frac_lim; % Fraction width tolerance
 save('Tolfile.mat','flims','minsnr','zlims','lat_max','N_tol','s_tol','iln','frac_lim','off_frac','offlim');
 notind = logical(1-ind);
 % Setting up our figure
-r = str2num(fname(strfind(fname,'_r')+2));
+r = str2num(fname(strfind(fname,'_r')+3));
 zf = func_shift_correct(ncoords(:,3)*q,framenumber,r);
 % zf = ncoords(:,3)*q;
 % zf = getdz(abs(fits(:,4)),abs(fits(:,5)),cal.z_cal);

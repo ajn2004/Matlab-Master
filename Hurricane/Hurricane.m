@@ -25,7 +25,7 @@ thresh = 20;
   % This section is dedicated to a list of variables for the user to select
   % 1 indicates go 0 indicates do not
   savewaves = 0;
-  showlocs = 1;
+  showlocs = 0;
   savepsfs = 0;
   saverb = 0;
   varys = [savewaves, showlocs, savepsfs, saverb];
@@ -66,7 +66,7 @@ elseif varys(3) == 1
 elseif varys(4) == 1
     mkdir('Rolling_Ball');
 end
-for i = 2:numel(files)
+for i = 1:numel(files)
     tic
    func_da_storm(files(i).name, dpath, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1, varys);
     clc;

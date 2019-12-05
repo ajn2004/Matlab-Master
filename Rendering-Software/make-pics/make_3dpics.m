@@ -19,6 +19,7 @@ q = q*1000; % convert q to nm
 xf_crlb = crlbs(:,1);
 yf_crlb = crlbs(:,2);
 [xf_all,yf_all,zf_all] = coord_split(ncoords);
+zf_all = func_shift_correct(zf_all,framenumber,1);
 rad = mean((xf_crlb.*yf_crlb).^0.25)*q; % all distances in this are determined off of loc_unc
 grid_size = 0.5*rad; % pixwidth in nm/pix
 um = 1000/grid_size; % number of pixels required to make a scale bar of 1 um

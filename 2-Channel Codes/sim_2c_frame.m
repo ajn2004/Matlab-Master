@@ -139,8 +139,8 @@ ynet = xnet;
 xnet = train(xnet,xsub.',ysub(:,1).');
 ynet = train(ynet,xsub.',ysub(:,2).');
 
-xo = xnet(x.');
-yo = ynet(x.');
+xo = xnet(xsub.');
+yo = ynet(xsub.');
 xo = xo(:);
 yo = yo(:);
 

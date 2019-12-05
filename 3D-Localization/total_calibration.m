@@ -9,9 +9,9 @@ close all;
 clc;
 %% User variables
 pixw = 6;                                                                   % ROI 'radius'
-q = 0.131;                                                                  % Pixel size in um
-step = 10;                                                                  % Steps between frames in nm
-CCs = 50;                                                                   % number of frames to x-correlate over
+q = 0.120;                                                                  % Pixel size in um
+step = 50;                                                                  % Steps between frames in nm
+CCs = 10;                                                                   % number of frames to x-correlate over
 wind = -pixw:pixw;                                                          % create window for segmentation
 
 %% END USER INPUT
@@ -127,32 +127,34 @@ psf = [];
 % axis
 fms = 1:o; % input framenum
 for i = 1:numel(psfs)          % Loop over all identified ROIs
-    [fits, crlb, lv,fnout] = slim_locs(psfs{i},fms,zeros(o,2),ang,50,100);  % Perform Fit
-    fnout = fnout.';                                                        % Save frame number which corresponds to Z-position
-    xa = fits(:,1)+psf_off{i}(fnout,1);                                     % define 'assignment' variable for x 
-    ya = fits(:,2)+psf_off{i}(fnout,2);                                     % define 'assignment' variable for y this allows centering around distribution
-%     xa = fits(:,1);
-%     ya = fits(:,2);
-    xf = [xf;xa-mean(xa)];                                                    % X-Position
-    yf = [yf;ya-mean(ya)];                                                    % Y-Position
-%     xf = [xf;xa];                                                    % X-Position
-%     yf = [yf;ya];                                                    % Y-Position
-    N = [N; fits(:,3)];                                                     % Number of Photons
-    sx = [sx;fits(:,4)];                                                    % Sigma in x' direction
-    sy = [sy;fits(:,5)];                                                    % Sigma in y' direction
-    O = [O; fits(:,6)];                                                     % Offset
-    % Lower bound on Variance of fitted variables
-    xfc = [xfc;crlb(:,1)];
-    yfc = [yfc;crlb(:,2)];
-    Nc = [Nc;crlb(:,3)];
-    Oc = [Oc;crlb(:,6)];
-    sxc = [sxc;crlb(:,4)];
-    syc = [syc;crlb(:,5)];
-    psf = [psf; fits(:,1)*i./fits(:,1)];                                            % Log the PSF the fit is associated with
-    llv = [llv;-abs(lv)];                                                   % Log Likelihood Value
-%     fnum = [fnum;fnout - disp(i)];                                          % Correct the Frame number based off correlation result
-
-    fnum = [fnum;fnout]; 
+    if i ~= 1 && i ~= 6
+        [fits, crlb, lv,fnout] = slim_locs(psfs{i},fms,zeros(o,2),ang,50,100);  % Perform Fit
+        fnout = fnout.';                                                        % Save frame number which corresponds to Z-position
+        xa = fits(:,1)+psf_off{i}(fnout,1);                                     % define 'assignment' variable for x
+        ya = fits(:,2)+psf_off{i}(fnout,2);                                     % define 'assignment' variable for y this allows centering around distribution
+        %     xa = fits(:,1);
+        %     ya = fits(:,2);
+        xf = [xf;xa-mean(xa)];                                                    % X-Position
+        yf = [yf;ya-mean(ya)];                                                    % Y-Position
+        %     xf = [xf;xa];                                                    % X-Position
+        %     yf = [yf;ya];                                                    % Y-Position
+        N = [N; fits(:,3)];                                                     % Number of Photons
+        sx = [sx;fits(:,4)];                                                    % Sigma in x' direction
+        sy = [sy;fits(:,5)];                                                    % Sigma in y' direction
+        O = [O; fits(:,6)];                                                     % Offset
+        % Lower bound on Variance of fitted variables
+        xfc = [xfc;crlb(:,1)];
+        yfc = [yfc;crlb(:,2)];
+        Nc = [Nc;crlb(:,3)];
+        Oc = [Oc;crlb(:,6)];
+        sxc = [sxc;crlb(:,4)];
+        syc = [syc;crlb(:,5)];
+        psf = [psf; fits(:,1)*i./fits(:,1)];                                            % Log the PSF the fit is associated with
+        llv = [llv;-abs(lv)];                                                   % Log Likelihood Value
+        %     fnum = [fnum;fnout - disp(i)];                                          % Correct the Frame number based off correlation result
+        
+        fnum = [fnum;fnout];
+    end
 end
 z1 = fnum*step/1000;                                                        % Populate Z-positions
 % Tolerance Step
@@ -168,14 +170,19 @@ rid = psf == refp; % build an index for the reference ID
 sigr = [fnum(indy&rid),sx(indy &rid),sy(indy & rid)]; % build reference sigma scan
 fnumc = fnum;
 for i = 1:numel(psfs) % loop over all psfs
+    if i ~= 1 && i ~= 6
     cid = psf == i; % grab Id for psf scan to correct
     sigc = [fnum(indy&cid),sx(indy & cid),sy(indy & cid)];
     dff = xcorrsig(sigr,sigc);
     fnumc(cid) = fnumc(cid) + dff;
+    end
 end
 z0 = fnumc*step/1000;
 
 %% Data Representation
+% ind = psf == 1 || psf == 6;
+% fnumc(ind) = [];
+
 
 % x corr corrections
 t3 = uitab(tg,'Title','Correlation Correction');
