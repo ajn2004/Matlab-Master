@@ -1,5 +1,5 @@
 function [i2, fnum, cents] = divide_up(i1,pixw, dps)
-[m,n,o] = size(i1);
+[m,n,o] = size(dps);
 fnum = [];
 i2 = [];
 cents = [];

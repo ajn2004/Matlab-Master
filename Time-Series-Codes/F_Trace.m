@@ -16,7 +16,7 @@ pixw = 3;           % Pixel width in radius (i.e. value of 7 gives 15x15 square 
 %% Analysis
 % c = scrub_config();  % reads camera configuration file
 [i1, mname, mpath] = read_im(im_type); % loads in an image and corrects
-i1 = i1;
+i1 = i1 - min(i1);
 [m,n,o] = size(i1); % get image size in [rows, cols, frames]
 try
     stim_fr = markerget(mname,'f');
@@ -25,7 +25,7 @@ try
 catch lsterr
 end
 % tex = c.AccumulateCycleTime;
-tex = 0.04;
+tex = 0.02945;
 si1 = std(i1,1,3);  % create standard deviation image for selection
 imagesc(si1)    % display standard deviation image
 axis image

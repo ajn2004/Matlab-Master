@@ -66,7 +66,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	icol = (int)idims[1];
 	irow = (int)idims[0];
 	numi = (int)idims[2];
-	if (numi > 10000000 || numi < 1){
+	if (numi > 10000 || numi < 1){
 		numi = 1;
 	}
 
@@ -105,7 +105,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	}
 
 	int numel = irow*icol*numi;	// number of pixels in the entire image
-	bkgsub<< <(numel-1)/1000+1, 1000 >> > (d_iall, d_ifin, thresh, numel);			// routiune vecor subtraction on GPU!!!!!
+	bkgsub<< <(numel-1)/1024+1, 1024 >> > (d_iall, d_ifin, thresh, numel);			// routiune vecor subtraction on GPU!!!!!
 
 
 	/*		 copy data back to mxarray pointers for output

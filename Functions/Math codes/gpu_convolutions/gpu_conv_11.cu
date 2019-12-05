@@ -176,9 +176,10 @@ void mexFunction(int nlhs, mxArray *plhs[],
 		mexErrMsgTxt("See Error above!\n");
 	}
 
-	/* Run GPU kernel*/
-	dim3 dimBlock(BLOCK_WIDTH, BLOCK_WIDTH);
-	dim3 dimGrid((irow - 1) / O_TILE_WIDTH + 1, (icol - 1) / O_TILE_WIDTH + 1, numi);
+/* Run GPU kernel*/
+dim3 dimBlock(BLOCK_WIDTH, BLOCK_WIDTH);
+dim3 dimGrid((icol - 1) / O_TILE_WIDTH + 1, (irow - 1) / O_TILE_WIDTH + 1, numi);
+
 
 	//							COVOLUTION SECTION IS COMMENTED OUT TO WORK ON EROSION
 	// RUN THE CONVOLUTION WITH KERNEL 

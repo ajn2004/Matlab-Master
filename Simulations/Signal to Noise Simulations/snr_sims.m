@@ -19,7 +19,7 @@ q = 0.122;
 
 x0 = rand(1) - 0.5; % Center the Molecule somewhere in the first pixel
 y0 = rand(1) - 0.5; % Center the Molecule somewhere in the first pixel
-N = 800; % SNR will be created from setting the offset relative to the N
+N = 277; % SNR will be created from setting the offset relative to the N
 phalp = 21;
 
 % Allow user to 'choose' a sigma value based on height of the molecule
@@ -46,7 +46,7 @@ Ns = 100:100:10000;
 % for lk = 1:numel(Ns)
 %     N = Ns(lk);
 %     SNRs = (N/N^0.5);
-SNRs = 26;
+SNRs = 16;
 for i = 1:numel(SNRs) % Loop over SNRs
 %     x0 = rand(1) - 0.5; % Center the Molecule somewhere in the first pixel
 % y0 = rand(1) - 0.5; % Center the Molecule somewhere in the first pixel
@@ -68,9 +68,9 @@ for i = 1:numel(SNRs) % Loop over SNRs
         im1(:,:,j) = double(imnoise(uint16(i1),'poisson'));
 %           im1(:,:,j) = double(imnoise(uint16(i1),'poisson'));
 %           im1(:,:,j) = double(imnoise(uint16(i1),'poisson')) - imgaussfilt(B,1.5);
-          imj = im1(:,:,j);
-          sim = sort(imj(:));
-          im1(:,:,j) = im1(:,:,j);
+%           imj = im1(:,:,j);
+%           sim = sort(imj(:));
+%           im1(:,:,j) = im1(:,:,j);
 %         surf(im1(:,:,j))
 %         drawnow
     end
@@ -101,18 +101,25 @@ for i = 1:numel(A)
    cords{i} = coords;
    fit{i} = fits;
    try
-       xstd(i) = std(coords(:,1)*q*1000);
-       ystd(i) = std(coords(:,2)*q*1000);
+       xstd(i) = std(coords(:,1)*q*1000)
+       ystd(i) = std(coords(:,2)*q*1000)
        sxstd(i) = q*mean((fits(:,4)-sx).^2).^0.5;
        systd(i) = q*mean((fits(:,5)-sy).^2).^0.5;
-       zstd(i) = std(coords(:,3)*q*1000)
+       zstd(i) = std(coords(:,3)*q*1000);
    catch
    end
 end     
-plot(SNRs,zstd)
+figure
+histogram((coords(:,1)-mean(coords(:,1)))*q*1000)
 hold on
-plot(SNRs,xstd)
-plot(SNRs,ystd)
+histogram((coords(:,2)-mean(coords(:,2)))*q*1000)
+% histogram(coords(:,3)*q*1000)
+hold off
+% 
+% plot(SNRs,zstd)
+% hold on
+% plot(SNRs,xstd)
+% plot(SNRs,ystd)
 % % set(gca,'XScale','Log')
 % % Bs = 
 % % plot(B0,zstd);
@@ -175,14 +182,14 @@ y = phalp^0.5./(x+phalp-1).^0.5;
 % xlabel('Number of dark pHluorins in Background')
 % ylabel('Reduction in SNR to be expected')
 % 
-zdeal = 200; % This is the maximum allowable Z uncertainty
-zdist = abs(zstd - zdeal); % find distance
-ind = find(zdist == min(zdist));
-redsnr = SNRs(ind);
-reduct = redsnr/max(SNRs);
-ydis = abs(y-reduct);
-mind = find(ydis == min(ydis));
-disp(['I estimate the maximum number of vesicles molecules that can be tolerated for a brightness of ', num2str(N),'is ', num2str(x(mind)/1.23),' vesicles']);
+% zdeal = 200; % This is the maximum allowable Z uncertainty
+% zdist = abs(zstd - zdeal); % find distance
+% ind = find(zdist == min(zdist));
+% redsnr = SNRs(ind);
+% reduct = redsnr/max(SNRs);
+% ydis = abs(y-reduct);
+% mind = find(ydis == min(ydis));
+% disp(['I estimate the maximum number of vesicles molecules that can be tolerated for a brightness of ', num2str(N),'is ', num2str(x(mind)/1.23),' vesicles']);
 % mol(lk) = x(mind);
 % end
 % 
@@ -231,28 +238,28 @@ disp(['I estimate the maximum number of vesicles molecules that can be tolerated
 % title('Uncertainty Versus SNR')
 % 
 
-figure
-plot(x,y);
-hold on
-xlabel('Number of dark pHluorins in Background')
-ylabel('\eta')
-title('\eta vs population')
-
-figure
-plot(x,y);
-hold on
-plot([min(x),max(x)],[reduct, reduct],'r')
-legend('\eta','Desired Value')
-xlabel('Number of dark pHluorins in Background')
-ylabel('\eta')
-title('\eta vs population')
+% figure
+% plot(x,y);
+% hold on
+% xlabel('Number of dark pHluorins in Background')
+% ylabel('\eta')
+% title('\eta vs population')
 % 
-figure
-plot(x,y);
-hold on
-plot([x(mind),x(mind)],[0.2, 1],'r')
-legend('\eta','Desired Value')
-xlabel('Number of dark pHluorins in Background')
-ylabel('\eta')
-title('\eta vs population')
-
+% figure
+% plot(x,y);
+% hold on
+% plot([min(x),max(x)],[reduct, reduct],'r')
+% legend('\eta','Desired Value')
+% xlabel('Number of dark pHluorins in Background')
+% ylabel('\eta')
+% title('\eta vs population')
+% % 
+% figure
+% plot(x,y);
+% hold on
+% plot([x(mind),x(mind)],[0.2, 1],'r')
+% legend('\eta','Desired Value')
+% xlabel('Number of dark pHluorins in Background')
+% ylabel('\eta')
+% title('\eta vs population')
+% 
