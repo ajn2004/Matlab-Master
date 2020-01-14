@@ -19,7 +19,7 @@ pixw = 6;       % radius to localize (final image size is (2*pixw+1)^2 pixels)
 an_dir = 'Analysis'; % name of analysis directory
 angle = 0; %approximate astig rotation in degrees
 sv_im = 'n'; % set to y/Y to save image of localizations
-thresh = 20;
+thresh = 30;
 
 %% Optionals
   % This section is dedicated to a list of variables for the user to select

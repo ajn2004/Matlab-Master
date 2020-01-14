@@ -1,4 +1,4 @@
-function [fits, crlbs, llv, fnout] = slim_locs(i2, varargin)
+function [fits, crlbs, llv, fnout, psfs] = slim_locs(i2, varargin)
 % Slim Locs is a script to analyze data w/ the gaussian fit after
 % performing the cspline fit to get Z data.
 % Variable input is expect to be of the form (i2, fnum, cents, rads,
@@ -52,6 +52,7 @@ offco = [];
 llv = [];
 fnout = [];
 zfo = [];
+psfs = [];
 n = o;
 if n > maxi
     rounds = floor(n/maxi);    
@@ -85,6 +86,7 @@ if n > maxi
        offo = [offo;off(ind)];
       offco = [offco; offc(ind)];
         llv = [llv; lv(ind)];
+        psfs = cat(2,psfs,i2(:,ind));
         
     end
     i3 = i2(:,i*maxi+1:end);
@@ -116,6 +118,7 @@ if n > maxi
        offo = [offo;off(ind)];
       offco = [offco; offc(ind)];
         llv = [llv; lv(ind)];
+        psfs = cat(2,psfs,i2(:,ind));
     end
 else
     try
@@ -146,6 +149,7 @@ else
        offo = [offo;off(ind)];
       offco = [offco; offc(ind)];
         llv = [llv; lv(ind)];
+        psfs = cat(2,psfs,i2(:,ind));
     catch lsterr
     end
 end

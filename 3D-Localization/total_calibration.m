@@ -10,7 +10,7 @@ clc;
 %% User variables
 pixw = 6;                                                                   % ROI 'radius'
 q = 0.120;                                                                  % Pixel size in um
-step = 50;                                                                  % Steps between frames in nm
+step = 20;                                                                  % Steps between frames in nm
 CCs = 10;                                                                   % number of frames to x-correlate over
 wind = -pixw:pixw;                                                          % create window for segmentation
 
@@ -115,6 +115,7 @@ yfc = [];
 llv = [];
 fnum = [];
 psf = [];
+ims = [];
 % gpu fit of PSFs
 % NOTE TO USER: because we assume an axis of elipticity that
 % need not be parallel to the axis of the camera we rotate our
@@ -128,7 +129,7 @@ psf = [];
 fms = 1:o; % input framenum
 for i = 1:numel(psfs)          % Loop over all identified ROIs
     if i ~= 1 && i ~= 6
-        [fits, crlb, lv,fnout] = slim_locs(psfs{i},fms,zeros(o,2),ang,50,100);  % Perform Fit
+        [fits, crlb, lv,fnout,im0s] = slim_locs(psfs{i},fms,zeros(o,2),ang,50,100);  % Perform Fit
         fnout = fnout.';                                                        % Save frame number which corresponds to Z-position
         xa = fits(:,1)+psf_off{i}(fnout,1);                                     % define 'assignment' variable for x
         ya = fits(:,2)+psf_off{i}(fnout,2);                                     % define 'assignment' variable for y this allows centering around distribution
@@ -152,7 +153,7 @@ for i = 1:numel(psfs)          % Loop over all identified ROIs
         psf = [psf; fits(:,1)*i./fits(:,1)];                                            % Log the PSF the fit is associated with
         llv = [llv;-abs(lv)];                                                   % Log Likelihood Value
         %     fnum = [fnum;fnout - disp(i)];                                          % Correct the Frame number based off correlation result
-        
+        ims = [ims,im0s];
         fnum = [fnum;fnout];
     end
 end
@@ -304,6 +305,7 @@ plot(ax,z0s,ssy)                                                            % Pl
 
 % Determining Z parameters
 ind = abs(z0s) < 1.2;                                                       % Limit height over which to fit sigmas
+% z_net = train_neural_z(z0s(indy),ims(:,indy));
 z_cal = get_z_params(z0s(ind),ssx(ind),ssy(ind));                           % Fit sigma curves to data and return result
 
 % Display results of Z-calibration
