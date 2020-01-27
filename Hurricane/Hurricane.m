@@ -28,7 +28,8 @@ thresh = 15;
   showlocs = 0;
   savepsfs = 0;
   saverb = 0;
-  varys = [savewaves, showlocs, savepsfs, saverb];
+  two_color = 1;
+  varys = [savewaves, showlocs, savepsfs, saverb, two_color];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % END USER CONTROL JUST RUN IT AND SELECT A FILE

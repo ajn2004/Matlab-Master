@@ -17,8 +17,9 @@ xfo = o2rx.'*vector.';
 yfo = o2ry.'*vector.';
 
 
-cdata.xf{1} = xfr;
-cdata.xf{2} = xfo;
-cdata.yf{1} = yfr;
-cdata.yf{2} = yfo;
+cdata.red.xf = xfr;
+cdata.orange.xf = xfo;
+cdata.red.yf = yfr;
+cdata.orange.yf = yfo;
+cdata.id = ind + 1; % index array to separate out 
 corrected_data = cdata;
