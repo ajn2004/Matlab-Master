@@ -80,15 +80,72 @@ fnum(ind) = [];
 if choices(3) == 1
     writetiff(iloc,[data_d,'\psfs\',fname(1:end-4),'_psfs.tif']);
 end
-[fits, crlbs, llv, framenumber] = slim_locs(iloc, fnum, cents, cal.ang);
+if choices(5) == 0
+[fits, crlbs, llv, framenumber] = slim_locs(iloc, fnum, cents, cal.red.ang);
 fits(:,4) = abs(fits(:,4));
 fits(:,5) = abs(fits(:,5));
-if choices(5) == 0
+
     zf = getdz(abs(fits(:,4)),abs(fits(:,5)),cal.z_cal)/q;
     coords = [fits(:,1:2),zf];
     [ncoords] = astig_tilt(coords,cal);
 else
-    cdata = channel_correct(fits(:,1:2)); %% Identify and correct channels
+    load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat');
+    id = cents(:,1) < split; % Identify localizations below the split
+    %% First fit is all red, so those can be immediately 
+    [fits, crlbs, llv, framenumber] = slim_locs(iloc(:,id), fnum(id), cents(id,:), cal.red.ang);
+    
+    % As everywhere in the equations used sigma is squared, we can without
+    % loss of generality make these fits positive definite
+    fits(:,4) = abs(fits(:,4));
+    fits(:,5) = abs(fits(:,5));
+    
+    % Put data into cdata structure
+    cdata.red.fits = fits;
+    cdata.red.crlbs = crlbs;
+    cdata.red.llv = llv;
+    cdata.red.framenumber = framenumber;
+    
+    % Z calculations
+    zf = getdz(cdata.red.fits(:,4),cdata.red.fits(:,5),cal.red.z_cal)/q; % Z assignment, this variable will be updated and stored elsewhere
+    ncoords = astig_tilt([cdata.red.fits(:,1:2),zf],cal.red); % corrections due to astigmatism
+    
+    % Assign fixed coordinates
+    cdata.red.xf = ncoords(:,1);
+    cdata.red.yf = ncoords(:,2);
+    cdata.red.zf = ncoords(:,3);
+    
+    
+    clear fits crlbs llv framenumber
+    %% Repeat above for orange
+    id = logical(1-id); % Changes 0 -> 1 and 1 -> 0 flipping the ID so now we can fit orange
+    [fits, crlbs, llv, framenumber] = slim_locs(iloc(:,id), fnum(id), cents(id,:), cal.orange.ang);
+    % As everywhere in the equations used sigma is squared, we can without
+    % loss of generality make these fits positive definite
+    fits(:,4) = abs(fits(:,4));
+    fits(:,5) = abs(fits(:,5));
+    
+    % Put data into cdata structure
+    cdata.orange.fits = fits;
+    cdata.orange.crlbs = crlbs;
+    cdata.orange.llv = llv;
+    cdata.orange.framenumber = framenumber;
+    
+    % Z calculations
+    zf = getdz(cdata.orange.fits(:,4),cdata.orange.fits(:,5),cal.orange.z_cal)/q; % Z assignment, this variable will be updated and stored elsewhere
+    ncoords = astig_tilt([cdata.orange.fits(:,1:2),zf],cal.orange); % corrections due to astigmatism
+    
+    % Assign fixed coordinates
+    cdata.orange.xf = ncoords(:,1);
+    cdata.orange.yf = ncoords(:,2);
+    cdata.orange.zf = ncoords(:,3);
+
+    
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% This section
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% and below
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% needs fixing
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% now
+    % The idea is going to be to fit the 2 channels with different
+    % calibration files for 3D to give us the best fit possible.
     try % Attempt 3D with 2 color calibration, if it doesn't work use 1 color calibration for both channels
         cdata.red.zf = getdz(abs(fits((cdata.id == 1),4)),abs(fits((cdata.id == 1),5)),cal.red.z_cal)/q;
         cdata.orange.zf = getdz(abs(fits((cdata.id == 2),4)),abs(fits((cdata.id == 2),5)),cal.orange.z_cal)/q;
@@ -129,7 +186,7 @@ end
 % hold off
 % colormap('gray');
 
-save([an_dir,'\', fname(1:end-4),'_dast.mat'],'cdata', 'pixw','q','ncoords','fits','crlbs','llv','framenumber','cal');
+save([an_dir,'\', fname(1:end-4),'_dast.mat'],  'cdata', 'pixw','q','ncoords','fits','crlbs','llv','framenumber','cal');
 % end
 % catch lsterr
 %      save([an_dir,'\', fname(1:end-4),'_dast.mat'], 'zf_all','sigx_all' ,'sigy_all','sigx_crlb','sigy_crlb','y','iloc','xf_all' , 'xf_crlb' , 'yf_all' , 'yf_crlb' , 'N' , 'N_crlb' ,'off_all' , 'off_crlb', 'framenum_all', 'llv','pixw','q','pix2pho');

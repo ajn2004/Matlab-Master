@@ -419,7 +419,7 @@ for i = 1:numel(zs) - 1 % Loop over a variety of height windows for averaging of
     zfm(i) = mean(zts(ind2));
 end
 
-splz = (min(zf_um(indy)):0.001:max(zf_um(indy)))/q;
+splz = (-1:0.001:1)/q;
 xtilt = gausssmooth(xfm,5,10);
 ytilt = gausssmooth(yfm,5,10);
 splx = spline(zs(1:end-1) + mean(diff(zs))/2,xtilt,splz);

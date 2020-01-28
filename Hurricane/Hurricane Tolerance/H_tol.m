@@ -23,6 +23,7 @@ load([fpath,fname]);
 if flims(2) == -1
     flims(2) = max(framenumber);
 end
+if 
 [~, p] = getdz(1,1,cal.z_cal, dmax);
 
 s_tol = [min(min([p(:,2),p(:,3)])),3*max(max([p(:,2),p(:,3)]))]; % sigma tolerances

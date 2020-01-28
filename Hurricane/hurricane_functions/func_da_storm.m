@@ -3,6 +3,7 @@ function func_da_storm(fname,data_d, an_dir, q, pix2pho, pixw,thresh, angle, sv_
 % Convert Variabls
 % pix2pho = single(pix2pho);
 q = double(q);
+try
 load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Hurricane\hurricane_functions\z_calib.mat')
 % if exist([data_d, 'z_calib.mat'])
 %     cal = load([data_d 'z_calib.mat']);
@@ -85,48 +86,68 @@ if choices(5) == 0
 fits(:,4) = abs(fits(:,4));
 fits(:,5) = abs(fits(:,5));
 
-    zf = getdz(abs(fits(:,4)),abs(fits(:,5)),cal.z_cal)/q;
+    zf = getdz(abs(fits(:,4)),abs(fits(:,5)),cal.z_cal,2)/q;
     coords = [fits(:,1:2),zf];
     [ncoords] = astig_tilt(coords,cal);
+    save([an_dir,'\', fname(1:end-4),'_dast.mat'],  'pixw','q','ncoords','fits','crlbs','llv','framenumber','cal');
 else
-    load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat');
+    load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
     id = cents(:,1) < split; % Identify localizations below the split
-    % First fit is all red, so those can be immediately 
-    [fits, crlbs, llv, framenumber] = slim_locs(iloc(:,id), fnum(id), cents(id,:), cal.red.ang);
+    %% First fit is all red, so those can be immediately 
+    [fits, crlbs, llv, framenumber] = slim_locs(iloc(:,:,id), fnum(id), cents(id,:), cal.red.ang);
     
+    % As everywhere in the equations used sigma is squared, we can without
+    % loss of generality make these fits positive definite
     fits(:,4) = abs(fits(:,4));
     fits(:,5) = abs(fits(:,5));
-    cdata = channel_correct(fits(:,1:2)); %% Identify and correct channels
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% This section
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% and below
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% needs fixing
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% now
-    % The idea is going to be to fit the 2 channels with different
-    % calibration files for 3D to give us the best fit possible.
-    try % Attempt 3D with 2 color calibration, if it doesn't work use 1 color calibration for both channels
-        cdata.red.zf = getdz(abs(fits((cdata.id == 1),4)),abs(fits((cdata.id == 1),5)),cal.red.z_cal)/q;
-        cdata.orange.zf = getdz(abs(fits((cdata.id == 2),4)),abs(fits((cdata.id == 2),5)),cal.orange.z_cal)/q;
-    catch % this shouldn't matter after proper debugging
-        cdata.red.zf = getdz(abs(fits((cdata.id == 1),4)),abs(fits((cdata.id == 1),5)),cal.z_cal)/q;
-        cdata.orange.zf = getdz(abs(fits((cdata.id == 2),4)),abs(fits((cdata.id == 2),5)),cal.z_cal)/q;
-    end
-    % Organize fitting data with molecule type
-    cdata.red.N = fits(cdata.id == 1,3);
-    cdata.red.O = fits(cdata.id == 1,6);
-    cdata.red.sx = fits(cdata.id == 1,4);
-    cdata.red.sy = fits(cdata.id == 1,5);
-    cdata.red.crlbs = crlbs(cdata.id == 1);
-    cdata.red.llv = llv(cdata.id == 1);
     
-    cdata.orange.N = fits(cdata.id == 2,3);
-    cdata.orange.O = fits(cdata.id == 3,6);
-    cdata.orange.sx = fits(cdata.id == 2,4);
-    cdata.orange.sy = fits(cdata.id == 2,5);
-    cdata.orange.crlbs = crlbs(cdata.id == 2);
-    cdata.orange.llv = llv(cdata.id == 2);
+    % Put data into cdata structure
+    cdata.red.fits = fits;
+    cdata.red.crlbs = crlbs;
+    cdata.red.llv = llv;
+    cdata.red.framenumber = framenumber;
+    save
+    % Z calculations
+    zf = getdz(cdata.red.fits(:,4),cdata.red.fits(:,5),cal.red.z_cal,2)/q; % Z assignment, this variable will be updated and stored elsewhere
+    ncoords = astig_tilt([cdata.red.fits(:,1:2),zf],cal.red); % corrections due to astigmatism
+    
+    % Assign fixed coordinates
+    cdata.red.xf = ncoords(:,1);
+    cdata.red.yf = ncoords(:,2);
+    cdata.red.zf = ncoords(:,3);
+    
+    
+    clear fits crlbs llv framenumber
+    %% Repeat above for orange
+    id = logical(1-id); % Changes 0 -> 1 and 1 -> 0 flipping the ID so now we can fit orange
+    [fits, crlbs, llv, framenumber] = slim_locs(iloc(:,:,id), fnum(id), cents(id,:), cal.orange.ang);
+    % As everywhere in the equations used sigma is squared, we can without
+    % loss of generality make these fits positive definite
+    fits(:,4) = abs(fits(:,4));
+    fits(:,5) = abs(fits(:,5));
+    
+    % Put data into cdata structure
+    cdata.orange.fits = fits;
+    cdata.orange.crlbs = crlbs;
+    cdata.orange.llv = llv;
+    cdata.orange.framenumber = framenumber;
+    
+    % Z calculations
+    zf = getdz(cdata.orange.fits(:,4),cdata.orange.fits(:,5),cal.orange.z_cal,2)/q; % Z assignment, this variable will be updated and stored elsewhere
+    ncoords = astig_tilt([cdata.orange.fits(:,1:2),zf],cal.orange); % corrections due to astigmatism
+    vec = xy_feature(ncoords(:,1),ncoords(:,2));
+    x = o2rx.'*vec.';
+    y = o2ry.'*vec.';
+    % Assign fixed coordinates
+    cdata.orange.xf = x;
+    cdata.orange.yf = y;
+    cdata.orange.zf = ncoords(:,3);
+    save([an_dir,'\', fname(1:end-4),'_dast.mat'],  'cdata', 'pixw','q','cal');
 end
 
-
+catch lsterr
+    disp(lsterr)
+end
 % save('results_of_bump.mat','fnum','q','iloc','cal','cents');
 
 % save('for_trial.mat','iloc'
@@ -143,7 +164,7 @@ end
 % hold off
 % colormap('gray');
 
-save([an_dir,'\', fname(1:end-4),'_dast.mat'],  'cdata', 'pixw','q','ncoords','fits','crlbs','llv','framenumber','cal');
+
 % end
 % catch lsterr
 %      save([an_dir,'\', fname(1:end-4),'_dast.mat'], 'zf_all','sigx_all' ,'sigy_all','sigx_crlb','sigy_crlb','y','iloc','xf_all' , 'xf_crlb' , 'yf_all' , 'yf_crlb' , 'N' , 'N_crlb' ,'off_all' , 'off_crlb', 'framenum_all', 'llv','pixw','q','pix2pho');

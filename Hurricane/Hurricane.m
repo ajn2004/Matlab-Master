@@ -69,7 +69,7 @@ elseif varys(4) == 1
 end
 for i = 1:numel(files)
     tic
-   func_da_storm(files(i).name, dpath, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1, varys);
+    func_da_storm(files(i).name, dpath, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1, varys);
     clc;
     disp(['File number ' , num2str(i) , ' out of ', num2str(numel(files))]);
     t(i) = toc;
