@@ -42,6 +42,13 @@ ifind = imerode(iwaves,se);
 if choices(1) == 1
     writetiff(ifind,[data_d,'\Waves\',fname(1:end-4),'_waves.tif']);
 end
+
+% If we're doing 2 color, block out frame we're not interested in
+if choices(5) == 1
+    load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
+    ifind = func_image_block(i1,split);
+end
+
 % thrsh = thresh/100*mean(max(max(iprod)));
 % tic
 % thrsh = 3*std(iprod(:)) + mean(iprod(:));
@@ -91,7 +98,7 @@ fits(:,5) = abs(fits(:,5));
     [ncoords] = astig_tilt(coords,cal);
     save([an_dir,'\', fname(1:end-4),'_dast.mat'],  'pixw','q','ncoords','fits','crlbs','llv','framenumber','cal');
 else
-    load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
+%     load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
     id = cents(:,1) < split; % Identify localizations below the split
     %% First fit is all red, so those can be immediately 
     [fits, crlbs, llv, framenumber] = slim_locs(iloc(:,:,id), fnum(id), cents(id,:), cal.red.ang);
