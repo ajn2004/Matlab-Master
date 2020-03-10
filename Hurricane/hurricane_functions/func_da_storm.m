@@ -46,7 +46,8 @@ end
 % If we're doing 2 color, block out frame we're not interested in
 if choices(5) == 1
     load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
-    ifind = func_image_block(i1,split);
+%     ifind = func_image_block(ifind,split);
+    ifind = func_image_block2(ifind,split);
 end
 
 % thrsh = thresh/100*mean(max(max(iprod)));
@@ -89,18 +90,19 @@ if choices(3) == 1
     writetiff(iloc,[data_d,'\psfs\',fname(1:end-4),'_psfs.tif']);
 end
 if choices(5) == 0
-[fits, crlbs, llv, framenumber] = slim_locs(iloc, fnum, cents, cal.red.ang);
+[fits, crlbs, llv, framenumber] = slim_locs(iloc, fnum, cents, cal.orange.ang);
 fits(:,4) = abs(fits(:,4));
 fits(:,5) = abs(fits(:,5));
 
-    zf = getdz(abs(fits(:,4)),abs(fits(:,5)),cal.z_cal,2)/q;
+    zf = getdz(abs(fits(:,4)),abs(fits(:,5)),cal.orange.z_cal,2)/q;
     coords = [fits(:,1:2),zf];
-    [ncoords] = astig_tilt(coords,cal);
+    [ncoords] = astig_tilt(coords,cal.orange);
     save([an_dir,'\', fname(1:end-4),'_dast.mat'],  'pixw','q','ncoords','fits','crlbs','llv','framenumber','cal');
 else
 %     load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
-    id = cents(:,1) < split; % Identify localizations below the split
+    id = cents(:,1) < 73; % Identify localizations below the split
     %% First fit is all red, so those can be immediately 
+    if numel(id)>0
     [fits, crlbs, llv, framenumber] = slim_locs(iloc(:,:,id), fnum(id), cents(id,:), cal.red.ang);
     
     % As everywhere in the equations used sigma is squared, we can without
@@ -125,8 +127,10 @@ else
     
     
     clear fits crlbs llv framenumber
+    end
     %% Repeat above for orange
     id = logical(1-id); % Changes 0 -> 1 and 1 -> 0 flipping the ID so now we can fit orange
+    if numel(id) >0
     [fits, crlbs, llv, framenumber] = slim_locs(iloc(:,:,id), fnum(id), cents(id,:), cal.orange.ang);
     % As everywhere in the equations used sigma is squared, we can without
     % loss of generality make these fits positive definite
@@ -146,9 +150,10 @@ else
     x = o2rx.'*vec.';
     y = o2ry.'*vec.';
     % Assign fixed coordinates
-    cdata.orange.xf = x;
-    cdata.orange.yf = y;
-    cdata.orange.zf = ncoords(:,3);
+    cdata.orange.xf = x.';
+    cdata.orange.yf = y.';
+    cdata.orange.zf = ncoords(:,3);    
+    end
     save([an_dir,'\', fname(1:end-4),'_dast.mat'],  'cdata', 'pixw','q','cal');
 end
 

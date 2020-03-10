@@ -20,11 +20,11 @@ dmax = 0.7;
 [fname, fpath] = uigetfile('*dast.mat');
 cd(fpath)
 load([fpath,fname]);
+
 if flims(2) == -1
     flims(2) = max(framenumber);
 end
-% if 
-cal = cal.orange;
+
 [~, p] = getdz(1,1,cal.z_cal, dmax);
 
 s_tol = [min(min([p(:,2),p(:,3)])),3*max(max([p(:,2),p(:,3)]))]; % sigma tolerances
@@ -71,10 +71,9 @@ save('Tolfile.mat','flims','minsnr','zlims','lat_max','N_tol','s_tol','iln','fra
 notind = logical(1-ind);
 % Setting up our figure
 r = str2num(fname(strfind(fname,'_r')+3));
-zf = func_shift_correct(ncoords(:,3)*q,framenumber,2);
-% zf = ncoords(:,3)*q;
-% zf = getdz(abs(fits(:,4)),abs(fits(:,5)),cal.z_cal,dmax)                                                                                                                        ;
 % zf = func_shift_correct(ncoords(:,3)*q,framenumber,r);
+% zf = ncoords(:,3)*q;
+zf = getdz(abs(fits(:,4)),abs(fits(:,5)),cal.z_cal,dmax);
 id = abs(zf) < 1000;
 f = figure;
 tg = uitabgroup(f);
@@ -82,12 +81,9 @@ t1 = uitab(tg,'Title','Localizations');
 tg1 = uitabgroup(t1);
 t21 = uitab(tg1,'Title','Pre-Tolerance');
 ax = axes(t21);
-% s = scatter3(ax, ncoords(id,1)*q,ncoords(id,2)*q,zf(id),mwidth,framenumber(id));
-
-% s.MarkerFaceColor = s.MarkerEdgeColor;
-
-% colormap('jet')
-plot3(ax, ncoords(id,1)*q,ncoords(id,2)*q,zf(id)*q,'.b');
+s = scatter3(ax, ncoords(id,1)*q,ncoords(id,2)*q,zf(id),mwidth,framenumber(id));
+s.MarkerFaceColor = s.MarkerEdgeColor;
+colormap('jet')
 xlabel(ax,'microns');
 ylabel(ax,'microns');
 axis equal
@@ -99,14 +95,13 @@ ylabel(ax,'microns');
 axis equal
 t3 = uitab(tg1,'Title','Post-Tolerance 3D');
 ax = axes(t3);
-% s = scatter3(ax, ncoords(ind,1)*q,ncoords(ind,2)*q,zf(ind),mwidth, framenumber(ind));
-plot3(ax, ncoords(ind,1)*q,ncoords(ind,2)*q,zf(ind)*q,'.b');
+s = scatter3(ax, ncoords(ind,1)*q,ncoords(ind,2)*q,zf(ind),mwidth, framenumber(ind));
 xlabel(ax,'microns');
 ylabel(ax,'microns');
 zlabel(ax,'microns');
 axis equal
 clear t1 t2 t3 t21 ax
-% s.MarkerFaceColor = s.MarkerEdgeColor;
+s.MarkerFaceColor = s.MarkerEdgeColor;
 colormap('jet');
 t2 = uitab(tg,'Title','Fit-Histograms');
 
