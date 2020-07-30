@@ -128,7 +128,7 @@ oind = ind; % Index represents all molecules that PASS tolerances
 notind = logical(1-ind);
 % Setting up our figure
 r = str2num(fname(strfind(fname,'_r')+3));
-r=2;
+r=0;
 zfr = func_shift_correct(cdata.red.zf*q,cdata.red.framenumber,r);
 zfo = func_shift_correct(cdata.orange.zf*q,cdata.orange.framenumber,r);
 % zf = ncoords(:,3)*q;
