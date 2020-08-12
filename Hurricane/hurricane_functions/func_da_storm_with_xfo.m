@@ -159,9 +159,8 @@ try
             x = o2rx.'*vec.';
             y = o2ry.'*vec.';
             % Assign fixed coordinates
-            cdata.orange.xf = ncoords(:,1);
-            cdata.orange.yf = ncoords(:,2);
-            cdata.orange.zf = ncoords(:,3);
+            cdata.orange.xf = x.';
+            cdata.orange.yf = y.';
             cal.o2rx = o2rx;
             cal.o2ry = o2ry;
         end
@@ -171,24 +170,12 @@ try
         
         
         field_names = fieldnames(cdata.red);
-        
-        
-        if sum(red_index)>0
-            cdata.red.fits(red_index,:) = [];
-            cdata.red.crlbs(red_index,:) = [];
+        for k=1:numel(field_names)
+            cdata.red.(field_names{k}) (red_index) = [];
+            cdata.orange.(field_names{k}) (orange_index) = [];
         end
-        if sum(orange_index)>0
-            cdata.orange.fits(orange_index,:) = [];
-            cdata.orange.crlbs(orange_index,:) = [];
-        end
-        for k=3:numel(field_names)
-            if sum(red_index) > 0
-                cdata.red.(field_names{k})(red_index) = [];
-            end
-            if sum(orange_index) > 0
-                cdata.orange.(field_names{k})(orange_index) = [];
-            end
-        end
+        cdata.orange.xfo(orange_index) = [];
+        cdata.orange.yfo(orange_index) = [];
         
         save([an_dir,'\', fname(1:end-4),'_dast.mat'],  'cdata', 'pixw','q','cal');
     end

@@ -8,10 +8,21 @@ fnum = [];
 % load calibration data and store in conglomorate array
 for i = 1:numel(files)
     load(files(i).name)
+<<<<<<< HEAD
+    xf = [xf; cdata.red.ncoords(:,1)];
+    yf = [yf; cdata.red.ncoords(:,2)];
+    N = [N; cdata.red.ncoords(:,3)];
+    xf = [xf; cdata.orange.ncoords(:,1)];
+    yf = [yf; cdata.orange.ncoords(:,2)];
+    N = [N; cdata.orange.ncoords(:,3)];
+    fnum = [fnum; cdata.red.framenumber + max([max(fnum),0])];
+    fnum = [fnum; cdata.orange.framenumber + max([max(fnum),0])];
+=======
     xf = [xf; fits(:,1)];
     yf = [yf; fits(:,2)];
     N = [N; fits(:,3)];
     fnum = [fnum; framenumber + max([max(fnum),0])];
+>>>>>>> master
 end
 
 % display calibration parameters of splitting channels via horizontal

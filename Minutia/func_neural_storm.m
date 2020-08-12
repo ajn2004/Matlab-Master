@@ -1,4 +1,4 @@
-function func_da_storm(fname,data_d, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1, choices)
+function func_neural_storm(fname,data_d, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1, choices)
 
 % Convert Variabls
 % pix2pho = single(pix2pho);
@@ -47,12 +47,6 @@ try
     if choices(5) == 1
         load('C:\Users\andre\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
         ifind = func_image_block(ifind,split);
-    elseif choices(5) == 2
-        load('C:\Users\andre\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
-        ifind = func_image_block_orange(ifind,split);
-    elseif choices(5) == 2
-        load('C:\Users\andre\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
-        ifind = func_image_block_orange(ifind,split);
     end
 %     ifind = func_image_block2(ifind,split);
     % thrsh = thresh/100*mean(max(max(iprod)));
@@ -65,6 +59,7 @@ try
     % thrsh = min(iprod(:))*thresh/100;
     % excerpt = 1;
     dps = cpu_peaks(ifind,thresh,pixw);
+    dps = neural_peaks(ifind, theta1, theta2);
     if choices(2) == 1
         in_d_eye(iprod, dps, pixw);
     end
@@ -105,9 +100,9 @@ try
         save([an_dir,'\', fname(1:end-4),'_dast.mat'],  'pixw','q','ncoords','fits','crlbs','llv','framenumber','cal');
     else
         %     load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
-        id = cents(:,1) < split; % Identify localizations below the split
+        id = cents(:,1) < 180; % Identify localizations below the split
         %% First fit is all red, so those can be immediately
-        if sum(id)>0&& choices(5) ~= 3
+        if sum(id)>0
             [fits, crlbs, llv, framenumber] = slim_locs(iloc(:,:,id), fnum(id), cents(id,:), cal.red.ang);
             
             % As everywhere in the equations used sigma is squared, we can without
@@ -116,10 +111,8 @@ try
             fits(:,5) = abs(fits(:,5));
             
             % Put data into cdata structure
-            for i = 1:6
-            cdata.red.fits(:,i) = fits(:,i);
-            cdata.red.crlbs(:,i) = crlbs(:,i);
-            end
+            cdata.red.fits = fits;
+            cdata.red.crlbs = crlbs;
             cdata.red.llv = llv;
             cdata.red.framenumber = framenumber;
             
@@ -137,7 +130,7 @@ try
         end
         %% Repeat above for orange
         id = logical(1-id); % Changes 0 -> 1 and 1 -> 0 flipping the ID so now we can fit orange
-        if sum(id) >0 && choices(5) ~= 2
+        if sum(id) >0
             [fits, crlbs, llv, framenumber] = slim_locs(iloc(:,:,id), fnum(id), cents(id,:), cal.orange.ang);
             % As everywhere in the equations used sigma is squared, we can without
             % loss of generality make these fits positive definite
@@ -145,10 +138,8 @@ try
             fits(:,5) = abs(fits(:,5));
             
             % Put data into cdata structure
-            for i = 1:6
-                cdata.orange.fits(:,i) = fits(:,i);
-                cdata.orange.crlbs(:,i) = crlbs(:,i);
-            end
+            cdata.orange.fits = fits;
+            cdata.orange.crlbs = crlbs;
             cdata.orange.llv = llv;
             cdata.orange.framenumber = framenumber;
             
@@ -159,37 +150,10 @@ try
             x = o2rx.'*vec.';
             y = o2ry.'*vec.';
             % Assign fixed coordinates
-            cdata.orange.xf = ncoords(:,1);
-            cdata.orange.yf = ncoords(:,2);
+            cdata.orange.xf = x.';
+            cdata.orange.yf = y.';
             cdata.orange.zf = ncoords(:,3);
-            cal.o2rx = o2rx;
-            cal.o2ry = o2ry;
         end
-        % Remove problem entries
-        orange_index = cdata.orange.xf  < 0 | cdata.orange.yf <0 ;
-        red_index = cdata.red.xf  < 0 | cdata.red.yf <0 ;
-        
-        
-        field_names = fieldnames(cdata.red);
-        
-        
-        if sum(red_index)>0
-            cdata.red.fits(red_index,:) = [];
-            cdata.red.crlbs(red_index,:) = [];
-        end
-        if sum(orange_index)>0
-            cdata.orange.fits(orange_index,:) = [];
-            cdata.orange.crlbs(orange_index,:) = [];
-        end
-        for k=3:numel(field_names)
-            if sum(red_index) > 0
-                cdata.red.(field_names{k})(red_index) = [];
-            end
-            if sum(orange_index) > 0
-                cdata.orange.(field_names{k})(orange_index) = [];
-            end
-        end
-        
         save([an_dir,'\', fname(1:end-4),'_dast.mat'],  'cdata', 'pixw','q','cal');
     end
     

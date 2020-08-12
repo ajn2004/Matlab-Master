@@ -49,7 +49,14 @@ tol.o.s_tol = [min(min([p(:,2),p(:,3)])),3*max(max([p(:,2),p(:,3)]))]; % sigma t
 
 if tol.r.flims(2) == -1
     tol.r.flims(2) = max(cdata.red.framenumber);
+<<<<<<< HEAD
+    try
     tol.o.flims(2) = max(cdata.orange.framenumber);
+    catch 
+    end
+=======
+    tol.o.flims(2) = max(cdata.orange.framenumber);
+>>>>>>> master
 end
 save('Tolfile.mat','tol');
 
@@ -61,16 +68,28 @@ ind = cdata.red.xf < 0 | cdata.red.xf > 200 |cdata.red.yf < 0 | cdata.red.yf > 2
 for i = 1:numel(fnames)
     cdata.red.(fnames{i})(ind,:) = [];
 end
+<<<<<<< HEAD
+try
+    cdata.orange.xf = cdata.orange.xf(:);
+    cdata.orange.yf = cdata.orange.yf(:);
+    ind = cdata.orange.xf < 0 | cdata.orange.xf > 200 | cdata.orange.yf < 0 | cdata.orange.yf > 200;
+=======
 cdata.orange.xf = cdata.orange.xf(:);
 cdata.orange.yf = cdata.orange.yf(:);
 ind = cdata.orange.xf < 0 | cdata.orange.xf > 200 | cdata.orange.yf < 0 | cdata.orange.yf > 200;
+>>>>>>> master
 
 fnames = fieldnames(cdata.orange);
 
 for i = 1:numel(fnames)
     cdata.orange.(fnames{i})(ind,:) = [];
 end
+<<<<<<< HEAD
+catch
+end
+=======
 
+>>>>>>> master
 
 %Define fractionals
 cdata.red.fr_N =  cdata.red.crlbs(:,3).^0.5./cdata.red.fits(:,3);
@@ -80,7 +99,11 @@ cdata.red.fr_o =  cdata.red.crlbs(:,6).^0.5./cdata.red.fits(:,6);
 cdata.red.ilv = cdata.red.llv(:)./cdata.red.fits(:,3);
 cdata.red.eps = abs(cdata.red.fits(:,4)./cdata.red.fits(:,5));
 cdata.red.snr =(cdata.red.fits(:,3)./(cdata.red.fits(:,3)+(2*6+1)^2*cdata.red.fits(:,6)).^0.5);
+<<<<<<< HEAD
+try
+=======
 
+>>>>>>> master
 cdata.orange.fr_N =  cdata.orange.crlbs(:,3).^0.5./cdata.orange.fits(:,3);
 cdata.orange.fr_sx = cdata.orange.crlbs(:,4).^0.5./cdata.orange.fits(:,4);
 cdata.orange.fr_sy = cdata.orange.crlbs(:,5).^0.5./cdata.orange.fits(:,5);
@@ -88,7 +111,12 @@ cdata.orange.fr_o =  cdata.orange.crlbs(:,6).^0.5./cdata.orange.fits(:,6);
 cdata.orange.ilv = cdata.orange.llv(:)./cdata.orange.fits(:,3);
 cdata.orange.eps = abs(cdata.orange.fits(:,4)./cdata.orange.fits(:,5));
 cdata.orange.snr =(cdata.orange.fits(:,3)./(cdata.orange.fits(:,3)+(2*6+1)^2*cdata.orange.fits(:,6)).^0.5);
+<<<<<<< HEAD
+catch
+end
+=======
 
+>>>>>>> master
 
 
 
@@ -109,7 +137,11 @@ ind = ind & cdata.red.fr_sx < tol.r.frac_lim & cdata.red.fr_sy < tol.r.frac_lim;
 rind = ind; % Index represents all molecules that PASS tolerances
 
 % Scream here for sanity
+<<<<<<< HEAD
+try
+=======
 
+>>>>>>> master
 % Build Orange
 ind = cdata.orange.fits(:,3) > tol.o.N_tol(1) & cdata.orange.fits(:,3) < tol.o.N_tol(2); % Photon Tolerance
 ind = ind & cdata.orange.snr >= tol.o.minsnr; % Signal to Noise tolerances
@@ -122,7 +154,12 @@ ind = ind & cdata.orange.ilv > tol.o.iln; % llv tolerance
 ind = ind & cdata.orange.fr_N < tol.o.frac_lim & abs(cdata.orange.fr_o) < tol.o.off_frac; % Fraction photon tolerance
 ind = ind & cdata.orange.fr_sx < tol.o.frac_lim & cdata.orange.fr_sy < tol.o.frac_lim; % Fraction width tolerance
 oind = ind; % Index represents all molecules that PASS tolerances
+<<<<<<< HEAD
+catch
+end
+=======
 
+>>>>>>> master
 % save('Tolfile.mat','flims','minsnr','zlims','lat_max','N_tol','s_tol','iln','frac_lim','off_frac','offlim');
 
 notind = logical(1-ind);
@@ -130,7 +167,14 @@ notind = logical(1-ind);
 r = str2num(fname(strfind(fname,'_r')+3));
 r=0;
 zfr = func_shift_correct(cdata.red.zf*q,cdata.red.framenumber,r);
+<<<<<<< HEAD
+try
 zfo = func_shift_correct(cdata.orange.zf*q,cdata.orange.framenumber,r);
+catch
+end
+=======
+zfo = func_shift_correct(cdata.orange.zf*q,cdata.orange.framenumber,r);
+>>>>>>> master
 % zf = ncoords(:,3)*q;
 
 f = figure;
@@ -141,7 +185,14 @@ t21 = uitab(tg1,'Title','Pre-Tolerance');
 ax = axes(t21);
 plot3(ax, cdata.red.xf*q,cdata.red.yf*q,cdata.red.zf*q,'.r','MarkerSize',mwidth);
 hold on
+<<<<<<< HEAD
+try
 plot3(ax, cdata.orange.xf*q,cdata.orange.yf*q,cdata.orange.zf*q,'.b','MarkerSize',mwidth);
+catch
+end
+=======
+plot3(ax, cdata.orange.xf*q,cdata.orange.yf*q,cdata.orange.zf*q,'.b','MarkerSize',mwidth);
+>>>>>>> master
 legend('Red','Orange')
 hold off
 % s.MarkerFaceColor = s.MarkerEdgeColor;
@@ -153,7 +204,14 @@ t2 = uitab(tg1,'Title','Post-Tolerance');
 ax = axes(t2);
 plot(ax, cdata.red.xf(rind),cdata.red.yf(rind),'.r','MarkerSize',mwidth);
 hold on
+<<<<<<< HEAD
+try
 plot(ax, cdata.orange.xf(oind),cdata.orange.yf(oind),'.b','MarkerSize',mwidth);
+catch
+end
+=======
+plot(ax, cdata.orange.xf(oind),cdata.orange.yf(oind),'.b','MarkerSize',mwidth);
+>>>>>>> master
 legend('Red','Orange')
 hold off
 xlabel(ax,'microns');
@@ -163,7 +221,14 @@ t3 = uitab(tg1,'Title','Post-Tolerance 3D');
 ax = axes(t3);
 plot3(ax, cdata.red.xf(rind)*q,cdata.red.yf(rind)*q,zfr(rind),'.r','MarkerSize',mwidth);
 hold on
+<<<<<<< HEAD
+try
 plot3(ax, cdata.orange.xf(oind)*q,cdata.orange.yf(oind)*q,zfo(oind),'.b','MarkerSize',mwidth);
+catch
+end
+=======
+plot3(ax, cdata.orange.xf(oind)*q,cdata.orange.yf(oind)*q,zfo(oind),'.b','MarkerSize',mwidth);
+>>>>>>> master
 legend('Red','Orange')
 hold off
 xlabel(ax,'microns');
@@ -180,7 +245,14 @@ t21 = uitab(tg2,'Title','Z-Histogram');
 ax = axes(t21);
 histogram(ax,cdata.red.zf(rind)*q);
 hold on
+<<<<<<< HEAD
+try
 histogram(ax,cdata.orange.zf(oind)*q);
+catch
+end
+=======
+histogram(ax,cdata.orange.zf(oind)*q);
+>>>>>>> master
 legend('Red','Orange')
 xlabel('Z-position(um)')
 ylabel('Frequency')
@@ -190,7 +262,14 @@ t22 = uitab(tg2,'Title','N-Histogram');
 ax = axes(t22);
 histogram(ax,cdata.red.fits(rind,3));
 hold on
+<<<<<<< HEAD
+try
 histogram(ax,cdata.orange.fits(oind,3));
+catch
+end
+=======
+histogram(ax,cdata.orange.fits(oind,3));
+>>>>>>> master
 hold off
 legend('Red','Orange')
 xlabel('N (photons)')
@@ -202,8 +281,16 @@ ax = axes(t23);
 histogram(ax,cdata.red.fits(rind,4));
 hold on
 histogram(ax,cdata.red.fits(rind,5));
+<<<<<<< HEAD
+try
 histogram(ax,cdata.orange.fits(oind,4));
 histogram(ax,cdata.orange.fits(oind,5));
+catch
+end
+=======
+histogram(ax,cdata.orange.fits(oind,4));
+histogram(ax,cdata.orange.fits(oind,5));
+>>>>>>> master
 hold off
 legend(ax,'Red \sigma_x','Red \sigma_y', 'Orange \sigma_x','Orange \sigma_y')
 xlabel(ax,'\sigma (pixels)')

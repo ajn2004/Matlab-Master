@@ -19,7 +19,7 @@ pixw = 6;       % radius to localize (final image size is (2*pixw+1)^2 pixels)
 an_dir = 'Analysis'; % name of analysis directory
 angle = 0; %approximate astig rotation in degrees
 sv_im = 'n'; % set to y/Y to save image of localizations
-thresh = 2;
+thresh = 10;
 
 %% Optionals
   % This section is dedicated to a list of variables for the user to select
@@ -36,11 +36,11 @@ thresh = 2;
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
              
-p = mfilename('fullpath');
-[fpath, fname, fext] = fileparts([p, '.m']);
-addpath(fpath);
-addpath([fpath,'\da_c']);
-addpath([fpath,'\da_functions']);
+% p = mfilename('fullpath');
+% [fpath, fname, fext] = fileparts([p, '.m']);
+% addpath(fpath);
+% addpath([fpath,'\da_c']);
+% addpath([fpath,'\da_functions']);
 
 % [dname, dpath] = uigetfile('*.tif');
 % cd(dpath); % we change to the path we are going to use
@@ -67,13 +67,15 @@ elseif varys(3) == 1
 elseif varys(4) == 1
     mkdir('Rolling_Ball');
 end
-for i = 1:numel(files)
-    tic
-    func_da_storm(files(i).name, dpath, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1, varys);
-    clc;
-    disp(['File number ' , num2str(i) , ' out of ', num2str(numel(files))]);
-    t(i) = toc;
-    ajn_wait(t,i,numel(files));
+for i = 3:numel(files)
+%     if isempty(strfind(files(i).name,'scan'))
+        tic
+        func_da_storm(files(i).name, dpath, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1, varys);
+        clc;
+        %     disp(['File number ' , num2str(i) , ' out of ', num2str(numel(files))]);
+        t(i) = toc;
+%     end
+%     ajn_wait(t,i,numel(files));
     close all
 end
 
