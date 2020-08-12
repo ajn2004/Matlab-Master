@@ -42,7 +42,7 @@ if numel(varargin) == 0
         else
             yt = points(i,2):points(i-1,2);
         end
-        if numel(xt) >= yt
+        if numel(xt) >= numel(yt)
             a = polyfit(points(i-1:i,1),points(i-1:i,2),1);
             x = [x,xt];
             y = [y,round(a(1)*xt + a(2))];

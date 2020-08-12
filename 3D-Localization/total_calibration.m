@@ -9,9 +9,9 @@ close all;
 clc;
 %% User variables
 pixw = 6;                                                                   % ROI 'radius'
-q = 0.131;                                                                  % Pixel size in um
-step = 10;                                                                  % Steps between frames in nm
-CCs = 50;                                                                   % number of frames to x-correlate over
+q = 0.120;                                                                  % Pixel size in um
+step = 20;                                                                  % Steps between frames in nm
+CCs = 10;                                                                   % number of frames to x-correlate over
 wind = -pixw:pixw;                                                          % create window for segmentation
 
 %% END USER INPUT
@@ -115,6 +115,7 @@ yfc = [];
 llv = [];
 fnum = [];
 psf = [];
+ims = [];
 % gpu fit of PSFs
 % NOTE TO USER: because we assume an axis of elipticity that
 % need not be parallel to the axis of the camera we rotate our
@@ -127,32 +128,34 @@ psf = [];
 % axis
 fms = 1:o; % input framenum
 for i = 1:numel(psfs)          % Loop over all identified ROIs
-    [fits, crlb, lv,fnout] = slim_locs(psfs{i},fms,zeros(o,2),ang,50,100);  % Perform Fit
-    fnout = fnout.';                                                        % Save frame number which corresponds to Z-position
-    xa = fits(:,1)+psf_off{i}(fnout,1);                                     % define 'assignment' variable for x 
-    ya = fits(:,2)+psf_off{i}(fnout,2);                                     % define 'assignment' variable for y this allows centering around distribution
-%     xa = fits(:,1);
-%     ya = fits(:,2);
-    xf = [xf;xa-mean(xa)];                                                    % X-Position
-    yf = [yf;ya-mean(ya)];                                                    % Y-Position
-%     xf = [xf;xa];                                                    % X-Position
-%     yf = [yf;ya];                                                    % Y-Position
-    N = [N; fits(:,3)];                                                     % Number of Photons
-    sx = [sx;fits(:,4)];                                                    % Sigma in x' direction
-    sy = [sy;fits(:,5)];                                                    % Sigma in y' direction
-    O = [O; fits(:,6)];                                                     % Offset
-    % Lower bound on Variance of fitted variables
-    xfc = [xfc;crlb(:,1)];
-    yfc = [yfc;crlb(:,2)];
-    Nc = [Nc;crlb(:,3)];
-    Oc = [Oc;crlb(:,6)];
-    sxc = [sxc;crlb(:,4)];
-    syc = [syc;crlb(:,5)];
-    psf = [psf; fits(:,1)*i./fits(:,1)];                                            % Log the PSF the fit is associated with
-    llv = [llv;-abs(lv)];                                                   % Log Likelihood Value
-%     fnum = [fnum;fnout - disp(i)];                                          % Correct the Frame number based off correlation result
-
-    fnum = [fnum;fnout]; 
+    if i ~= 1 && i ~= 6
+        [fits, crlb, lv,fnout,im0s] = slim_locs(psfs{i},fms,zeros(o,2),ang,50,100);  % Perform Fit
+        fnout = fnout.';                                                        % Save frame number which corresponds to Z-position
+        xa = fits(:,1)+psf_off{i}(fnout,1);                                     % define 'assignment' variable for x
+        ya = fits(:,2)+psf_off{i}(fnout,2);                                     % define 'assignment' variable for y this allows centering around distribution
+        %     xa = fits(:,1);
+        %     ya = fits(:,2);
+        xf = [xf;xa-mean(xa)];                                                    % X-Position
+        yf = [yf;ya-mean(ya)];                                                    % Y-Position
+        %     xf = [xf;xa];                                                    % X-Position
+        %     yf = [yf;ya];                                                    % Y-Position
+        N = [N; fits(:,3)];                                                     % Number of Photons
+        sx = [sx;fits(:,4)];                                                    % Sigma in x' direction
+        sy = [sy;fits(:,5)];                                                    % Sigma in y' direction
+        O = [O; fits(:,6)];                                                     % Offset
+        % Lower bound on Variance of fitted variables
+        xfc = [xfc;crlb(:,1)];
+        yfc = [yfc;crlb(:,2)];
+        Nc = [Nc;crlb(:,3)];
+        Oc = [Oc;crlb(:,6)];
+        sxc = [sxc;crlb(:,4)];
+        syc = [syc;crlb(:,5)];
+        psf = [psf; fits(:,1)*i./fits(:,1)];                                            % Log the PSF the fit is associated with
+        llv = [llv;-abs(lv)];                                                   % Log Likelihood Value
+        %     fnum = [fnum;fnout - disp(i)];                                          % Correct the Frame number based off correlation result
+        ims = [ims,im0s];
+        fnum = [fnum;fnout];
+    end
 end
 z1 = fnum*step/1000;                                                        % Populate Z-positions
 % Tolerance Step
@@ -168,14 +171,19 @@ rid = psf == refp; % build an index for the reference ID
 sigr = [fnum(indy&rid),sx(indy &rid),sy(indy & rid)]; % build reference sigma scan
 fnumc = fnum;
 for i = 1:numel(psfs) % loop over all psfs
+    if i ~= 1 && i ~= 6
     cid = psf == i; % grab Id for psf scan to correct
     sigc = [fnum(indy&cid),sx(indy & cid),sy(indy & cid)];
     dff = xcorrsig(sigr,sigc);
     fnumc(cid) = fnumc(cid) + dff;
+    end
 end
 z0 = fnumc*step/1000;
 
 %% Data Representation
+% ind = psf == 1 || psf == 6;
+% fnumc(ind) = [];
+
 
 % x corr corrections
 t3 = uitab(tg,'Title','Correlation Correction');
@@ -276,18 +284,18 @@ for i = 1:numel(zus)                                                        % Lo
 end
 
 % Find plane of least confusion
-ds = ssx - ssy;                                                             % Subtract sigma-y from sigma-x
+ds = ssy - ssx;                                                             % Subtract sigma-y from sigma-x
 tds = uitab(tg3,'Title','DS curve');
 ax = axes(tds);
 plot(ax,abs(ds))
 xlabel(ax,'Index')
 ylabel(ax,'Difference between average sx and sy')
 tdx = input('Choose an Index to grab minimum of the DS curve');
-ind = find(abs(ds(tdx:end)) == min(abs(ds(tdx:end))));                  % Find minimum of absolute value
+ind = find(abs(ds(tdx:tdx + 30)) == min(abs(ds(tdx:tdx + 30))));                  % Find minimum of absolute value
 z0s = zus - zus(ind(1)+tdx);                                                 % Call the found index the 0 point
 
 % Data Representation of Sigma and Z space
-t3 = uitab(tg,'Title','Sigmas');
+t3 = uitab(tg,'Title','Sigmas2');
 ax = axes(t3);
 plot(ax,z0(indy)-zus(ind(1)+tdx),sx(indy),'.')                               % Plot Toleranced Sigma-x data
 hold on
@@ -296,12 +304,17 @@ plot(ax,z0s,ssx)                                                            % Pl
 plot(ax,z0s,ssy)                                                            % Plot average sigma-y
 
 % Determining Z parameters
-ind = abs(z0s) < 1.2;                                                       % Limit height over which to fit sigmas
-z_cal = get_z_params(z0s(ind),ssx(ind),ssy(ind));                           % Fit sigma curves to data and return result
-
+ind = abs(z0s) < 0.5;                                                       % Limit height over which to fit sigmas
+% z_net = train_neural_z(z0s(indy),ims(:,indy));
+z_cal = get_z_params(z0s(ind),ssx(ind),ssy(ind));      
+% Fit sigma curves to data and return result
+% Redfeining z_call and 
 % Display results of Z-calibration
 yx = z_cal_fit(z0s(ind),z_cal(1:5));                                        % Determine ideal fitted Sig-x Values
-yy = z_cal_fit(z0s(ind),z_cal(6:end));                                      % Determine ideal fitted Sig-y values
+yy = z_cal_fit(z0s(ind),z_cal(6:end));
+
+
+% Determine ideal fitted Sig-y values
 % Overlay result on scattered / average sig-x plot
 plot(ax,z0s(ind),yx,'gx')
 plot(ax,z0s(ind),yy,'gx')
@@ -312,7 +325,7 @@ legend('Sig-X','Sigy-Y','Location','North');
 % It's known that in astigmatism there may be a slight slant that
 % exists over the Z direction, in this section we'll address that
 
-zf_um = getdz(sx,sy,z_cal);   % Get Z-values
+zf_um = getdz(sx,sy,z_cal,2);   % Get Z-values
 upz = 0.5;
 dnz = -0.5;
 indy = indy & zf_um <upz & zf_um > dnz;                                              % Limit view to fitted region listed above
@@ -332,17 +345,22 @@ ax = axes(tf);
 
 % Overlay stage v fit curves
 zc = z0;
-for i = 1:numel(psfs)
-    id = psf == i & abs(zf_um) < 1; % ident by psf and position
+figure
+for i = 4:numel(psfs)
+    id = psf == i & abs(z0 - 0.88) < 0.22; % ident by psf and position
     zs = z0(id); % subset of stage positions
     zfs = zf_um(id); % subset of fitted positions
+    plot(zs,zfs,'.')
     a = polyfit(zfs,zs,1); % linear fit to obtain x-intercept of stage
     zc(id) = zc(id) - a(2); % adjust stage position to 'center' by subtracting x-interecept of all psfs
+    hold on
 end
+
 
 % plot(ax,z0(indy),zf_um(indy),'.')
 % a = polyfit(z0(indy),zf_um(indy),1);                                        % The slope of this distribution gives us the 'correction' for absolute Z
 
+%purge clumped psfs for orange
 
 % grab subsets
 dist = 0.5;
@@ -351,6 +369,11 @@ xfs = xf(indy);
 yfs = yf(indy);
 zfs = zf_um(indy)/q;
 pfs = psf(indy);
+done_id = psf <4;
+xfs(done_id) = [];
+yfs(done_id) = [];
+zfs(done_id) = [];
+pfs(done_id) = [];
 zs = (min(zfs*q):0.040:max(zfs*q))/q;  % zfs is in pixels, are values are in pixels right now
 for i = 1:numel(zs)-1 % Attempt to grab the magnification curve of stage versus fit
     id = zf_um >= zs(i)*q & zf_um < zs(i+1)*q;
@@ -360,7 +383,15 @@ for i = 1:numel(zs)-1 % Attempt to grab the magnification curve of stage versus 
     z0m(i) = mean(zc(id2));
     zfm(i) = mean(zf_um(id2));
 end
-a = polyfit(z0m,zfm,1);
+id = zf_um < 0.18;
+z0m = zc(id);
+% a = polyfit(z0m,zfm,1);
+ind = psf >3 & abs(z0 - 0.88) < 0.22;
+plot(z0(ind),zf_um(ind),'.')
+a_actual = polyfit(z0(ind),zf_um(ind),1);
+hold on
+plot(z0(ind),z0(ind)*a_actual(1) + a_actual(2),'r')
+
 clear zfm
 plot(ax,zc(indy),zf_um(indy),'.');
 hold on
@@ -375,11 +406,14 @@ ylabel('Found Position');
 xt = [];
 yt = [];
 zt = [];
-for i = 1:max(pfs)
-    ind = pfs == i;
-    xt = [xt;xfs(ind)-mean(xfs(ind))];
-    yt = [yt;yfs(ind)-mean(yfs(ind))];
-    zt = [zt;zfs(ind)];
+for i = 4:max(psf)
+    ind = psf == i;
+    try
+        xt = [xt;xfs(ind)-mean(xfs(ind))];
+        yt = [yt;yfs(ind)-mean(yfs(ind))];
+        zt = [zt;zfs(ind)];
+    catch
+    end
 end
 % indy = indy & xfc.^0.5*q < 0.005 & yfc.^0.5*q < 0.005;
 % indy = indy & abs(xf) < 0.5 & abs(yf) < 0.5;
@@ -389,12 +423,12 @@ ysel = [];
 zsel = [];
 for i = 1:numel(zs) - 1 % Loop over a variety of height windows for averaging of points
     ind1 = zt >= zs(i) & zt <=zs(i+1);  % grab all points within height window
-    ind1 = ind1 & (xt.^2+yt.^2).^0.5 < 0.5; % grab all points who lie within a half pixel radius of center (at this point all scans have a 0 mean in XY)
+    ind1 = ind1 & ((xt - mean(xt(ind1))).^2+(yt - mean(yt(ind1))).^2).^0.5 < 0.5; % grab all points who lie within a half pixel radius of center (at this point all scans have a 0 mean in XY)
     % Subsets
     xts = xt(ind1);
     yts = yt(ind1);
     zts = zt(ind1);
-    rts = (xts.^2+yts.^2).^0.5; % convert subsetted xy to R
+    rts = ((xts-mean(xts)).^2+(yts-mean(yts)).^2).^0.5; % convert subsetted xy to R
     mr = mean(rts); % grab mean of R
     str = std(rts); % grab stdev of R
 %     my = mean(yts);
@@ -410,7 +444,7 @@ for i = 1:numel(zs) - 1 % Loop over a variety of height windows for averaging of
     zfm(i) = mean(zts(ind2));
 end
 
-splz = (min(zf_um(indy)):0.001:max(zf_um(indy)))/q;
+splz = (-0.5:0.001:0.5)/q;
 xtilt = gausssmooth(xfm,5,10);
 ytilt = gausssmooth(yfm,5,10);
 splx = spline(zs(1:end-1) + mean(diff(zs))/2,xtilt,splz);
@@ -433,6 +467,7 @@ legend('Avg Pts','Spline Curve');
 zf = zf_um/q;
 xc = spline(zs(1:end-1) + mean(diff(zs))/2,xtilt,zf);
 yc = spline(zs(1:end-1) + mean(diff(zs))/2,ytilt,zf);
+% new drift correction attempt
 
 xf_c = xf - xc;
 yf_c = yf - yc;
@@ -455,4 +490,4 @@ cal.tilt.zs = zs;
 
 %% Calibration Handling
 disp(['Distance between Minima is ', num2str(1000*(cal.z_cal(2)-cal.z_cal(7))),'nm']);
-save('z_calib.mat','cal')
+save('z_calib_orange.mat','cal')

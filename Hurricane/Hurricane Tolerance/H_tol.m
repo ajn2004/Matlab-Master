@@ -6,15 +6,15 @@ clearvars; close all; clc;
 %Tolerance data
 mwidth = 6; %marker width for visualization, does not affect data
 zlims= [-0.49, 0.49]; % Limit of the absolute value of z-data in pixels
-flims = [2,-1];
-lat_max = 0.1; % Maximum lateral uncertainty in micrometers
-N_tol = [200, 1400000]; % Tolerance on N
-offlim = [0, 1250];
-minsnr = 10;
-iln = -10;  % lower bound on llv/N
-frac_lim = 0.3; % Limit on the fractional uncertainty of any value
-off_frac = 0.3;
-
+flims = [1,-1];
+lat_max = 0.01; % Maximum lateral uncertainty in micrometers
+N_tol = [50, 140000000]; % Tolerance on N
+offlim = [-10, 125000];
+minsnr = 0;
+iln = -1;  % lower bound on llv/N
+frac_lim = 0.2; % Limit on the fractional uncertainty of any value
+off_frac = 0.5;
+dmax = 0.7;
 
 
 [fname, fpath] = uigetfile('*dast.mat');
@@ -23,7 +23,9 @@ load([fpath,fname]);
 if flims(2) == -1
     flims(2) = max(framenumber);
 end
-[~, p] = getdz(1,1,cal.z_cal);
+% if 
+cal = cal.orange;
+[~, p] = getdz(1,1,cal.z_cal, dmax);
 
 s_tol = [min(min([p(:,2),p(:,3)])),3*max(max([p(:,2),p(:,3)]))]; % sigma tolerances
 snr =(fits(:,3)./(fits(:,3)+(2*6+1)^2*fits(:,6)).^0.5);
@@ -68,19 +70,24 @@ ind = ind & fr_sx < frac_lim & fr_sy < frac_lim; % Fraction width tolerance
 save('Tolfile.mat','flims','minsnr','zlims','lat_max','N_tol','s_tol','iln','frac_lim','off_frac','offlim');
 notind = logical(1-ind);
 % Setting up our figure
-r = str2num(fname(strfind(fname,'_r')+2));
-zf = func_shift_correct(ncoords(:,3)*q,framenumber,r);
+r = str2num(fname(strfind(fname,'_r')+3));
+zf = func_shift_correct(ncoords(:,3)*q,framenumber,2);
 % zf = ncoords(:,3)*q;
-% zf = getdz(abs(fits(:,4)),abs(fits(:,5)),cal.z_cal);
+% zf = getdz(abs(fits(:,4)),abs(fits(:,5)),cal.z_cal,dmax)                                                                                                                        ;
+% zf = func_shift_correct(ncoords(:,3)*q,framenumber,r);
+id = abs(zf) < 1000;
 f = figure;
 tg = uitabgroup(f);
 t1 = uitab(tg,'Title','Localizations');
 tg1 = uitabgroup(t1);
 t21 = uitab(tg1,'Title','Pre-Tolerance');
 ax = axes(t21);
-s = scatter3(ax, ncoords(:,1)*q,ncoords(:,2)*q,zf,mwidth,framenumber);
-s.MarkerFaceColor = s.MarkerEdgeColor;
-colormap('jet')
+% s = scatter3(ax, ncoords(id,1)*q,ncoords(id,2)*q,zf(id),mwidth,framenumber(id));
+
+% s.MarkerFaceColor = s.MarkerEdgeColor;
+
+% colormap('jet')
+plot3(ax, ncoords(id,1)*q,ncoords(id,2)*q,zf(id),'.b');
 xlabel(ax,'microns');
 ylabel(ax,'microns');
 axis equal
@@ -92,13 +99,14 @@ ylabel(ax,'microns');
 axis equal
 t3 = uitab(tg1,'Title','Post-Tolerance 3D');
 ax = axes(t3);
-s = scatter3(ax, ncoords(ind,1)*q,ncoords(ind,2)*q,zf(ind),mwidth, framenumber(ind));
+% s = scatter3(ax, ncoords(ind,1)*q,ncoords(ind,2)*q,zf(ind),mwidth, framenumber(ind));
+plot3(ax, ncoords(ind,1)*q,ncoords(ind,2)*q,zf(ind),'.b');
 xlabel(ax,'microns');
 ylabel(ax,'microns');
 zlabel(ax,'microns');
 axis equal
 clear t1 t2 t3 t21 ax
-s.MarkerFaceColor = s.MarkerEdgeColor;
+% s.MarkerFaceColor = s.MarkerEdgeColor;
 colormap('jet');
 t2 = uitab(tg,'Title','Fit-Histograms');
 

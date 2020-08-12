@@ -15,8 +15,8 @@ f2 = sig2(:,1);
 % Spline interpolation onto the output
 
 wind = -5:5;
-mid1 = round(numel(sxy1)/2);
-mid2 = round(numel(sxy2)/2);
+mid1 = round(numel(sxy1)/2)-10;
+mid2 = round(numel(sxy2)/2)-10;
 
 ssx1 = sxy1(mid1+wind);
 try

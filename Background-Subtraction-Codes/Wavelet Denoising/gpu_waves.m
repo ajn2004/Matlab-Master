@@ -16,4 +16,5 @@ wvlt = [baselet(1), zeros(1,2^(i-1)-1),baselet(2), zeros(1,2^(i-1)-1),baselet(3)
 wave = wvlt.*wvlt.';
 i2 = gpu_conv(i1,wave);
 disp('Wavelet: Conv step 2 done')
-im2 = split_sub(i1,i2);
+% im2 = split_sub(i1,i2);
+im2 = (i1 - i2).*((i1 - i2)>2);

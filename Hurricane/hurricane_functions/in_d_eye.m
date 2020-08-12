@@ -12,7 +12,7 @@ for i = 1:o
     draw_boxes([col,row],pixw);
     colormap('gray')
     axis image
-    title('Background Subtracted')
+    title(['Background Subtracted Frame ',num2str(i)])
     drawnow
     M(i) = getframe(gcf);
 end

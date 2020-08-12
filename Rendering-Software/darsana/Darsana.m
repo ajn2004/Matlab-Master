@@ -18,7 +18,7 @@ gain = 1;      % gain of final image, effectively changes brightness
 smooth = 0.75;   % relative smoothing radius 1 is default value, smooth < 1 = sharpen, smooth > 1 = blur
 dz = 50;       % Desired z resolution in nm
 grid = 0;       % Grid size, set to 0 for default value
-image = 1;      % Image setting variable 1: Grayscale 2:User Color 3:3D 4:User Variable 5: NN render
+image = 3;      % Image setting variable 1: Grayscale 2:User Color 3:3D 4:User Variable 5: NN render
 thresh = 100;   % threshold for NN representation if image is set to 5
 vary = 'N';
 %% Color Settings

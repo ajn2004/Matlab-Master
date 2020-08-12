@@ -1,4 +1,4 @@
-function [z,params] = getdz(sigx,sigy,z_cal)
+function [z,params] = getdz(sigx,sigy,z_cal, dmax)
 z =[];
 x = (-0.5:0.001:0.5).';
 z_cal = double(z_cal);
@@ -29,6 +29,9 @@ for i = 1:numel(sigx)
 %     D = ((sigx(i)-sx).^2 + (sigy(i)-sy).^2).^0.5;
 %     D = ((sigx(i).^0.5-sx.^0.5).^2 + (sigy(i).^0.5-sy.^0.5).^2);
     ind = find(D == min(D), 1);
+    if min(D) > dmax
+        ind = -1;
+    end
     try
     z(i,1) = x(ind(1));  % emperically found to be the axial zoom factor by fitting a line between board movements and position measurements
     catch
