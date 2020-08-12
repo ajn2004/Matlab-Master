@@ -54,7 +54,7 @@ try
         load('C:\Users\andre\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
         ifind = func_image_orange_block(ifind,split);
     end
-    %     ifind = func_image_block2(ifind,split);
+%     ifind = func_image_block2(ifind,split);
     % thrsh = thresh/100*mean(max(max(iprod)));
     % tic
     % thrsh = 3*std(iprod(:)) + mean(iprod(:));
@@ -103,12 +103,11 @@ try
         coords = [fits(:,1:2),zf];
         [ncoords] = astig_tilt(coords,cal.red);
         save([an_dir,'\', fname(1:end-4),'_dast.mat'],  'pixw','q','ncoords','fits','crlbs','llv','framenumber','cal');
-    end
-    if choices(5) == 1 || choices(5) ==2
+    else
         %     load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
         id = cents(:,1) < split; % Identify localizations below the split
         %% First fit is all red, so those can be immediately
-        if sum(id)>0
+        if sum(id)>0&& choices(5) ~= 3
             [fits, crlbs, llv, framenumber] = slim_locs(iloc(:,:,id), fnum(id), cents(id,:), cal.red.ang);
             
             % As everywhere in the equations used sigma is squared, we can without
@@ -118,42 +117,28 @@ try
             
             % Put data into cdata structure
             for i = 1:6
-                cdata.red.fits(:,i) = fits(:,i);
-                cdata.red.crlbs(:,i) = crlbs(:,i);
+            cdata.red.fits(:,i) = fits(:,i);
+            cdata.red.crlbs(:,i) = crlbs(:,i);
             end
             cdata.red.llv = llv;
             cdata.red.framenumber = framenumber;
             
             % Z calculations
-            %             zf = getdz(cdata.red.fits(:,4),cdata.red.fits(:,5),cal.red.z_cal,2)/q; % Z assignment, this variable will be updated and stored elsewhere
-            %             ncoords = astig_tilt([cdata.red.fits(:,1:2),zf],cal.red); % corrections due to astigmatism
-            zf = get_spline_z(fits(:,4),fits(:,5),cal.red); % New z_registration based off spline 3d calibration
+%             zf = getdz(cdata.red.fits(:,4),cdata.red.fits(:,5),cal.red.z_cal,2)/q; % Z assignment, this variable will be updated and stored elsewhere
+%             ncoords = astig_tilt([cdata.red.fits(:,1:2),zf],cal.red); % corrections due to astigmatism
+            zf = get_spline_z(sx,sy,cal.red); % New z_registration based off spline 3d calibration
             ncoords = make_astigmatism_corrections([cdata.red.fits(:,1:2),zf/q],cal.red,q);
             % Assign fixed coordinates
             cdata.red.xf = ncoords(:,1);
             cdata.red.yf = ncoords(:,2);
             cdata.red.zf = ncoords(:,3);
             
-            red_index = cdata.red.xf  < 0 | cdata.red.yf <0 ;
-            field_names = fieldnames(cdata.red);
-            
-            if sum(red_index)>0
-                cdata.red.fits(red_index,:) = [];
-                cdata.red.crlbs(red_index,:) = [];
-            end
-            
-            for k=3:numel(field_names)
-                if sum(red_index) > 0
-                    cdata.red.(field_names{k})(red_index) = [];
-                end
-                
-            end
             
             clear fits crlbs llv framenumber
         end
         %% Repeat above for orange
         id = logical(1-id); % Changes 0 -> 1 and 1 -> 0 flipping the ID so now we can fit orange
-        if sum(id) >0 && choices(5) ~= 3
+        if sum(id) >0 && choices(5) ~= 2
             [fits, crlbs, llv, framenumber] = slim_locs(iloc(:,:,id), fnum(id), cents(id,:), cal.orange.ang);
             % As everywhere in the equations used sigma is squared, we can without
             % loss of generality make these fits positive definite
@@ -173,8 +158,8 @@ try
             
             %ncoords = astig_tilt([cdata.orange.fits(:,1:2),zf],cal.orange); % corrections due to astigmatism
             %ncoords = astig_tilt([cdata.orange.fits(:,1:2),zf],cal.orange); % corrections due to astigmatism
-            zf = get_spline_z(fits(:,4),fits(:,5),cal.orange); % New z_registration based off spline 3d calibration
-            ncoords = make_astigmatism_corrections([cdata.orange.fits(:,1:2),zf],cal.orange,q);
+            zf = get_spline_z(sx,sy,cal.orange); % New z_registration based off spline 3d calibration
+            ncoords = make_astigmatism_corrections([cdata.orange.fits(:,1:2),zf],cal.orange);
             vec = xy_feature(ncoords(:,1),ncoords(:,2));
             x = o2rx.'*vec.';
             y = o2ry.'*vec.';
@@ -184,26 +169,31 @@ try
             cdata.orange.zf = ncoords(:,3);
             cal.o2rx = o2rx;
             cal.o2ry = o2ry;
-            field_names = fieldnames(cdata.orange);
-        
-            orange_index = cdata.orange.xf  < 0 | cdata.orange.yf <0 ;
-            if sum(orange_index)>0
-                cdata.orange.fits(orange_index,:) = [];
-                cdata.orange.crlbs(orange_index,:) = [];
-            end
-            for k=3:numel(field_names)
-                if sum(orange_index) > 0
-                    cdata.orange.(field_names{k})(orange_index) = [];
-                end
-            end
         end
         % Remove problem entries
+        orange_index = cdata.orange.xf  < 0 | cdata.orange.yf <0 ;
+        red_index = cdata.red.xf  < 0 | cdata.red.yf <0 ;
         
-
+        
+        field_names = fieldnames(cdata.red);
         
         
-        
-          
+        if sum(red_index)>0
+            cdata.red.fits(red_index,:) = [];
+            cdata.red.crlbs(red_index,:) = [];
+        end
+        if sum(orange_index)>0
+            cdata.orange.fits(orange_index,:) = [];
+            cdata.orange.crlbs(orange_index,:) = [];
+        end
+        for k=3:numel(field_names)
+            if sum(red_index) > 0
+                cdata.red.(field_names{k})(red_index) = [];
+            end
+            if sum(orange_index) > 0
+                cdata.orange.(field_names{k})(orange_index) = [];
+            end
+        end
         
         save([an_dir,'\', fname(1:end-4),'_dast.mat'],  'cdata', 'pixw','q','cal');
     end

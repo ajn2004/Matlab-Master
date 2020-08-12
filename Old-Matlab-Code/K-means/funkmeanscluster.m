@@ -188,7 +188,7 @@ for j = 1:noc
 end
 [c, allclosest] = min(distance,[],2);
 disp('Finished');
-for i = 1:noc
-    disp(['% of elements in cluster ', num2str(i),' is ', num2str(mean(allclosest == i))]);
-end
+% for i = 1:noc
+%     disp(['% of elements in cluster ', num2str(i),' is ', num2str(mean(allclosest == i))]);
+% end
 end

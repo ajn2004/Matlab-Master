@@ -28,7 +28,7 @@ thresh = 2;
   showlocs = 0;
   savepsfs = 0;
   saverb = 0;
-  two_color = 1;
+  two_color = 2;
   varys = [savewaves, showlocs, savepsfs, saverb, two_color];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

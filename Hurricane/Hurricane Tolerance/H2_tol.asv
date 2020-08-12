@@ -476,7 +476,7 @@ if channel_flag == 1 || channel_flag == 3 % load orange tolerances
     hold on
     plot(ax,cdata.red.zf(rind)*q,cdata.red.fits(rind,5),'.')
 end
-if channel_flag == 1 || channel_flag == 2 % load orange tolerances
+if channel_flag == 1 || channel_flag == 3 % load orange tolerances
     plot(ax,cdata.orange.zf(oind)*q,cdata.orange.fits(oind,4),'.')
     hold on
     plot(ax,cdata.orange.zf(oind)*q,cdata.orange.fits(oind,5),'.')
@@ -486,8 +486,8 @@ legend(ax,'\sigma_x','\sigma_y')
 if channel_flag == 1% load orange tolerances
     legend(ax,'red \sigma_x','red \sigma_y','orange \sigma_x','orange\sigma_y')
 elseif channel_flag == 2
-    legend(ax ,'orange \sigma_x','orange\sigma_y')
+    legend('Orange')
 elseif channel_flag == 3
-    legend(ax,'red \sigma_x','red \sigma_y')
+    legend('Red')
 end
 clear t2 tg tg1 f ax
