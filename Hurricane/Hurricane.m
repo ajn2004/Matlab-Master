@@ -19,7 +19,7 @@ pixw = 6;       % radius to localize (final image size is (2*pixw+1)^2 pixels)
 an_dir = 'Analysis'; % name of analysis directory
 angle = 0; %approximate astig rotation in degrees
 sv_im = 'n'; % set to y/Y to save image of localizations
-thresh = 2;
+thresh = 5;
 
 %% Optionals
   % This section is dedicated to a list of variables for the user to select
@@ -28,7 +28,7 @@ thresh = 2;
   showlocs = 0;
   savepsfs = 0;
   saverb = 0;
-  two_color = 2;
+  two_color = 1;
   varys = [savewaves, showlocs, savepsfs, saverb, two_color];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -67,7 +67,7 @@ elseif varys(3) == 1
 elseif varys(4) == 1
     mkdir('Rolling_Ball');
 end
-for i = 1:numel(files)
+for i = 2
     tic
     func_da_storm(files(i).name, dpath, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1, varys);
     clc;

@@ -42,7 +42,7 @@ mwidth = 6; %marker width for visualization, does not affect data
 
 %% Setting up Red Tolerances
 if channel_flag == 1 || channel_flag == 3 % load red tolerances
-    tol.r.zlims = [-0.49, 0.49]; % Limit of the absolute value of z-data in pixels
+    tol.r.zlims = [-1,1]; % Limit of the absolute value of z-data in pixels
     tol.r.flims = [1,-1];
     tol.r.lat_max = 0.01; % Maximum lateral uncertainty in micrometers
     tol.r.N_tol = [50, 140000000]; % Tolerance on N
@@ -58,7 +58,7 @@ if channel_flag == 1 || channel_flag == 3 % load red tolerances
 end
 %% Setting up Orange TOlerances
 if channel_flag == 1 || channel_flag == 2 % load orange tolerances
-    tol.o.zlims = [-0.49, 0.49]; % Limit of the absolute value of z-data in pixels
+    tol.o.zlims = [-1,1]; % Limit of the absolute value of z-data in pixels
     tol.o.flims = [1,-1];
     tol.o.lat_max = 0.04; % Maximum lateral uncertainty in micrometers
     tol.o.N_tol = [50, 140000000]; % Tolerance on N

@@ -43,27 +43,45 @@ try
         writetiff(ifind,[data_d,'\Waves\',fname(1:end-4),'_waves.tif']);
     end
     
-    % If we're doing 2 color, block out frame we're not interested in
-    if choices(5) == 1 % one equl dual color switcher
-        load('C:\Users\andre\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
-        ifind = func_image_block(ifind,split);
-    elseif choices(5) == 2 % 2 = orange only channel
-        load('C:\Users\andre\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
+    % automatically detect switcher behavior
+    dps = cpu_peaks(ifind(:,:,1:10),5,pixw);
+    [iloc, fnum, cents] = divide_up(iprod(:,:,1:10), pixw, dps);
+    
+    
+    % Count percentage of molecules in even and odd channels
+    ind = mod(fnum,2) == 0;
+    red_evens = sum(cents(ind,1)<180)/sum(ind);
+    orange_evens = sum(cents(ind,1)>180)/sum(ind);
+    
+    ind = mod(fnum,2) == 1;
+    red_odds = sum(cents(ind,1)<180)/sum(ind);
+    orange_odds = sum(cents(ind,1)>180)/sum(ind);
+    load('C:\Users\andre\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
+    if choices(5) == 1 % User intended to use dual channel w/ both colors
+        if orange_evens > orange_odds % Indicates more orange molecules are found on even frames
+            ifind = func_image_block(ifind,split,2);
+        else
+            ifind = func_image_block(ifind,split,1);
+        end
+    elseif choices(5) == 2 % 2 = orange only channel intended
         ifind = func_image_red_block(ifind,split);
-    elseif choices(5) == 0 % 0 = red only channel
-        load('C:\Users\andre\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
+    elseif choices(5) == 3 % 3 = red only channel intended
         ifind = func_image_orange_block(ifind,split);
     end
-    %     ifind = func_image_block2(ifind,split);
-    % thrsh = thresh/100*mean(max(max(iprod)));
-    % tic
-    % thrsh = 3*std(iprod(:)) + mean(iprod(:));
-    % toc
-    % thrsh = thresh/100*mean(max(max(diprod)));
-    % surf(max(ifind,[],3));
-    % thrsh = input('What should the threshold be? ');
-    % thrsh = min(iprod(:))*thresh/100;
-    % excerpt = 1;
+    
+%     % If we're doing 2 color, block out frame we're not interested in
+%     if choices(5) == 1 % one equl dual color switcher
+%         load('C:\Users\andre\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
+%         ifind = func_image_block(ifind,split);
+%     elseif choices(5) == 2 % 2 = orange only channel
+%         load('C:\Users\andre\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
+%         ifind = func_image_red_block(ifind,split);
+%     elseif choices(5) == 3 % 0 = red only channel
+%         load('C:\Users\andre\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
+%         ifind = func_image_orange_block(ifind,split);
+%     end
+   
+    
     dps = cpu_peaks(ifind,thresh,pixw);
     if choices(2) == 1
         in_d_eye(iprod, dps, pixw);
@@ -104,11 +122,13 @@ try
         [ncoords] = astig_tilt(coords,cal.red);
         save([an_dir,'\', fname(1:end-4),'_dast.mat'],  'pixw','q','ncoords','fits','crlbs','llv','framenumber','cal');
     end
-    if choices(5) == 1 || choices(5) ==2
+    id = cents(:,1) < split; % Identify localizations below the split
+    if choices(5) == 1 || choices(5) ==3
         %     load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
-        id = cents(:,1) < split; % Identify localizations below the split
+        
         %% First fit is all red, so those can be immediately
         if sum(id)>0
+            disp('orange')
             [fits, crlbs, llv, framenumber] = slim_locs(iloc(:,:,id), fnum(id), cents(id,:), cal.red.ang);
             
             % As everywhere in the equations used sigma is squared, we can without
@@ -153,7 +173,8 @@ try
         end
         %% Repeat above for orange
         id = logical(1-id); % Changes 0 -> 1 and 1 -> 0 flipping the ID so now we can fit orange
-        if sum(id) >0 && choices(5) ~= 3
+        if sum(id) >0 && (choices(5) == 1 || choices(5) == 2)
+            disp('orange')
             [fits, crlbs, llv, framenumber] = slim_locs(iloc(:,:,id), fnum(id), cents(id,:), cal.orange.ang);
             % As everywhere in the equations used sigma is squared, we can without
             % loss of generality make these fits positive definite
@@ -174,7 +195,7 @@ try
             %ncoords = astig_tilt([cdata.orange.fits(:,1:2),zf],cal.orange); % corrections due to astigmatism
             %ncoords = astig_tilt([cdata.orange.fits(:,1:2),zf],cal.orange); % corrections due to astigmatism
             zf = get_spline_z(fits(:,4),fits(:,5),cal.orange); % New z_registration based off spline 3d calibration
-            ncoords = make_astigmatism_corrections([cdata.orange.fits(:,1:2),zf],cal.orange,q);
+            ncoords = make_astigmatism_corrections([cdata.orange.fits(:,1:2),zf/q],cal.orange,q);
             vec = xy_feature(ncoords(:,1),ncoords(:,2));
             x = o2rx.'*vec.';
             y = o2ry.'*vec.';

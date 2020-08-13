@@ -25,16 +25,7 @@ for i = 1:numel(data(:,1))
                 if numel(ns) >= minp
                     N = unique([N;ns]);
                     clust(ID) = C;
-                    %                         if  clust(ID) == 0 % visit criteria
-                    %                             if numel(ns) >= minp % noise criteria
-                    %                                 N = unique([N;ns(:)]);
-                    %                                 clust(ID) = C; % mark point as apart of cluster
-                    %                             else
-                    %                                 clust(ID) = -1; % mark point as apart of noise
-                    %                             end
-                    %                         end
-                    %
-                    
+
                 else
                     clust(ID) = -1;
                 end
