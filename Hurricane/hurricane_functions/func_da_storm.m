@@ -51,27 +51,30 @@ try
     end
     
 %     % automatically detect switcher behavior
-    dps = cpu_peaks(ifind(:,:,1:10),5,pixw);
+    dps = cpu_peaks(ifind(:,:,1:10),50,pixw);
     [iloc, fnum, cents] = divide_up(iprod(:,:,1:10), pixw, dps);
     
-    
-    % Count percentage of molecules in even and odd channels
-    ind = mod(fnum,2) == 0;
-    red_evens = sum(cents(ind,1)<180)/sum(ind);
-    orange_evens = sum(cents(ind,1)>180)/sum(ind);
-    even_red_brights = sum(sum(iloc(:,:,cents(ind,1)<180)));
-    even_orange_brights = sum(sum(iloc(:,:,cents(ind,1)>180)));
-    even_ratio = mean(even_red_brights)/mean(even_orange_brights); % shows average 'brightness' of red to orange
-    
-    ind = mod(fnum,2) == 1;
-    red_odds = sum(cents(ind,1)<180)/sum(ind);
-    orange_odds = sum(cents(ind,1)>180)/sum(ind);
-    odd_red_brights = sum(sum(iloc(:,:,cents(ind,1)<180)));
-    odd_orange_brights = sum(sum(iloc(:,:,cents(ind,1)>180)));
-    odd_ratio = mean(odd_red_brights)/mean(odd_orange_brights);
+    % The ongoing pursuit of how to automatically detect which frame flips
+    % first. This should be corrected in arduino code.
+    odd_red_percentage = sum(mod(fnum,2) == 1 & cents(:,1) < 180)/(sum(mod(fnum,2) == 1 & cents(:,1) > 180)+1); % on odd frames, ratio of red / orange molecules
+    even_red_percentage = sum(mod(fnum,2) == 0 & cents(:,1) < 180)/(sum(mod(fnum,2) == 0 & cents(:,1) > 180)+1); % on even frames, ratio of red / orange molecules
+%     % Count percentage of molecules in even and odd channels
+%     ind = mod(fnum,2) == 0;
+%     red_evens = sum(cents(ind,1)<180)/sum(ind);
+%     orange_evens = sum(cents(ind,1)>180)/sum(ind);
+%     even_red_brights = sum(sum(iloc(:,:,cents(ind,1)<180)));
+%     even_orange_brights = sum(sum(iloc(:,:,cents(ind,1)>180)));
+%     even_ratio = mean(even_red_brights)/mean(even_orange_brights); % shows average 'brightness' of red to orange
+%     
+%     ind = mod(fnum,2) == 1;
+%     red_odds = sum(cents(ind,1)<180)/sum(ind);
+%     orange_odds = sum(cents(ind,1)>180)/sum(ind);
+%     odd_red_brights = sum(sum(iloc(:,:,cents(ind,1)<180)));
+%     odd_orange_brights = sum(sum(iloc(:,:,cents(ind,1)>180)));
+%     odd_ratio = mean(odd_red_brights)/mean(odd_orange_brights);
 
     if choices(5) == 1 % User intended to use dual channel w/ both colors
-        if odd_ratio < even_ratio % Even ratio larger than odd indicates red molecules are on even channels
+        if odd_red_percentage < even_red_percentage % Even ratio larger than odd indicates red molecules are on even channels
             ifind = func_image_block(ifind,split,1);
         else
             ifind = func_image_block(ifind,split,2); 
@@ -141,13 +144,26 @@ try
         
         %% First fit is all red, so those can be immediately
         if sum(id)>0
-            disp('orange')
+            
             [fits, crlbs, llv, framenumber] = slim_locs(iloc(:,:,id), fnum(id), cents(id,:), cal.red.ang);
             
             % As everywhere in the equations used sigma is squared, we can without
             % loss of generality make these fits positive definite
             fits(:,4) = abs(fits(:,4));
             fits(:,5) = abs(fits(:,5));
+            
+            % Z calculations
+            %             zf = getdz(cdata.red.fits(:,4),cdata.red.fits(:,5),cal.red.z_cal,2)/q; % Z assignment, this variable will be updated and stored elsewhere
+            %             ncoords = astig_tilt([cdata.red.fits(:,1:2),zf],cal.red); % corrections due to astigmatism
+            zf = get_spline_z(fits(:,4),fits(:,5),cal.red); % New z_registration based off spline 3d calibration
+            % remove failed z assignments
+            ind = zf == -5;
+            fits(ind,:) = [];
+            crlbs(ind,:) = [];
+            llv(ind) = [];
+            framenumber(ind) = [];
+            zf(ind) = [];
+            
             
             % Put data into cdata structure
             for i = 1:6
@@ -157,12 +173,8 @@ try
             cdata.red.llv = llv;
             cdata.red.framenumber = framenumber;
             
-            % Z calculations
-            %             zf = getdz(cdata.red.fits(:,4),cdata.red.fits(:,5),cal.red.z_cal,2)/q; % Z assignment, this variable will be updated and stored elsewhere
-            %             ncoords = astig_tilt([cdata.red.fits(:,1:2),zf],cal.red); % corrections due to astigmatism
-            zf = get_spline_z(fits(:,4),fits(:,5),cal.red); % New z_registration based off spline 3d calibration
             ncoords = make_astigmatism_corrections([cdata.red.fits(:,1:2),zf/q],cal.red,q);
-            % Assign fixed coordinates
+            % Assign fixed coordinates which are in microns at this point
             cdata.red.xf = ncoords(:,1);
             cdata.red.yf = ncoords(:,2);
             cdata.red.zf = ncoords(:,3);
@@ -187,13 +199,20 @@ try
         %% Repeat above for orange
         id = logical(1-id); % Changes 0 -> 1 and 1 -> 0 flipping the ID so now we can fit orange
         if sum(id) >0 && (choices(5) == 1 || choices(5) == 2)
-            disp('orange')
+            
             [fits, crlbs, llv, framenumber] = slim_locs(iloc(:,:,id), fnum(id), cents(id,:), cal.orange.ang);
             % As everywhere in the equations used sigma is squared, we can without
             % loss of generality make these fits positive definite
             fits(:,4) = abs(fits(:,4));
             fits(:,5) = abs(fits(:,5));
-            
+            % Remove failed Z fits
+            zf = get_spline_z(fits(:,4),fits(:,5),cal.orange); % New z_registration based off spline 3d calibration            
+            ind = zf == -5;
+            fits(ind,:) = [];
+            crlbs(ind,:) = [];
+            llv(ind) = [];
+            framenumber(ind) = [];
+            zf(ind) = [];
             % Put data into cdata structure
             for i = 1:6
                 cdata.orange.fits(:,i) = fits(:,i);
@@ -207,15 +226,15 @@ try
             
             %ncoords = astig_tilt([cdata.orange.fits(:,1:2),zf],cal.orange); % corrections due to astigmatism
             %ncoords = astig_tilt([cdata.orange.fits(:,1:2),zf],cal.orange); % corrections due to astigmatism
-            zf = get_spline_z(fits(:,4),fits(:,5),cal.orange); % New z_registration based off spline 3d calibration
             ncoords = make_astigmatism_corrections([cdata.orange.fits(:,1:2),zf/q],cal.orange,q);
             vec = xy_feature(ncoords(:,1),ncoords(:,2));
 %             x = o2rx.'*vec.';
 %             y = o2ry.'*vec.';
-            % Assign fixed coordinates
+            % Assign fixed coordinates ncoords are in microns
             cdata.orange.xf = ncoords(:,1);
             cdata.orange.yf = ncoords(:,2);
             cdata.orange.zf = ncoords(:,3);
+            % ensure transform is assigned to calibration variable
             cal.o2rx = o2rx;
             cal.o2ry = o2ry;
             field_names = fieldnames(cdata.orange);

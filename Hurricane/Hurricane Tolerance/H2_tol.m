@@ -42,7 +42,7 @@ mwidth = 6; %marker width for visualization, does not affect data
 
 %% Setting up Red Tolerances
 if channel_flag == 1 || channel_flag == 3 % load red tolerances
-    tol.r.zlims = [min(cdata.red.zf),max(cdata.red.zf)]; % Limit of the absolute value of z-data in pixels
+    tol.r.zlims = [-0.4 0.4]; % Limit of the absolute value of z-data in pixels
     tol.r.flims = [1,-1];
     tol.r.lat_max = 0.01; % Maximum lateral uncertainty in micrometers
     tol.r.N_tol = [50, 140000000]; % Tolerance on N
@@ -52,13 +52,14 @@ if channel_flag == 1 || channel_flag == 3 % load red tolerances
     tol.r.frac_lim = 0.3; % Limit on the fractional uncertainty of any value
     tol.r.off_frac = 0.5;
     tol.r.s_tol = [1, 5]; % sigma tolerances
+    tol.r.eps_lim = [0.2, 3]; % Elipticity tolerances
     if tol.r.flims(2) == -1 % assign max frame to max frame in data set if left at -1
         tol.r.flims(2) = max(cdata.red.framenumber);
     end
 end
 %% Setting up Orange TOlerances
 if channel_flag == 1 || channel_flag == 2 % load orange tolerances
-    tol.o.zlims = [min(cdata.orange.zf),max(cdata.orange.zf)]; % Limit of the absolute value of z-data in pixels
+    tol.o.zlims = [-0.4, 0.4]; % Limit of the absolute value of z-data in pixels
     tol.o.flims = [1,-1];
     tol.o.lat_max = 0.04; % Maximum lateral uncertainty in micrometers
     tol.o.N_tol = [50, 140000000]; % Tolerance on N
@@ -69,6 +70,7 @@ if channel_flag == 1 || channel_flag == 2 % load orange tolerances
     tol.o.off_frac = 0.5;
     tol.dmax = 1;
     tol.o.s_tol = [1, 5]; % sigma tolerances
+    tol.o.eps_lim = [0.2, 3]; % Elipticity tolerances
     if tol.o.flims(2) == -1 % assign max frame to max frame in data set if left at -1
         tol.o.flims(2) = max(cdata.orange.framenumber);
     end
@@ -111,6 +113,7 @@ if channel_flag == 1 || channel_flag == 3 % load red tolerances
     ind = ind & cdata.red.ilv > tol.r.iln; % llv tolerance
     ind = ind & cdata.red.fr_N < tol.r.frac_lim & abs(cdata.red.fr_o) < tol.r.off_frac; % Fraction photon tolerance
     ind = ind & cdata.red.fr_sx < tol.r.frac_lim & cdata.red.fr_sy < tol.r.frac_lim; % Fraction width tolerance
+    ind = ind & cdata.red.eps < tol.r.eps_lim(2) & cdata.red.eps > tol.r.eps_lim(1); % elipticity
     rind = ind; % Index represents all molecules that PASS tolerances
     
 end
@@ -145,6 +148,7 @@ if channel_flag == 1 || channel_flag == 2 % load orange tolerances
     ind = ind & cdata.orange.ilv > tol.o.iln; % llv tolerance
     ind = ind & cdata.orange.fr_N < tol.o.frac_lim & abs(cdata.orange.fr_o) < tol.o.off_frac; % Fraction photon tolerance
     ind = ind & cdata.orange.fr_sx < tol.o.frac_lim & cdata.orange.fr_sy < tol.o.frac_lim; % Fraction width tolerance
+    ind = ind & cdata.orange.eps < tol.o.eps_lim(2) & cdata.orange.eps > tol.o.eps_lim(1); % elipticity
     oind = ind; % Index represents all molecules that PASS tolerances
 end
 
