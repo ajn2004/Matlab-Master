@@ -61,20 +61,20 @@ try
     orange_evens = sum(cents(ind,1)>180)/sum(ind);
     even_red_brights = sum(sum(iloc(:,:,cents(ind,1)<180)));
     even_orange_brights = sum(sum(iloc(:,:,cents(ind,1)>180)));
-    even_ratio = mean(even_red_brights)/mean(even_orange_brights); % shows average 'brightness' of red to orange
+    even_ratio = even_red_brights/even_orange_brights; % shows average 'brightness' of red to orange
     
     ind = mod(fnum,2) == 1;
     red_odds = sum(cents(ind,1)<180)/sum(ind);
     orange_odds = sum(cents(ind,1)>180)/sum(ind);
     odd_red_brights = sum(sum(iloc(:,:,cents(ind,1)<180)));
     odd_orange_brights = sum(sum(iloc(:,:,cents(ind,1)>180)));
-    odd_ratio = mean(odd_red_brights)/mean(odd_orange_brights);
+    odd_ratio = odd_red_brights/odd_orange_brights;
 
     if choices(5) == 1 % User intended to use dual channel w/ both colors
-        if odd_ratio < even_ratio % Even ratio larger than odd indicates red molecules are on even channels
-            ifind = func_image_block(ifind,split,1);
+        if orange_evens < orange_odds % Indicates more orange molecules are found on even frames
+            ifind = func_image_block(ifind,split,2);
         else
-            ifind = func_image_block(ifind,split,2); 
+            ifind = func_image_block(ifind,split,1);
         end
     elseif choices(5) == 2 % 2 = orange only channel intended
         ifind = func_image_red_block(ifind,split);

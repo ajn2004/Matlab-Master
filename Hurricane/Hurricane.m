@@ -28,7 +28,7 @@ thresh = 5;
   showlocs = 0;
   savepsfs = 0;
   saverb = 0;
-  two_color = 3;
+  two_color = 1;
   varys = [savewaves, showlocs, savepsfs, saverb, two_color];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -68,7 +68,7 @@ elseif varys(4) == 1
     mkdir('Rolling_Ball');
 end
 
-for i = 1:numel(files)
+for i = 2:numel(files)
     tic
     if isempty(strfind(files(i).name,'scan'))
         func_da_storm(files(i).name, dpath, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1, varys);

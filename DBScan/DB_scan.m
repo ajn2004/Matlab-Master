@@ -13,8 +13,8 @@ for i = 1:numel(data(:,1))
         N = func_range_scan(data(i,:),data,eps); % Find mols in neighborhood
         N = N(:); % N is an array of molecules in neighborhood     
         if numel(N) >= minp  % noise criteria
-            C = C + 1; % If new
-            clust(i) = C;
+            C = C + 1; % If new increment cluster count
+            clust(i) = C; % Apply cluster label
             while sum(clust(N) == 0) > 0 % while there are unvisited points
                 ind = find(clust(N) == 0);
                 ind2 = clust(N) == -1; % Incorporate all 'noise' variables into the cluster
