@@ -28,7 +28,7 @@ thresh = 5;
   showlocs = 0;
   savepsfs = 0;
   saverb = 0;
-  two_color = 1;
+  two_color = 3;
   varys = [savewaves, showlocs, savepsfs, saverb, two_color];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
@@ -67,13 +67,16 @@ elseif varys(3) == 1
 elseif varys(4) == 1
     mkdir('Rolling_Ball');
 end
-for i = 2
+
+for i = 1:numel(files)
     tic
-    func_da_storm(files(i).name, dpath, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1, varys);
-    clc;
-    disp(['File number ' , num2str(i) , ' out of ', num2str(numel(files))]);
-    t(i) = toc;
-    ajn_wait(t,i,numel(files));
+    if isempty(strfind(files(i).name,'scan'))
+        func_da_storm(files(i).name, dpath, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1, varys);
+        clc;
+        disp(['File number ' , num2str(i) , ' out of ', num2str(numel(files))]);
+        t(i) = toc;
+        ajn_wait(t,i,numel(files));
+    end
     close all
 end
 

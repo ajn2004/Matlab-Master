@@ -1,4 +1,4 @@
-function func_da_storm(fname,data_d, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1, choices)
+function func_da_storm(fname,data_d, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1, choices,splits)
 
 % Convert Variabls
 % pix2pho = single(pix2pho);
@@ -43,26 +43,26 @@ try
         writetiff(ifind,[data_d,'\Waves\',fname(1:end-4),'_waves.tif']);
     end
     
-    % automatically detect switcher behavior
-    dps = cpu_peaks(ifind(:,:,1:10),5,pixw);
-    [iloc, fnum, cents] = divide_up(iprod(:,:,1:10), pixw, dps);
-    
-    
-    % Count percentage of molecules in even and odd channels
-    ind = mod(fnum,2) == 0;
-    red_evens = sum(cents(ind,1)<180)/sum(ind);
-    orange_evens = sum(cents(ind,1)>180)/sum(ind);
-    
-    ind = mod(fnum,2) == 1;
-    red_odds = sum(cents(ind,1)<180)/sum(ind);
-    orange_odds = sum(cents(ind,1)>180)/sum(ind);
+%     % automatically detect switcher behavior
+%     dps = cpu_peaks(ifind(:,:,1:10),5,pixw);
+%     [iloc, fnum, cents] = divide_up(iprod(:,:,1:10), pixw, dps);
+%     
+%     
+%     % Count percentage of molecules in even and odd channels
+%     ind = mod(fnum,2) == 0;
+%     red_evens = sum(cents(ind,1)<180)/sum(ind);
+%     orange_evens = sum(cents(ind,1)>180)/sum(ind);
+%     
+%     ind = mod(fnum,2) == 1;
+%     red_odds = sum(cents(ind,1)<180)/sum(ind);
+%     orange_odds = sum(cents(ind,1)>180)/sum(ind);
     load('C:\Users\andre\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
     if choices(5) == 1 % User intended to use dual channel w/ both colors
-        if orange_evens > orange_odds % Indicates more orange molecules are found on even frames
+%         if orange_evens < orange_odds % Indicates more orange molecules are found on even frames
             ifind = func_image_block(ifind,split,2);
-        else
-            ifind = func_image_block(ifind,split,1);
-        end
+%         else
+%             ifind = func_image_block(ifind,split,1);
+%         end
     elseif choices(5) == 2 % 2 = orange only channel intended
         ifind = func_image_red_block(ifind,split);
     elseif choices(5) == 3 % 3 = red only channel intended
@@ -112,7 +112,7 @@ try
     if choices(3) == 1
         writetiff(iloc,[data_d,'\psfs\',fname(1:end-4),'_psfs.tif']);
     end
-    if choices(5) == 0 || choices(5) == 3
+    if choices(5) == 0
         [fits, crlbs, llv, framenumber] = slim_locs(iloc, fnum, cents, cal.red.ang);
         fits(:,4) = abs(fits(:,4));
         fits(:,5) = abs(fits(:,5));
@@ -197,8 +197,8 @@ try
             zf = get_spline_z(fits(:,4),fits(:,5),cal.orange); % New z_registration based off spline 3d calibration
             ncoords = make_astigmatism_corrections([cdata.orange.fits(:,1:2),zf/q],cal.orange,q);
             vec = xy_feature(ncoords(:,1),ncoords(:,2));
-            x = o2rx.'*vec.';
-            y = o2ry.'*vec.';
+%             x = o2rx.'*vec.';
+%             y = o2ry.'*vec.';
             % Assign fixed coordinates
             cdata.orange.xf = ncoords(:,1);
             cdata.orange.yf = ncoords(:,2);

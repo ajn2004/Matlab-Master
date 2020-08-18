@@ -42,7 +42,7 @@ mwidth = 6; %marker width for visualization, does not affect data
 
 %% Setting up Red Tolerances
 if channel_flag == 1 || channel_flag == 3 % load red tolerances
-    tol.r.zlims = [-1,1]; % Limit of the absolute value of z-data in pixels
+    tol.r.zlims = [min(cdata.red.zf),max(cdata.red.zf)]; % Limit of the absolute value of z-data in pixels
     tol.r.flims = [1,-1];
     tol.r.lat_max = 0.01; % Maximum lateral uncertainty in micrometers
     tol.r.N_tol = [50, 140000000]; % Tolerance on N
@@ -58,7 +58,7 @@ if channel_flag == 1 || channel_flag == 3 % load red tolerances
 end
 %% Setting up Orange TOlerances
 if channel_flag == 1 || channel_flag == 2 % load orange tolerances
-    tol.o.zlims = [-1,1]; % Limit of the absolute value of z-data in pixels
+    tol.o.zlims = [min(cdata.orange.zf),max(cdata.orange.zf)]; % Limit of the absolute value of z-data in pixels
     tol.o.flims = [1,-1];
     tol.o.lat_max = 0.04; % Maximum lateral uncertainty in micrometers
     tol.o.N_tol = [50, 140000000]; % Tolerance on N
@@ -104,7 +104,7 @@ if channel_flag == 1 || channel_flag == 3 % load red tolerances
     ind = cdata.red.fits(:,3) > tol.r.N_tol(1) & cdata.red.fits(:,3) < tol.r.N_tol(2); % Photon Tolerance
     ind = ind & cdata.red.snr >= tol.r.minsnr; % Signal to Noise tolerances
     ind = ind & abs(cdata.red.framenumber - mean(tol.r.flims)) <= diff(tol.r.flims)/2; % Framenumber tolerances
-    ind = ind & abs(cdata.red.zf*q-mean(tol.r.zlims)) <= diff(tol.r.zlims)/2; % axial tolerances
+    ind = ind & abs(cdata.red.zf-mean(tol.r.zlims)) < diff(tol.r.zlims)/2; % axial tolerances
     ind = ind & abs(cdata.red.fits(:,6)-mean(tol.r.offlim)) <= diff(tol.r.offlim)/2;   % offset tolerances
     ind = ind & (abs(cdata.red.fits(:,4)).*abs(cdata.red.fits(:,5))).^0.5 > tol.r.s_tol(1) & (abs(cdata.red.fits(:,4)).*abs(cdata.red.  fits(:,5))).^0.5 < tol.r.s_tol(2); % sigma Tolerance
     ind = ind & q*cdata.red.crlbs(:,1).^.5 < tol.r.lat_max & q*cdata.red.crlbs(:,2).^.5 < tol.r.lat_max; % Lateral Uncertainty Tolerance
@@ -138,7 +138,7 @@ if channel_flag == 1 || channel_flag == 2 % load orange tolerances
     ind = cdata.orange.fits(:,3) > tol.o.N_tol(1) & cdata.orange.fits(:,3) < tol.o.N_tol(2); % Photon Tolerance
     ind = ind & cdata.orange.snr >= tol.o.minsnr; % Signal to Noise tolerances
     ind = ind & abs(cdata.orange.framenumber - mean(tol.o.flims)) <= diff(tol.o.flims)/2; % Framenumber tolerances
-    ind = ind & abs(cdata.orange.zf*q-mean(tol.o.zlims)) <= diff(tol.o.zlims)/2; % axial tolerances
+    ind = ind & abs(cdata.orange.zf-mean(tol.o.zlims)) < diff(tol.o.zlims)/2; % axial tolerances
     ind = ind & abs(cdata.orange.fits(:,6)-mean(tol.o.offlim)) <= diff(tol.o.offlim)/2;   % offset tolerances
     ind = ind & (abs(cdata.orange.fits(:,4)).*abs(cdata.orange.fits(:,5))).^0.5 > tol.o.s_tol(1) & (abs(cdata.orange.fits(:,4)).*abs(cdata.orange.  fits(:,5))).^0.5 < tol.o.s_tol(2); % sigma Tolerance
     ind = ind & q*cdata.orange.crlbs(:,1).^.5 < tol.o.lat_max & q*cdata.orange.crlbs(:,2).^.5 < tol.o.lat_max; % Lateral Uncertainty Tolerance
@@ -214,11 +214,11 @@ axis equal
 t3 = uitab(tg1,'Title','Post-Tolerance 3D');
 ax = axes(t3);
 if channel_flag == 1 || channel_flag == 3 % load orange tolerances
-plot3(ax, cdata.red.xf(rind)*q,cdata.red.yf(rind)*q,cdata.red.zf(rind),'.r','MarkerSize',mwidth);
+plot3(ax, cdata.red.xf(rind),cdata.red.yf(rind),cdata.red.zf(rind),'.r','MarkerSize',mwidth);
 hold on
 end
 if channel_flag == 1 || channel_flag == 2 % load orange tolerances
-plot3(ax, cdata.orange.xf(oind)*q,cdata.orange.yf(oind)*q,cdata.orange.zf(oind),'.b','MarkerSize',mwidth);
+plot3(ax, cdata.orange.xf(oind),cdata.orange.yf(oind),cdata.orange.zf(oind),'.b','MarkerSize',mwidth);
 end
 if channel_flag == 1% load orange tolerances
     legend('Red','Orange')
@@ -242,11 +242,11 @@ tg2 = uitabgroup(t2);
 t21 = uitab(tg2,'Title','Z-Histogram');
 ax = axes(t21);
 if channel_flag == 1 || channel_flag == 3 % load orange tolerances
-    histogram(ax,cdata.red.zf(rind)*q);
+    histogram(ax,cdata.red.zf(rind));
     hold on
 end
 if channel_flag == 1 || channel_flag == 2 % load orange tolerances
-    histogram(ax,cdata.orange.zf(oind)*q);
+    histogram(ax,cdata.orange.zf(oind));
 end
 if channel_flag == 1% load orange tolerances
     legend('Red','Orange')
@@ -472,14 +472,14 @@ clear tg2 t2
 t2 = uitab(tg,'Title','Sigma Curves');
 ax = axes(t2);
 if channel_flag == 1 || channel_flag == 3 % load orange tolerances
-    plot(ax,cdata.red.zf(rind)*q,cdata.red.fits(rind,4),'.')
+    plot(ax,cdata.red.zf(rind),cdata.red.fits(rind,4),'.')
     hold on
-    plot(ax,cdata.red.zf(rind)*q,cdata.red.fits(rind,5),'.')
+    plot(ax,cdata.red.zf(rind),cdata.red.fits(rind,5),'.')
 end
 if channel_flag == 1 || channel_flag == 2 % load orange tolerances
-    plot(ax,cdata.orange.zf(oind)*q,cdata.orange.fits(oind,4),'.')
+    plot(ax,cdata.orange.zf(oind),cdata.orange.fits(oind,4),'.')
     hold on
-    plot(ax,cdata.orange.zf(oind)*q,cdata.orange.fits(oind,5),'.')
+    plot(ax,cdata.orange.zf(oind),cdata.orange.fits(oind,5),'.')
 end
 hold off
 legend(ax,'\sigma_x','\sigma_y')
