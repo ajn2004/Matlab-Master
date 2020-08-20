@@ -12,37 +12,18 @@ try
         load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
         load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Hurricane\hurricane_functions\z_calib.mat')
     end
-    % if exist([data_d, 'z_calib.mat'])
-    %     cal = load([data_d 'z_calib.mat']);
-    % else
-    %     cal = load('z_calib.mat');
-    % end
-    % mi1 = 0
-    % Load file and dark current background subtraction
+
     i1 = (readtiff(fname) - mi1);
-    % i1 = sum(i1,3);
-    % i1 = i1.*(i1>0);
+
     [m,n,o] = size(i1);
-    % i1(1:30,:,:) = 0;
-    % i1(m-30:m,:,:) = 0;
-    % i1(:,1:30,:) = 0;
-    % i1(:,n-30:n,:) = 0;
-    % Rolling Ball Background Subtract
-    % iprod = rollingball(i1);
+
     iprod = gpu_rball(i1);
     if choices(4) == 1
         writetiff(iprod,[data_d,'\Rolling_Ball\',fname(1:end-4),'_rb.tif']);
     end
-    % iprod = bp_subtract(i1);
-    % iprod = imgaussfilt(i1,0.8947);
-    % iprod = i1;
-    % Peak Detection
+
     
-    
-    % thrsh = 300/pix2pho;
-    % diprod = diff(iprod,3);
-    % for i = 1:o
-    % ifind = denoise_psf(iprod,2);
+    clear i1 mi1;
     iwaves = gpu_waves(iprod);
     se = strel('Disk',1);
     ifind = imerode(iwaves,se);
@@ -51,13 +32,18 @@ try
     end
     
 %     % automatically detect switcher behavior
-    dps = cpu_peaks(ifind(:,:,1:10),50,pixw);
-    [iloc, fnum, cents] = divide_up(iprod(:,:,1:10), pixw, dps);
+    dps = cpu_peaks(ifind(:,:,1:100),50,pixw);
+    [iloc, fnum, cents] = divide_up(iprod(:,:,1:100), pixw, dps);
     
     % The ongoing pursuit of how to automatically detect which frame flips
     % first. This should be corrected in arduino code.
+    if isempty(cents)
+            dps = cpu_peaks(ifind(:,:,1:100),20,pixw);
+            [iloc, fnum, cents] = divide_up(iprod(:,:,1:100), pixw, dps);
+    end
     odd_red_percentage = sum(mod(fnum,2) == 1 & cents(:,1) < 180)/(sum(mod(fnum,2) == 1 & cents(:,1) > 180)+1); % on odd frames, ratio of red / orange molecules
     even_red_percentage = sum(mod(fnum,2) == 0 & cents(:,1) < 180)/(sum(mod(fnum,2) == 0 & cents(:,1) > 180)+1); % on even frames, ratio of red / orange molecules
+    
 %     % Count percentage of molecules in even and odd channels
 %     ind = mod(fnum,2) == 0;
 %     red_evens = sum(cents(ind,1)<180)/sum(ind);
