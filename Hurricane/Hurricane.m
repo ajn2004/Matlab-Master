@@ -25,10 +25,10 @@ thresh = 5;
   % This section is dedicated to a list of variables for the user to select
   % 1 indicates go 0 indicates do not
   savewaves = 0;
-  showlocs = 0;
+  showlocs = 1;
   savepsfs = 0;
   saverb = 0;
-  two_color = 1;
+  two_color = 2;
   varys = [savewaves, showlocs, savepsfs, saverb, two_color];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

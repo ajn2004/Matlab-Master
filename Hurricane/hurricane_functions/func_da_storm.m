@@ -60,11 +60,11 @@ try
 %     odd_ratio = mean(odd_red_brights)/mean(odd_orange_brights);
 
     if choices(5) == 1 % User intended to use dual channel w/ both colors
-        if odd_red_percentage < even_red_percentage % Even ratio larger than odd indicates red molecules are on even channels
+%         if odd_red_percentage < even_red_percentage % Even ratio larger than odd indicates red molecules are on even channels
             ifind = func_image_block(ifind,split,1);
-        else
-            ifind = func_image_block(ifind,split,2); 
-        end
+%         else
+%             ifind = func_image_block(ifind,split,2); 
+%         end
     elseif choices(5) == 2 % 2 = orange only channel intended
         ifind = func_image_red_block(ifind,split);
     elseif choices(5) == 3 % 3 = red only channel intended
@@ -249,7 +249,15 @@ try
     
 catch lsterr
     disp(lsterr)
+    
+    imagesc(iprod(:,:,1))
+    title('Odd Frame')
+    figure
+    
+    imagesc(iprod(:,:,101))
+    title('Even Frame')
     waitforbuttonpress
+    
 end
 % save('results_of_bump.mat','fnum','q','iloc','cal','cents');
 
