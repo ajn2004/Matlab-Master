@@ -5,8 +5,8 @@ function im2 = gpu_waves(im1)
 
 im2 = im1*0; % preallocate
 baselet = [1/16, 1/4, 3/8, 1/4, 1/16];
-i1 = [];
-i2 = [];
+i1 = im1*0;
+i2 = i1;
 i = 1;
 wvlt = [baselet(1), zeros(1,2^(i-1)-1),baselet(2), zeros(1,2^(i-1)-1),baselet(3), zeros(1,2^(i-1)-1),baselet(4), zeros(1,2^(i-1)-1),baselet(5)]; % construct wavelet
 wave = wvlt.*wvlt.';

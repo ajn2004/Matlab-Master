@@ -4,6 +4,7 @@ function [dps] = cpu_peaks(i1, thrsh,pixw)
 dps = zeros(m,n,o); % preallocate output array
 wind = -pixw:pixw; % define a window to find the highest point around
 tsh = i1.*(i1>=thrsh);
+
 for i = 1:o % loop over all frames
 %     tsh(:,:,i) = i1(:,:,i).*(i1(:,:,i)>=(max(max(i1(:,:,i)))*thrsh/100));
     [row,col] = find(tsh(:,:,i) > 0); % find all pixels above threshold
