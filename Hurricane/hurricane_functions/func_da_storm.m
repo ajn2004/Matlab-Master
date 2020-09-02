@@ -16,7 +16,7 @@ try
     i1 = (readtiff(fname) - mi1);
 
     [m,n,o] = size(i1);
-
+    i1 = i1(:,:,1:2:o);
     iprod = gpu_rball(i1);
     if choices(4) == 1
         writetiff(iprod,[data_d,'\Rolling_Ball\',fname(1:end-4),'_rb.tif']);
@@ -31,46 +31,48 @@ try
         writetiff(ifind,[data_d,'\Waves\',fname(1:end-4),'_waves.tif']);
     end
     
-%     % automatically detect switcher behavior
-    dps = cpu_peaks(ifind(:,:,1:100),50,pixw);
-    [iloc, fnum, cents] = divide_up(iprod(:,:,1:100), pixw, dps);
-    
-    % The ongoing pursuit of how to automatically detect which frame flips
-    % first. This should be corrected in arduino code.
-    if isempty(cents)
-            dps = cpu_peaks(ifind(:,:,1:100),20,pixw);
-            [iloc, fnum, cents] = divide_up(iprod(:,:,1:100), pixw, dps);
-    end
-    odd_red_percentage = sum(mod(fnum,2) == 1 & cents(:,1) < 180)/(sum(mod(fnum,2) == 1 & cents(:,1) > 180)+1); % on odd frames, ratio of red / orange molecules
-    even_red_percentage = sum(mod(fnum,2) == 0 & cents(:,1) < 180)/(sum(mod(fnum,2) == 0 & cents(:,1) > 180)+1); % on even frames, ratio of red / orange molecules
-    
-%     % Count percentage of molecules in even and odd channels
-%     ind = mod(fnum,2) == 0;
-%     red_evens = sum(cents(ind,1)<180)/sum(ind);
-%     orange_evens = sum(cents(ind,1)>180)/sum(ind);
-%     even_red_brights = sum(sum(iloc(:,:,cents(ind,1)<180)));
-%     even_orange_brights = sum(sum(iloc(:,:,cents(ind,1)>180)));
-%     even_ratio = mean(even_red_brights)/mean(even_orange_brights); % shows average 'brightness' of red to orange
+%     % Beginning of comment block for switching behavior
+% %     % automatically detect switcher behavior
+%     dps = cpu_peaks(ifind(:,:,1:100),50,pixw);
+%     [iloc, fnum, cents] = divide_up(iprod(:,:,1:100), pixw, dps);
 %     
-%     ind = mod(fnum,2) == 1;
-%     red_odds = sum(cents(ind,1)<180)/sum(ind);
-%     orange_odds = sum(cents(ind,1)>180)/sum(ind);
-%     odd_red_brights = sum(sum(iloc(:,:,cents(ind,1)<180)));
-%     odd_orange_brights = sum(sum(iloc(:,:,cents(ind,1)>180)));
-%     odd_ratio = mean(odd_red_brights)/mean(odd_orange_brights);
-
-    if choices(5) == 1 % User intended to use dual channel w/ both colors
+%     % The ongoing pursuit of how to automatically detect which frame flips
+%     % first. This should be corrected in arduino code.
+%     if isempty(cents)
+%             dps = cpu_peaks(ifind(:,:,1:100),20,pixw);
+%             [iloc, fnum, cents] = divide_up(iprod(:,:,1:100), pixw, dps);
+%     end
+%     odd_red_percentage = sum(mod(fnum,2) == 1 & cents(:,1) < 180)/(sum(mod(fnum,2) == 1 & cents(:,1) > 180)+1); % on odd frames, ratio of red / orange molecules
+%     even_red_percentage = sum(mod(fnum,2) == 0 & cents(:,1) < 180)/(sum(mod(fnum,2) == 0 & cents(:,1) > 180)+1); % on even frames, ratio of red / orange molecules
+%     
+% %     % Count percentage of molecules in even and odd channels
+% %     ind = mod(fnum,2) == 0;
+% %     red_evens = sum(cents(ind,1)<180)/sum(ind);
+% %     orange_evens = sum(cents(ind,1)>180)/sum(ind);
+% %     even_red_brights = sum(sum(iloc(:,:,cents(ind,1)<180)));
+% %     even_orange_brights = sum(sum(iloc(:,:,cents(ind,1)>180)));
+% %     even_ratio = mean(even_red_brights)/mean(even_orange_brights); % shows average 'brightness' of red to orange
+% %     
+% %     ind = mod(fnum,2) == 1;
+% %     red_odds = sum(cents(ind,1)<180)/sum(ind);
+% %     orange_odds = sum(cents(ind,1)>180)/sum(ind);
+% %     odd_red_brights = sum(sum(iloc(:,:,cents(ind,1)<180)));
+% %     odd_orange_brights = sum(sum(iloc(:,:,cents(ind,1)>180)));
+% %     odd_ratio = mean(odd_red_brights)/mean(odd_orange_brights);
+% 
+%     if choices(5) == 1 % User intended to use dual channel w/ both colors
 %         if odd_red_percentage < even_red_percentage % Even ratio larger than odd indicates red molecules are on even channels
-            ifind = func_image_block(ifind,split,1);
+%             ifind = func_image_block(ifind,split,1);
 %         else
 %             ifind = func_image_block(ifind,split,2); 
 %         end
-    elseif choices(5) == 2 % 2 = orange only channel intended
-        ifind = func_image_red_block(ifind,split);
-    elseif choices(5) == 3 % 3 = red only channel intended
-        ifind = func_image_orange_block(ifind,split);
-    end
-    
+%     elseif choices(5) == 2 % 2 = orange only channel intended
+%         ifind = func_image_red_block(ifind,split);
+%     elseif choices(5) == 3 % 3 = red only channel intended
+%         ifind = func_image_orange_block(ifind,split);
+%     end
+% % End of switching behavior comment block
+
 %     % If we're doing 2 color, block out frame we're not interested in
 %     if choices(5) == 1 % one equl dual color switcher
 %         load('C:\Users\andre\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
