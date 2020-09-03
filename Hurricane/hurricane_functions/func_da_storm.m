@@ -16,7 +16,7 @@ try
     i1 = (readtiff(fname) - mi1);
 
     [m,n,o] = size(i1);
-    i1 = i1(:,:,1:2:o);
+%     i1 = i1(:,:,1:2:o);
     iprod = gpu_rball(i1);
     if choices(4) == 1
         writetiff(iprod,[data_d,'\Rolling_Ball\',fname(1:end-4),'_rb.tif']);
