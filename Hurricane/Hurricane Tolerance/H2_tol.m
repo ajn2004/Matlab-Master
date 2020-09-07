@@ -111,7 +111,7 @@ if channel_flag == 1 || channel_flag == 3 % load red tolerances
     ind = ind & (abs(cdata.red.fits(:,4)).*abs(cdata.red.fits(:,5))).^0.5 > tol.r.s_tol(1) & (abs(cdata.red.fits(:,4)).*abs(cdata.red.  fits(:,5))).^0.5 < tol.r.s_tol(2); % sigma Tolerance
     ind = ind & q*cdata.red.crlbs(:,1).^.5 < tol.r.lat_max & q*cdata.red.crlbs(:,2).^.5 < tol.r.lat_max; % Lateral Uncertainty Tolerance
     ind = ind & cdata.red.ilv > tol.r.iln; % llv tolerance
-    ind = ind & cdata.red.fr_N < tol.r.frac_lim & abs(cdata.red.fr_o) < tol.r.off_frac; % Fraction photon tolerance
+    ind = ind & cdata.red.fr_N < tol.r.frac_lim; % Fraction photon tolerance
     ind = ind & cdata.red.fr_sx < tol.r.frac_lim & cdata.red.fr_sy < tol.r.frac_lim; % Fraction width tolerance
     ind = ind & cdata.red.eps < tol.r.eps_lim(2) & cdata.red.eps > tol.r.eps_lim(1); % elipticity
     rind = ind; % Index represents all molecules that PASS tolerances
@@ -146,7 +146,7 @@ if channel_flag == 1 || channel_flag == 2 % load orange tolerances
     ind = ind & (abs(cdata.orange.fits(:,4)).*abs(cdata.orange.fits(:,5))).^0.5 > tol.o.s_tol(1) & (abs(cdata.orange.fits(:,4)).*abs(cdata.orange.  fits(:,5))).^0.5 < tol.o.s_tol(2); % sigma Tolerance
     ind = ind & q*cdata.orange.crlbs(:,1).^.5 < tol.o.lat_max & q*cdata.orange.crlbs(:,2).^.5 < tol.o.lat_max; % Lateral Uncertainty Tolerance
     ind = ind & cdata.orange.ilv > tol.o.iln; % llv tolerance
-    ind = ind & cdata.orange.fr_N < tol.o.frac_lim & abs(cdata.orange.fr_o) < tol.o.off_frac; % Fraction photon tolerance
+    ind = ind & cdata.orange.fr_N < tol.o.frac_lim; % Fraction photon tolerance
     ind = ind & cdata.orange.fr_sx < tol.o.frac_lim & cdata.orange.fr_sy < tol.o.frac_lim; % Fraction width tolerance
     ind = ind & cdata.orange.eps < tol.o.eps_lim(2) & cdata.orange.eps > tol.o.eps_lim(1); % elipticity
     oind = ind; % Index represents all molecules that PASS tolerances
