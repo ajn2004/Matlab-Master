@@ -33,44 +33,44 @@ try
     
 %     % Beginning of comment block for switching behavior
 % %     % automatically detect switcher behavior
-%     dps = cpu_peaks(ifind(:,:,1:100),50,pixw);
-%     [iloc, fnum, cents] = divide_up(iprod(:,:,1:100), pixw, dps);
+    dps = cpu_peaks(ifind(:,:,1:100),50,pixw);
+    [iloc, fnum, cents] = divide_up(iprod(:,:,1:100), pixw, dps);
+    
+    % The ongoing pursuit of how to automatically detect which frame flips
+    % first. This should be corrected in arduino code.
+    if isempty(cents)
+            dps = cpu_peaks(ifind(:,:,1:100),20,pixw);
+            [iloc, fnum, cents] = divide_up(iprod(:,:,1:100), pixw, dps);
+    end
+    odd_red_percentage = sum(mod(fnum,2) == 1 & cents(:,1) < 180)/(sum(mod(fnum,2) == 1 & cents(:,1) > 180)+1); % on odd frames, ratio of red / orange molecules
+    even_red_percentage = sum(mod(fnum,2) == 0 & cents(:,1) < 180)/(sum(mod(fnum,2) == 0 & cents(:,1) > 180)+1); % on even frames, ratio of red / orange molecules
+    
+%     % Count percentage of molecules in even and odd channels
+%     ind = mod(fnum,2) == 0;
+%     red_evens = sum(cents(ind,1)<180)/sum(ind);
+%     orange_evens = sum(cents(ind,1)>180)/sum(ind);
+%     even_red_brights = sum(sum(iloc(:,:,cents(ind,1)<180)));
+%     even_orange_brights = sum(sum(iloc(:,:,cents(ind,1)>180)));
+%     even_ratio = mean(even_red_brights)/mean(even_orange_brights); % shows average 'brightness' of red to orange
 %     
-%     % The ongoing pursuit of how to automatically detect which frame flips
-%     % first. This should be corrected in arduino code.
-%     if isempty(cents)
-%             dps = cpu_peaks(ifind(:,:,1:100),20,pixw);
-%             [iloc, fnum, cents] = divide_up(iprod(:,:,1:100), pixw, dps);
-%     end
-%     odd_red_percentage = sum(mod(fnum,2) == 1 & cents(:,1) < 180)/(sum(mod(fnum,2) == 1 & cents(:,1) > 180)+1); % on odd frames, ratio of red / orange molecules
-%     even_red_percentage = sum(mod(fnum,2) == 0 & cents(:,1) < 180)/(sum(mod(fnum,2) == 0 & cents(:,1) > 180)+1); % on even frames, ratio of red / orange molecules
-%     
-% %     % Count percentage of molecules in even and odd channels
-% %     ind = mod(fnum,2) == 0;
-% %     red_evens = sum(cents(ind,1)<180)/sum(ind);
-% %     orange_evens = sum(cents(ind,1)>180)/sum(ind);
-% %     even_red_brights = sum(sum(iloc(:,:,cents(ind,1)<180)));
-% %     even_orange_brights = sum(sum(iloc(:,:,cents(ind,1)>180)));
-% %     even_ratio = mean(even_red_brights)/mean(even_orange_brights); % shows average 'brightness' of red to orange
-% %     
-% %     ind = mod(fnum,2) == 1;
-% %     red_odds = sum(cents(ind,1)<180)/sum(ind);
-% %     orange_odds = sum(cents(ind,1)>180)/sum(ind);
-% %     odd_red_brights = sum(sum(iloc(:,:,cents(ind,1)<180)));
-% %     odd_orange_brights = sum(sum(iloc(:,:,cents(ind,1)>180)));
-% %     odd_ratio = mean(odd_red_brights)/mean(odd_orange_brights);
-% 
-%     if choices(5) == 1 % User intended to use dual channel w/ both colors
-%         if odd_red_percentage < even_red_percentage % Even ratio larger than odd indicates red molecules are on even channels
-%             ifind = func_image_block(ifind,split,1);
-%         else
-%             ifind = func_image_block(ifind,split,2); 
-%         end
-%     elseif choices(5) == 2 % 2 = orange only channel intended
-%         ifind = func_image_red_block(ifind,split);
-%     elseif choices(5) == 3 % 3 = red only channel intended
-%         ifind = func_image_orange_block(ifind,split);
-%     end
+%     ind = mod(fnum,2) == 1;
+%     red_odds = sum(cents(ind,1)<180)/sum(ind);
+%     orange_odds = sum(cents(ind,1)>180)/sum(ind);
+%     odd_red_brights = sum(sum(iloc(:,:,cents(ind,1)<180)));
+%     odd_orange_brights = sum(sum(iloc(:,:,cents(ind,1)>180)));
+%     odd_ratio = mean(odd_red_brights)/mean(odd_orange_brights);
+
+    if choices(5) == 1 % User intended to use dual channel w/ both colors
+        if odd_red_percentage < even_red_percentage % Even ratio larger than odd indicates red molecules are on even channels
+            ifind = func_image_block(ifind,split,1);
+        else
+            ifind = func_image_block(ifind,split,2); 
+        end
+    elseif choices(5) == 2 % 2 = orange only channel intended
+        ifind = func_image_red_block(ifind,split);
+    elseif choices(5) == 3 % 3 = red only channel intended
+        ifind = func_image_orange_block(ifind,split);
+    end
 % % End of switching behavior comment block
 
 %     % If we're doing 2 color, block out frame we're not interested in
@@ -196,11 +196,11 @@ try
             % Remove failed Z fits
             zf = get_spline_z(fits(:,4),fits(:,5),cal.orange); % New z_registration based off spline 3d calibration            
             ind = zf == -5;
-            fits(ind,:) = [];
-            crlbs(ind,:) = [];
-            llv(ind) = [];
-            framenumber(ind) = [];
-            zf(ind) = [];
+%             fits(ind,:) = [];
+%             crlbs(ind,:) = [];
+%             llv(ind) = [];
+%             framenumber(ind) = [];
+%             zf(ind) = [];
             % Put data into cdata structure
             for i = 1:6
                 cdata.orange.fits(:,i) = fits(:,i);
