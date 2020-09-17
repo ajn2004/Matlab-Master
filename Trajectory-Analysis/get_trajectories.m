@@ -20,14 +20,22 @@ for i = 1:max(framenum_all)
                 clear dist disto
                 for k = 1:numel(fodex)
                     try
-                        dist(k) = ((xf_all(cind(j)) - xf_all(fodex(k))).^2 + (yf_all(cind(j)) - yf_all(fodex(k))).^2).^0.5;
+                        dist(k) = 0;
+                        for l = 1:numel(data(1,:))
+                        dist(k) = dist(k) +(data(cind(j),l) - data(fodex(k),l)).^2;
+                        end
+                        dist(k) = dist(k)^0.5;
                     catch
                         trajec = 'new_baby';
                     end
                 end
 
-                    disto = ((xf_all(cind(j)) - xf_all(cind)).^2 + (yf_all(cind(j)) - yf_all(cind)).^2).^0.5;
-
+%                     disto = ((xf_all(cind(j)) - xf_all(cind)).^2 + (yf_all(cind(j)) - yf_all(cind)).^2).^0.5;
+                    disto = 0;
+                    for l = 1:numel(data(1,:))
+                        disto = disto +(data(cind(j),l) - data(cind,l)).^2;
+                    end
+                    disto = disto.^0.5;
                 flag = find(disto > 0 & disto <= 2*dmax);
                 if min(dist) <= dmax && sum(dist <= 2*dmax) < 2 && isempty(flag)
                     foll(cind(j)) = fodex(find(dist == min(dist)));

@@ -46,6 +46,7 @@ t = toc;
 disp(['Corrected ', num2str(o),' frames in ', num2str(t), 's']);
 catch lasterr
     waitforbuttonpress
+    t=toc;
 end
 end
 

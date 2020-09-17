@@ -1,3 +1,0 @@
-function [traj, foll] = traj_connect(foll, traj, strt)
-    
-end
