@@ -30,17 +30,21 @@ laser_images = image(channel_vertical_crop_start:channel_vertical_crop_stop,chan
 indexes = get_index_from_ruler(sub_ruler_image,laser_images);
 
 % Z correction for red
+try
 z_correction_smoothed = spline((2:2:2*numel(indexes)), gausssmooth(indexes, 5,10),cdata.red.framenumber)*step_size;
 z_correction_raw = spline((2:2:2*numel(indexes)), indexes,cdata.red.framenumber)*step_size;
 cdata.red.zf_smoothed = cdata.red.zf - z_correction_smoothed;
 cdata.red.zf_raw = cdata.red.zf - z_correction_raw;
-
+catch
+end
 % Z correction for orange
+try
 z_correction_smoothed = spline((2:2:2*numel(indexes)), gausssmooth(indexes, 5,10),cdata.orange.framenumber)*step_size;
 z_correction_raw = spline((2:2:2*numel(indexes)), indexes,cdata.orange.framenumber)*step_size;
 cdata.orange.zf_smoothed = cdata.orange.zf - z_correction_smoothed;
 cdata.orange.zf_raw = cdata.orange.zf - z_correction_raw;
-
+catch
+end
 save(['scan_corrected\',file_list{1}(1:end-4),'_sc.mat'],'cdata','cal','tol');
 t = toc;
 disp(['Corrected ', num2str(o),' frames in ', num2str(t), 's']);

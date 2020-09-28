@@ -3,7 +3,7 @@ up_2_index = strfind(current_position,'\Analysis');
 image_path = current_position(1:up_2_index);
 files = dir('*dast_tol*');
 mkdir('scan_corrected');
-for i = 9
+for i = 5:numel(files)
     image_file_name = [image_path, files(i).name(1:end-13),'.tif'];
     image_ruler_name = [image_path, files(i).name(1:end-14),'scan.tif'];
     file_list = {files(i).name,image_file_name,image_ruler_name};

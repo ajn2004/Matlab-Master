@@ -1,17 +1,17 @@
-close all; clearvars; clc;
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Hurricane
-%
-% Hurricane will be a full localization software suite by the time I am
-% done. Right now it is a batch program that allows the user to run
-% Da_Storm over every tiff in a folder. This is done similar to the way the
-% "Bracket" localization algorithms perform
-%
-% AJN 7/25/17
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% function Hurricane(thresh)
+% The Perfect Storm
+% This is a batch script that will fully analyze a collection of folders 
+% specified by the user. We will be calling the batch version of all our
+% functions so the user variables setting will be a bit expansive
+% AJN 9-27-2020
+clearvars;
+close all;
+clc;
 
-%% User Controlled Area
+%% Regular Change User Variables
+folders_to_analyze = {'D:\Dropbox\Data\9-23-20 fixed hek gpi-halo\'};
+
+%% Set and forget Variables
+% Hurricane Variables
 emg = 0; % Enter the EM Gain value used on the camera
 pix2pho = em_gain(emg);    %Pixel to photon ratio
 q = 0.122;          % Pixel size in um
@@ -21,7 +21,8 @@ angle = 0; %approximate astig rotation in degrees
 sv_im = 'n'; % set to y/Y to save image of localizations
 thresh = 5;
 
-%% Optionals
+%% Perform the Hurricane Process
+% Hurricane Optionals
   % This section is dedicated to a list of variables for the user to select
   % 1 indicates go 0 indicates do not
   savewaves = 0;
@@ -30,22 +31,9 @@ thresh = 5;
   saverb = 0;
   two_color = 3;
   varys = [savewaves, showlocs, savepsfs, saverb, two_color];
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-% END USER CONTROL JUST RUN IT AND SELECT A FILE
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-             
-p = mfilename('fullpath');
-[fpath, fname, fext] = fileparts([p, '.m']);
-addpath(fpath);
-addpath([fpath,'\da_c']);
-addpath([fpath,'\da_functions']);
-
-% [dname, dpath] = uigetfile('*.tif');
-% cd(dpath); % we change to the path we are going to use
-dpath = pwd;
-
+cd(folders_to_analyze{1});
 try
 load('back_subtract.mat');
 catch lsterr
@@ -67,20 +55,11 @@ elseif varys(3) == 1
 elseif varys(4) == 1
     mkdir('Rolling_Ball');
 end
-
+disp('Hurricane')
 for i = 1:numel(files)
-    tic
+    
     if isempty(strfind(files(i).name,'scan'))
         func_da_storm(files(i).name, dpath, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1, varys);
-        clc;
-        disp(['File number ' , num2str(i) , ' out of ', num2str(numel(files))]);
-        t(i) = toc;
-        ajn_wait(t,i,numel(files));
     end
-    close all
 end
-
-
-
-% end
-
+disp(
