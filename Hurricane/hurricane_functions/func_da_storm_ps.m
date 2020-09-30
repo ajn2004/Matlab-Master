@@ -124,7 +124,7 @@ try
         zf = getdz(abs(fits(:,4)),abs(fits(:,5)),cal.red.z_cal,2)/q;
         coords = [fits(:,1:2),zf];
         [ncoords] = astig_tilt(coords,cal.red);
-        save([an_dir,'\', fname(1:end-4),'_dast.mat'],  'pixw','q','ncoords','fits','crlbs','llv','framenumber','cal');
+        save(['Analysis\', fname(1:end-4),'_dast.mat'],  'pixw','q','ncoords','fits','crlbs','llv','framenumber','cal');
     end
     id = cents(:,1) < split; % Identify localizations below the split
     if choices(5) == 1 || choices(5) ==3
@@ -246,7 +246,7 @@ try
         
           
         
-        save([an_dir,'\', fname(1:end-4),'_dast.mat'],  'cdata', 'pixw','q','cal');
+        save(['Analysis\', fname(1:end-4),'_dast.mat'],  'cdata', 'pixw','q','cal');
     end
     
 catch lsterr

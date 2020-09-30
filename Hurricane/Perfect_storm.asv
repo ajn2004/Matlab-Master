@@ -1,5 +1,5 @@
 % The Perfect Storm
-% This is a batch script that will fully analyze a collection of folders 
+% This is a batch script that will fully analyze a collection of folders
 % specified by the user. We will be calling the batch version of all our
 % functions so the user variables setting will be a bit expansive
 % AJN 9-27-2020
@@ -23,19 +23,19 @@ thresh = 5;
 
 %% Perform the Hurricane Process
 % Hurricane Optionals
-  % This section is dedicated to a list of variables for the user to select
-  % 1 indicates go 0 indicates do not
-  savewaves = 0;
-  showlocs = 1;
-  savepsfs = 0;
-  saverb = 0;
-  two_color = 3;
-  varys = [savewaves, showlocs, savepsfs, saverb, two_color];
+% This section is dedicated to a list of variables for the user to select
+% 1 indicates go 0 indicates do not
+savewaves = 0;
+showlocs = 0;
+savepsfs = 0;
+saverb = 0;
+two_color = 3;
+varys = [savewaves, showlocs, savepsfs, saverb, two_color];
 
 
 cd(folders_to_analyze{1});
 try
-load('back_subtract.mat');
+    load('back_subtract.mat');
 catch lsterr
     mi1 = 0;
 end
@@ -56,10 +56,86 @@ elseif varys(4) == 1
     mkdir('Rolling_Ball');
 end
 disp('Hurricane')
+lost_inds = [];
 for i = 1:numel(files)
     
     if isempty(strfind(files(i).name,'scan'))
-        func_da_storm(files(i).name, dpath, an_dir, q, pix2pho, pixw,thresh, angle, sv_im, mi1, varys);
+        try
+            filename = [folders_to_analyze{1},files(i).name];
+        func_da_storm_ps(files(i).name, q, pix2pho, pixw,thresh, angle, sv_im, mi1, varys);
+        catch lsterr
+            disp(lsterr.message)
+            lost_inds = [lost_inds;i];
+        end
     end
 end
-disp(
+disp('Tolerance')
+
+%Batch H_tol
+% files = dir('*dast*');
+
+disp('files')
+disp(lost_inds)
+disp('Were lost during hurricane')
+lost_inds = [];
+% Batch Scan Correction
+for i = 1:numel(files)
+    if isempty(strfind(files(i).name,'scan'))
+        try
+        filename = [folders_to_analyze{1},'Analysis\',files(i).name(1:end-4),'_dast.mat'];
+        func_batch_h2_tol_ps(filename);
+        delete(filename)
+        catch lsterr
+            lost_inds = [lost_inds;i];
+        end
+    end
+end
+
+disp('files')
+disp(lost_inds)
+disp('Were lost during tolerance')
+
+image_path = folders_to_analyze{1};
+lost_inds = [];
+for i = 1:numel(files)
+    if isempty(strfind(files(i).name,'scan'))
+        try
+            image_file_name = [image_path, files(i).name];
+            image_ruler_name = [image_path, files(i).name(1:end-5),'scan.tif'];
+            filename = [folders_to_analyze{1},'Analysis\',files(i).name(1:end-4),'_dast_tol.mat'];
+            file_list = {filename,image_file_name,image_ruler_name};
+            t(i) = laser_scan_correction_ps(file_list);
+            delete(filename)
+        catch
+            lost_inds = [lost_inds;i];
+        end
+    end
+end
+disp('files')
+disp(lost_inds)
+disp('Were lost during scan correction')
+lost_inds = [];
+for i  = 1:numel(files)
+    if isempty(strfind(files(i).name,'scan'))
+        filename = [folders_to_analyze{1},'Analysis\',files(i).name(1:end-4),'_dast_tol_sc.mat'];
+        try
+            load(filename);
+            
+            try
+                cdata.orange = converge_duplicates(cdata.orange,2, 1);
+            catch
+            end
+            try
+                cdata.red = converge_duplicates(cdata.red,2, 0);
+            catch
+            end
+            save([folders_to_analyze{1},'Analysis\',files(i).name(1:end-4),'_full.mat'],'cdata','tol','cal');
+            delete(filename)
+        catch
+            
+        end
+    end
+end
+disp('files')
+disp(lost_inds)
+disp('Were lost during convergance')

@@ -104,5 +104,4 @@ end
 
 % Scream here for sanity
 save([fname(1:end-4),'_tol.mat']);
-delete fname
 end
