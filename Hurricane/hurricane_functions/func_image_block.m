@@ -8,7 +8,7 @@ rblock = oblock;
 oblock(:,split:end) = 0;
 rblock(:,1:split) = 0;
 
-if toggle == 1 % This allows us to switch between orange and red blocking through a functional input
+if toggle == 1 % 1 for having red on the even frames and orange on the odd
     for i = 1:2:o
         i2(:,:,i) = i1(:,:,i).*rblock;
     end
@@ -17,7 +17,7 @@ if toggle == 1 % This allows us to switch between orange and red blocking throug
         i2(:,:,i) = i1(:,:,i).*oblock;
     end
     
-else
+else % 2 for having orange on the even and red on the odd frames
     for i = 2:2:o
         i2(:,:,i) = i1(:,:,i).*rblock;
     end

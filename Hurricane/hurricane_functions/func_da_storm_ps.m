@@ -39,11 +39,11 @@ try
     % The ongoing pursuit of how to automatically detect which frame flips
     % first. This should be corrected in arduino code.
     if isempty(cents)
-            dps = cpu_peaks(ifind(:,:,1:100),20,pixw);
+            dps = cpu_peaks(ifind(:,:,1:100),10,pixw);
             [iloc, fnum, cents] = divide_up(iprod(:,:,1:100), pixw, dps);
     end
-    odd_red_percentage = sum(mod(fnum,2) == 1 & cents(:,1) < 180)/(sum(mod(fnum,2) == 1 & cents(:,1) > 180)+1); % on odd frames, ratio of red / orange molecules
-    even_red_percentage = sum(mod(fnum,2) == 0 & cents(:,1) < 180)/(sum(mod(fnum,2) == 0 & cents(:,1) > 180)+1); % on even frames, ratio of red / orange molecules
+    odd_red_percentage = sum(mod(fnum,2) == 1 & cents(:,1) < split)/(sum(mod(fnum,2) == 1 & cents(:,1) > split)+1); % on odd frames, ratio of red / orange molecules
+    even_red_percentage = sum(mod(fnum,2) == 0 & cents(:,1) < split)/(sum(mod(fnum,2) == 0 & cents(:,1) > split)+1); % on even frames, ratio of red / orange molecules
     
 %     % Count percentage of molecules in even and odd channels
 %     ind = mod(fnum,2) == 0;
@@ -61,11 +61,14 @@ try
 %     odd_ratio = mean(odd_red_brights)/mean(odd_orange_brights);
 
     if choices(5) == 1 % User intended to use dual channel w/ both colors
-        if odd_red_percentage < even_red_percentage % Even ratio larger than odd indicates red molecules are on even channels
-            ifind = func_image_block(ifind,split,1);
-        else
-            ifind = func_image_block(ifind,split,2); 
-        end
+%         if odd_red_percentage < even_red_percentage % Even ratio larger than odd indicates red molecules are on even channels
+%             ifind = func_image_block(ifind,split,1);
+%         else
+%             ifind = func_image_block(ifind,split,2); 
+%         end
+% At this point experiments are requiring stimulus which is forces a resest
+% in frames so we can trust things to be more normalized here
+            ifind = func_image_block(ifind,split,1); 
     elseif choices(5) == 2 % 2 = orange only channel intended
         ifind = func_image_red_block(ifind,split);
     elseif choices(5) == 3 % 3 = red only channel intended
@@ -250,7 +253,8 @@ try
     end
     
 catch lsterr
-    disp(lsterr)
+    disp(lsterr.message)
+    disp(lsterr.stack(1))
     
     imagesc(iprod(:,:,1))
     title('Odd Frame')

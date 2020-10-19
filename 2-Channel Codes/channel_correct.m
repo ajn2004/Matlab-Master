@@ -1,25 +1,18 @@
 function [corrected_data] = channel_correct(data)
 
 % corrected_data = data*0; % initialize data
+try
 load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat','split','o2rx','o2ry');
+catch
+    load('C:\Users\andre\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat','split','o2rx','o2ry');
+end
 xf = data(:,1);
 yf = data(:,2);
-ind = xf<split;
-xfr = xf(ind);
-yfr = yf(ind);
-ind = logical(1-ind);
-xfo = xf(ind);
-yfo = yf(ind);
 
 % vector = [xfr.^2, yfr.^2, xfr, yfr,xfr.*yfr, xfr*0+1];
-vector = xy_feature(xfo,yfo);
+vector = xy_feature(xf,yf);
 xfo = o2rx.'*vector.';
 yfo = o2ry.'*vector.';
 
-
-cdata.red.xf = xfr;
-cdata.orange.xf = xfo;
-cdata.red.yf = yfr;
-cdata.orange.yf = yfo;
-cdata.id = ind + 1; % index array to separate out 
-corrected_data = cdata;
+corrected_data = [xfo(:),yfo(:)];
+end

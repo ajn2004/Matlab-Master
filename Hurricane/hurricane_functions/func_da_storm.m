@@ -1,4 +1,4 @@
-function func_da_storm_ps(fname, q, pix2pho, pixw,thresh, angle, sv_im, mi1, choices,splits)
+function func_da_storm(fname, data_d, an_dir, q, pixw,thresh, mi1, choices)
 
 % Convert Variabls
 % pix2pho = single(pix2pho);

@@ -8,7 +8,7 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folders_to_analyze = {'D:\Dropbox\Data\9-23-20 fixed hek gpi-halo\'};
+folders_to_analyze = {'D:\Dropbox\Data\9-17-20 fixed neruons vglut\' };
 
 %% Set and forget Variables
 % Hurricane Variables
@@ -29,11 +29,11 @@ savewaves = 0;
 showlocs = 0;
 savepsfs = 0;
 saverb = 0;
-two_color = 3;
+two_color = 1; % two color code is as follows 1 = 2 color (algorithm decides order), 2= orange only 3 = red only 0 = no frame blocking
 varys = [savewaves, showlocs, savepsfs, saverb, two_color];
 
-
-cd(folders_to_analyze{1});
+for l = 1:numel(folders_to_analyze)
+cd(folders_to_analyze{l});
 try
     load('back_subtract.mat');
 catch lsterr
@@ -61,7 +61,7 @@ for i = 1:numel(files)
     
     if isempty(strfind(files(i).name,'scan'))
         try
-            filename = [folders_to_analyze{1},files(i).name];
+            filename = [folders_to_analyze{l},files(i).name];
         func_da_storm_ps(files(i).name, q, pix2pho, pixw,thresh, angle, sv_im, mi1, varys);
         catch lsterr
             disp(lsterr.message)
@@ -82,10 +82,11 @@ lost_inds = [];
 for i = 1:numel(files)
     if isempty(strfind(files(i).name,'scan'))
         try
-        filename = [folders_to_analyze{1},'Analysis\',files(i).name(1:end-4),'_dast.mat'];
+        filename = [folders_to_analyze{l},'Analysis\',files(i).name(1:end-4),'_dast.mat'];
         func_batch_h2_tol_ps(filename);
         delete(filename)
         catch lsterr
+            disp(lsterr)
             lost_inds = [lost_inds;i];
         end
     end
@@ -95,14 +96,14 @@ disp('files')
 disp(lost_inds)
 disp('Were lost during tolerance')
 
-image_path = folders_to_analyze{1};
+image_path = folders_to_analyze{l};
 lost_inds = [];
 for i = 1:numel(files)
     if isempty(strfind(files(i).name,'scan'))
         try
             image_file_name = [image_path, files(i).name];
             image_ruler_name = [image_path, files(i).name(1:end-5),'scan.tif'];
-            filename = [folders_to_analyze{1},'Analysis\',files(i).name(1:end-4),'_dast_tol.mat'];
+            filename = [folders_to_analyze{l},'Analysis\',files(i).name(1:end-4),'_dast_tol.mat'];
             file_list = {filename,image_file_name,image_ruler_name};
             t(i) = laser_scan_correction_ps(file_list);
             delete(filename)
@@ -117,7 +118,7 @@ disp('Were lost during scan correction')
 lost_inds = [];
 for i  = 1:numel(files)
     if isempty(strfind(files(i).name,'scan'))
-        filename = [folders_to_analyze{1},'Analysis\',files(i).name(1:end-4),'_dast_tol_sc.mat'];
+        filename = [folders_to_analyze{l},'Analysis\',files(i).name(1:end-4),'_dast_tol_sc.mat'];
         try
             load(filename);
             
@@ -129,7 +130,7 @@ for i  = 1:numel(files)
                 cdata.red = converge_duplicates(cdata.red,2, 0);
             catch
             end
-            save([folders_to_analyze{1},'Analysis\',files(i).name(1:end-4),'_full.mat'],'cdata','tol','cal');
+            save([folders_to_analyze{l},'Analysis\',files(i).name(1:end-4),'_full.mat'],'cdata','tol','cal');
             delete(filename)
         catch
             
@@ -139,3 +140,4 @@ end
 disp('files')
 disp(lost_inds)
 disp('Were lost during convergance')
+end
