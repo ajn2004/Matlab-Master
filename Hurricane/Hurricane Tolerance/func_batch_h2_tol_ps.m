@@ -1,6 +1,10 @@
 function func_batch_h2_tol_ps(fname)
 % batch routine for files
+try
 load('C:\Users\andre\Documents\GitHub\Matlab-Master\Hurricane\Tolfile.mat');
+catch
+    load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Hurricane\Tolfile.mat');
+end
 load(fname,'cdata','cal','pixw','q');
 
 % Identify number of colors we're working with

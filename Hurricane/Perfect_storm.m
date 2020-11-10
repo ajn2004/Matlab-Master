@@ -8,7 +8,7 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folders_to_analyze = {'D:\Dropbox\Data\9-17-20 fixed neruons vglut\' };
+folders_to_analyze = {'D:\Dropbox\Data\11-9-20 sec6-vGlut\' };
 
 %% Set and forget Variables
 % Hurricane Variables
@@ -116,28 +116,28 @@ disp('files')
 disp(lost_inds)
 disp('Were lost during scan correction')
 lost_inds = [];
-for i  = 1:numel(files)
-    if isempty(strfind(files(i).name,'scan'))
-        filename = [folders_to_analyze{l},'Analysis\',files(i).name(1:end-4),'_dast_tol_sc.mat'];
-        try
-            load(filename);
-            
-            try
-                cdata.orange = converge_duplicates(cdata.orange,2, 1);
-            catch
-            end
-            try
-                cdata.red = converge_duplicates(cdata.red,2, 0);
-            catch
-            end
-            save([folders_to_analyze{l},'Analysis\',files(i).name(1:end-4),'_full.mat'],'cdata','tol','cal');
-            delete(filename)
-        catch
-            
-        end
-    end
-end
-disp('files')
-disp(lost_inds)
-disp('Were lost during convergance')
+% for i  = 1:numel(files)
+%     if isempty(strfind(files(i).name,'scan'))
+%         filename = [folders_to_analyze{l},'Analysis\',files(i).name(1:end-4),'_dast_tol_sc.mat'];
+%         try
+%             load(filename);
+%             
+%             try
+%                 cdata.orange = converge_duplicates(cdata.orange,2, 1);
+%             catch
+%             end
+%             try
+%                 cdata.red = converge_duplicates(cdata.red,2, 0);
+%             catch
+%             end
+%             save([folders_to_analyze{l},'Analysis\',files(i).name(1:end-4),'_full.mat'],'cdata','tol','cal');
+%             delete(filename)
+%         catch
+%             
+%         end
+%     end
+% end
+% disp('files')
+% disp(lost_inds)
+% disp('Were lost during convergance')
 end
