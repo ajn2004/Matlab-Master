@@ -249,7 +249,7 @@ try
         
           
         
-        save(['Analysis\', fname(1:end-4),'_dast.mat'],  'cdata', 'pixw','q','cal');
+        save(['Analysis\', fname(1:end-9),'_dast.mat'],  'cdata', 'pixw','q','cal');
     end
     
 catch lsterr

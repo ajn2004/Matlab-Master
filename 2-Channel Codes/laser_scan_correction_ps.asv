@@ -18,11 +18,8 @@ load(file_list{1});
 str_ind = strfind(ruler_name, 'd_');
 str_end = strfind(ruler_name, '_r_');
 step_size = str2num(ruler_name(str_ind+2:str_end-1))/1000;
-if isempty(step_size)
-    step_size = 0.02; % make default step size 20nm as that's what it set to default on the python gui 11/10/20 AJN
-end
+if isempty
 data_name = [image_name(1:end-4),'_dast_tol.mat'];
-
 ruler_image = readtiff(ruler_name);
 image = readtiff(image_name);
 [m,n,o] = size(ruler_image);
