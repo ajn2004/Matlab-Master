@@ -8,7 +8,7 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folders_to_analyze = {'D:\Dropbox\Data\11-9-20 sec6-vGlut\' };
+folders_to_analyze = {'D:\Dropbox\Data\11-12-20 tuj\' };
 
 %% Set and forget Variables
 % Hurricane Variables
@@ -29,7 +29,7 @@ savewaves = 0;
 showlocs = 0;
 savepsfs = 0;
 saverb = 0;
-two_color = 1; % two color code is as follows 1 = 2 color (algorithm decides order), 2= orange only 3 = red only 0 = no frame blocking
+two_color = 3; % two color code is as follows 1 = 2 color (algorithm decides order), 2= orange only 3 = red only 0 = no frame blocking
 varys = [savewaves, showlocs, savepsfs, saverb, two_color];
 
 for l = 1:numel(folders_to_analyze)
@@ -103,7 +103,7 @@ for i = 1:numel(files)
         try
             image_file_name = [image_path, files(i).name];
             image_ruler_name = [image_path, files(i).name(1:end-8),'scan.tif'];
-            filename = [folders_to_analyze{l},'Analysis\',files(i).name(1:end-9),'_dast_tol_sc.mat'];
+            filename = [folders_to_analyze{l},'Analysis\',files(i).name(1:end-9),'_dast_tol.mat'];
             file_list = {filename,image_file_name,image_ruler_name};
             t(i) = laser_scan_correction_ps(file_list);
             delete(filename)
