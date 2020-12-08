@@ -10,11 +10,11 @@
 
 pix = 500;
 % % for pix = 1:1000
-% [xgrid, ygrid] = meshgrid(-round(pix/2):round(pix/2),-round(pix/2):round(pix/2));
-m = 387;
-n = 87;
-start = [xgrid(m,n),ygrid(m,n)];
-% start = [-0.2003, 0.5437];
+[xgrid, ygrid] = meshgrid(-round(pix/2):round(pix/2),-round(pix/2):round(pix/2));
+% m = 387;
+% n = 87;
+% start = [xgrid(m,n),ygrid(m,n)];
+start = [-0.2003, 0.5437];
 k = 1;
 iter = 10000;
 i = 0;

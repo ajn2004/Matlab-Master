@@ -8,7 +8,7 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folders_to_analyze = {'D:\Dropbox\Data\11-12-20 tuj\' };
+folders_to_analyze = {'D:\Dropbox\Data\12-1-20 beas and beads\','D:\Dropbox\Data\12-2-20 beas and beads\' };
 
 %% Set and forget Variables
 % Hurricane Variables
@@ -29,7 +29,7 @@ savewaves = 0;
 showlocs = 0;
 savepsfs = 0;
 saverb = 0;
-two_color = 3; % two color code is as follows 1 = 2 color (algorithm decides order), 2= orange only 3 = red only 0 = no frame blocking
+two_color = 1; % two color code is as follows 1 = 2 color (algorithm decides order), 2= orange only 3 = red only 0 = no frame blocking
 varys = [savewaves, showlocs, savepsfs, saverb, two_color];
 
 for l = 1:numel(folders_to_analyze)
@@ -45,9 +45,8 @@ files = dir('*.tif');
 % sendit2(an_dir);
 % end
 mkdir(an_dir);
-%% Localize the files with the thresholds found
-% thresh = findathresh(files,pix2pho,mi1);
-% mi1 = 0;
+% Normalize Name information
+files = rename_problem_files(files);
 if varys(1) == 1
     mkdir('Waves');
 elseif varys(3) == 1
@@ -62,7 +61,7 @@ for i = 1:numel(files)
     if isempty(strfind(files(i).name,'scan'))
         try
             filename = [folders_to_analyze{l},files(i).name];
-        func_da_storm_ps(files(i).name, q, pix2pho, pixw,thresh, angle, sv_im, mi1, varys);
+            func_da_storm_ps(files(i).name, q, pix2pho, pixw,thresh, angle, sv_im, mi1, varys);
         catch lsterr
             disp(lsterr.message)
             lost_inds = [lost_inds;i];
@@ -103,7 +102,7 @@ for i = 1:numel(files)
         try
             image_file_name = [image_path, files(i).name];
             image_ruler_name = [image_path, files(i).name(1:end-8),'scan.tif'];
-            filename = [folders_to_analyze{l},'Analysis\',files(i).name(1:end-9),'_dast_tol.mat'];
+            filename = [folders_to_analyze{l},'Analysis\',files(i).name(1:end-9),'_dast.mat'];
             file_list = {filename,image_file_name,image_ruler_name};
             t(i) = laser_scan_correction_ps(file_list);
             delete(filename)

@@ -13,8 +13,8 @@
 
 // includes, project
 #include <cuda_runtime.h>
-#include <helper_functions.h>
-#include <helper_cuda.h>
+//#include <helper_functions.h>
+//#include <helper_cuda.h>
 
 void __global__ g_frac(double *d_zr,
 	double *d_zi,
@@ -122,17 +122,17 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, mxArray const *prhs[])
 	*/
 	
 	// cudaMalloc Array
-	checkCudaErrors(cudaMalloc((void**)&d_zr, mem_size));
-	checkCudaErrors(cudaMalloc((void**)&d_zi, mem_size));
-	checkCudaErrors(cudaMalloc((void**)&d_z0r, mem_size));
-	checkCudaErrors(cudaMalloc((void**)&d_z0i, mem_size));
-	checkCudaErrors(cudaMalloc((void**)&d_count, mem_size));
+	cudaMalloc((void**)&d_zr, mem_size);
+	cudaMalloc((void**)&d_zi, mem_size);
+	cudaMalloc((void**)&d_z0r, mem_size);
+	cudaMalloc((void**)&d_z0i, mem_size);
+	cudaMalloc((void**)&d_count, mem_size);
 		
 	// Data Copy Array
-	checkCudaErrors(cudaMemcpy(d_zr, zr, mem_size, cudaMemcpyHostToDevice));
-	checkCudaErrors(cudaMemcpy(d_zi, zi, mem_size, cudaMemcpyHostToDevice));
-	checkCudaErrors(cudaMemcpy(d_z0r, z0r, mem_size, cudaMemcpyHostToDevice));
-	checkCudaErrors(cudaMemcpy(d_z0i, z0i, mem_size, cudaMemcpyHostToDevice));
+	cudaMemcpy(d_zr, zr, mem_size, cudaMemcpyHostToDevice);
+	cudaMemcpy(d_zi, zi, mem_size, cudaMemcpyHostToDevice);
+	cudaMemcpy(d_z0r, z0r, mem_size, cudaMemcpyHostToDevice);
+	cudaMemcpy(d_z0i, z0i, mem_size, cudaMemcpyHostToDevice);
 		
 	// Get Fractional error Vectors and tolerance
 	/* Run GPU kernel*/
@@ -161,7 +161,7 @@ void mexFunction(int nlhs, mxArray *plhs[], int nrhs, mxArray const *prhs[])
 
 
 	// copy data array
-	 checkCudaErrors(cudaMemcpy(count, d_count, mem_size, cudaMemcpyDeviceToHost));
+	 cudaMemcpy(count, d_count, mem_size, cudaMemcpyDeviceToHost);
 	 
 		
 	// Release GPU memory
