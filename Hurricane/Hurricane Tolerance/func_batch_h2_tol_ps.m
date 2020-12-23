@@ -1,7 +1,7 @@
 function func_batch_h2_tol_ps(fname)
 % batch routine for files
 try
-load('C:\Users\andre\Documents\GitHub\Matlab-Master\Hurricane\Tolfile.mat');
+load('C:\Users\ajnel\Documents\GitHub\Matlab-Master\Hurricane\Tolfile.mat');
 catch
     load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Hurricane\Tolfile.mat');
 end

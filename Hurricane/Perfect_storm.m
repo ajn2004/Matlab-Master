@@ -8,7 +8,7 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folders_to_analyze = {'D:\Dropbox\Data\12-1-20 beas and beads\','D:\Dropbox\Data\12-2-20 beas and beads\' };
+folders_to_analyze = {'G:\Dropbox\Data\12-1-20 beas and beads\','G:\Dropbox\Data\12-2-20 beas and beads\', 'G:\Dropbox\Data\12-7-20 tuj in neurons\', 'G:\Dropbox\Data\12-8-20 glut4 and vglut in neurons\', 'G:\Dropbox\Data\12-15-20 glut4 and vglut in neurons\' };
 
 %% Set and forget Variables
 % Hurricane Variables
@@ -102,9 +102,9 @@ for i = 1:numel(files)
         try
             image_file_name = [image_path, files(i).name];
             image_ruler_name = [image_path, files(i).name(1:end-8),'scan.tif'];
-            filename = [folders_to_analyze{l},'Analysis\',files(i).name(1:end-9),'_dast.mat'];
+            filename = [folders_to_analyze{l},'Analysis\',files(i).name(1:end-9),'_dast_tol.mat'];
             file_list = {filename,image_file_name,image_ruler_name};
-            t(i) = laser_scan_correction_ps(file_list);
+            t(i) = laser_scan_comparator_correction_ps(file_list);
             delete(filename)
         catch
             lost_inds = [lost_inds;i];

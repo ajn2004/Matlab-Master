@@ -24,8 +24,7 @@ Fixed
 
 // includes, project
 #include <cuda_runtime.h>
-#include <helper_functions.h>
-#include <helper_cuda.h>
+
 
 #define PI 3.14159265358979323846
 
@@ -394,11 +393,28 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	
 	// allocate memory and copy it onto the gpu device
 	// iall
+	cudaMalloc((void**)&d_iall, imem); // allocate image memory
+	cudaMemcpy(d_iall, iall, imem, cudaMemcpyHostToDevice); // copy images from device to host
+
+	/*
 	checkCudaErrors(cudaMalloc((void**)&d_iall, imem)); // allocate image memory
 	checkCudaErrors(cudaMemcpy(d_iall, iall, imem, cudaMemcpyHostToDevice)); // copy images from device to host
-
-
+	*/
 	// allocate memory for fitted variables that will be returned from device
+	cudaMalloc((void**)&d_xf_all   , vmem); // allocate xf_all memory
+	cudaMalloc((void**)&d_xf_crlb  , vmem); // allocate xf_crlb memory
+	cudaMalloc((void**)&d_yf_all   , vmem); // allocate yf_all memory
+	cudaMalloc((void**)&d_yf_crlb  , vmem); // allocate yf_crlb memory
+	cudaMalloc((void**)&d_sigx_all , vmem); // allocate sigx memory
+	cudaMalloc((void**)&d_sigx_crlb, vmem); // allocate sigx_crlb memory
+	cudaMalloc((void**)&d_sigy_all , vmem); // allocate sigy memory
+	cudaMalloc((void**)&d_sigy_crlb, vmem); // allocate sigy_crlb memory
+	cudaMalloc((void**)&d_N		   , vmem); // allocate N memory
+	cudaMalloc((void**)&d_N_crlb   , vmem); // allocate N_crlb memory
+	cudaMalloc((void**)&d_off	   , vmem); // allocate off memory
+	cudaMalloc((void**)&d_off_crlb , vmem); // allocate N memory
+	cudaMalloc((void**)&d_llv	   , vmem); // allocate llv memory
+	/*
 	checkCudaErrors(cudaMalloc((void**)&d_xf_all   , vmem)); // allocate xf_all memory
 	checkCudaErrors(cudaMalloc((void**)&d_xf_crlb  , vmem)); // allocate xf_crlb memory
 	checkCudaErrors(cudaMalloc((void**)&d_yf_all   , vmem)); // allocate yf_all memory
@@ -412,7 +428,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	checkCudaErrors(cudaMalloc((void**)&d_off	   , vmem)); // allocate off memory
 	checkCudaErrors(cudaMalloc((void**)&d_off_crlb , vmem)); // allocate N memory
 	checkCudaErrors(cudaMalloc((void**)&d_llv	   , vmem)); // allocate llv memory
-
+	*/
 	/* Run GPU kernel*/
 	threadsperblock = mxGetScalar(prhs[1]);  // get number of threads perblock from matlab
 
@@ -450,6 +466,21 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	 offc = (double *)mxGetPr(plhs[11]);
 	  llv = (double *)mxGetPr(plhs[12]);
 	// copy memory from device to host
+	// due to annoyances w/ compilation I am trying to avoid checkCudaErrors
+	cudaMemcpy(xf    , d_xf_all    ,vmem, cudaMemcpyDeviceToHost);
+	cudaMemcpy(xfc   , d_xf_crlb   ,vmem, cudaMemcpyDeviceToHost);
+	cudaMemcpy(yf    , d_yf_all    ,vmem, cudaMemcpyDeviceToHost);
+	cudaMemcpy(yfc   , d_yf_crlb   ,vmem, cudaMemcpyDeviceToHost);
+	cudaMemcpy(n     , d_N         ,vmem, cudaMemcpyDeviceToHost);
+	cudaMemcpy(nc    , d_N_crlb    ,vmem, cudaMemcpyDeviceToHost);
+	cudaMemcpy(sigx  , d_sigx_all  ,vmem, cudaMemcpyDeviceToHost);
+	cudaMemcpy(sigxc , d_sigx_crlb ,vmem, cudaMemcpyDeviceToHost);
+	cudaMemcpy(sigy  , d_sigy_all  ,vmem, cudaMemcpyDeviceToHost);
+	cudaMemcpy(sigyc , d_sigy_crlb ,vmem, cudaMemcpyDeviceToHost);
+	cudaMemcpy(off   , d_off       ,vmem, cudaMemcpyDeviceToHost);
+	cudaMemcpy(offc  , d_off_crlb  ,vmem, cudaMemcpyDeviceToHost);
+	cudaMemcpy(llv   , d_llv       ,vmem, cudaMemcpyDeviceToHost);
+	/*
 	checkCudaErrors(cudaMemcpy(xf    , d_xf_all    ,vmem, cudaMemcpyDeviceToHost));
 	checkCudaErrors(cudaMemcpy(xfc   , d_xf_crlb   ,vmem, cudaMemcpyDeviceToHost));
 	checkCudaErrors(cudaMemcpy(yf    , d_yf_all    ,vmem, cudaMemcpyDeviceToHost));
@@ -463,7 +494,7 @@ void mexFunction(int nlhs, mxArray *plhs[],
 	checkCudaErrors(cudaMemcpy(off   , d_off       ,vmem, cudaMemcpyDeviceToHost));
 	checkCudaErrors(cudaMemcpy(offc  , d_off_crlb  ,vmem, cudaMemcpyDeviceToHost));
 	checkCudaErrors(cudaMemcpy(llv   , d_llv       ,vmem, cudaMemcpyDeviceToHost));
-
+*/
 	// clean up
 	cudaFree(d_iall);
 	cudaFree(d_N);  

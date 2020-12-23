@@ -6,8 +6,8 @@ q = double(q);
 try
     
     try
-    load('C:\Users\andre\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
-    load('C:\Users\andre\Documents\GitHub\Matlab-Master\Hurricane\hurricane_functions\z_calib.mat')
+    load('C:\Users\ajnel\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
+    load('C:\Users\ajnel\Documents\GitHub\Matlab-Master\Hurricane\hurricane_functions\z_calib.mat')
     catch
         load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
         load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Hurricane\hurricane_functions\z_calib.mat')
