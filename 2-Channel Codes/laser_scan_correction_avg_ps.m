@@ -1,4 +1,4 @@
-function t = laser_scan_correction_ps(file_list)
+function t = laser_scan_correction_avg_ps(file_list)
 
 try
     tic
@@ -31,7 +31,7 @@ sub_ruler_image = ruler_image(channel_vertical_crop_start:channel_vertical_crop_
 laser_images = image(channel_vertical_crop_start:channel_vertical_crop_stop,channel_split:channel_split_end,2:2:end);
 
 
-indexes = get_index_from_ruler(sub_ruler_image,laser_images);
+indexes = get_average_index_from_ruler(sub_ruler_image,laser_images);
 smoothed_indexes = conv(indexes,[0.2, 0.2, 0.2, 0.2, 0.2,],'same');
 smoothed_indexes(1) = indexes(1);
 smoothed_indexes(end) = indexes(end);
@@ -56,7 +56,7 @@ cdata.orange.zf_raw = cdata.orange.zf - z_correction_raw;
 catch
 end
 % save([file_list{1}(1:end-4),'_sc.mat'],'cdata','cal','tol');
-save([file_list{1}(1:end-4),'_old.mat'],'cdata','cal');
+save([file_list{1}(1:end-4),'_avg.mat'],'cdata','cal');
 t = toc;
 disp(['Corrected ', num2str(o),' frames in ', num2str(t), 's']);
 catch lasterr

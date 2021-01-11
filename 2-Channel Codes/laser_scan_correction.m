@@ -45,7 +45,7 @@ cdata.orange.zf_smoothed = cdata.orange.zf - z_correction_smoothed;
 cdata.orange.zf_raw = cdata.orange.zf - z_correction_raw;
 catch
 end
-save(['scan_corrected\',file_list{1}(1:end-4),'_sc.mat'],'cdata','cal','tol');
+save(['scan_corrected\',file_list{1}(1:end-4),'_old_sc.mat'],'cdata','cal','tol');
 t = toc;
 disp(['Corrected ', num2str(o),' frames in ', num2str(t), 's']);
 catch lasterr

@@ -12,7 +12,12 @@ function indexes = get_index_from_ruler(ruler, image_stack)
            C(j) = corr2(ruler(:,:,j), image_stack(:,:,i));  
         end
         C = gausssmooth(C,5,10);
-        indexes(i) = find(C == max(C));
+        try
+        indexes(i) = find(C == max(C),1);
+        catch
+            indexes(i) = indexes(i-1);
+        end
 
     end
+    disp('done')
 end

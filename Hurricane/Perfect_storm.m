@@ -8,7 +8,7 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folders_to_analyze = {'G:\Dropbox\Data\12-1-20 beas and beads\','G:\Dropbox\Data\12-2-20 beas and beads\', 'G:\Dropbox\Data\12-7-20 tuj in neurons\', 'G:\Dropbox\Data\12-8-20 glut4 and vglut in neurons\', 'G:\Dropbox\Data\12-15-20 glut4 and vglut in neurons\' };
+folders_to_analyze = {'G:\Dropbox\Data\12-15-20 glut4 and vglut in neurons\'};
 
 %% Set and forget Variables
 % Hurricane Variables
@@ -55,6 +55,7 @@ elseif varys(4) == 1
     mkdir('Rolling_Ball');
 end
 disp('Hurricane')
+
 lost_inds = [];
 for i = 1:numel(files)
     
@@ -69,19 +70,21 @@ for i = 1:numel(files)
     end
 end
 disp('Tolerance')
-
-%Batch H_tol
-% files = dir('*dast*');
+% 
+% % Batch H_tol
+% cd(folders_to_analyze{l});
+toleranced_files = dir('Analysis\*dast.mat');
 
 disp('files')
 disp(lost_inds)
 disp('Were lost during hurricane')
 lost_inds = [];
 % Batch Scan Correction
-for i = 1:numel(files)
-    if isempty(strfind(files(i).name,'scan'))
+for i = 1:numel(toleranced_files)
+    if isempty(strfind(toleranced_files(i).name,'scan'))
         try
-        filename = [folders_to_analyze{l},'Analysis\',files(i).name(1:end-9),'_dast.mat'];
+        filename = [folders_to_analyze{l},'Analysis\',toleranced_files(i).name];
+%         filename = [folders_to_analyze{l},'Analysis\',files(i).name];
         func_batch_h2_tol_ps(filename);
         delete(filename)
         catch lsterr
@@ -104,39 +107,40 @@ for i = 1:numel(files)
             image_ruler_name = [image_path, files(i).name(1:end-8),'scan.tif'];
             filename = [folders_to_analyze{l},'Analysis\',files(i).name(1:end-9),'_dast_tol.mat'];
             file_list = {filename,image_file_name,image_ruler_name};
-            t(i) = laser_scan_comparator_correction_ps(file_list);
-            delete(filename)
+            t(i) = laser_scan_correction_avg_ps(file_list);
+%             t(i) = laser_scan_correction_ps(file_list);
+%             delete(filename)
         catch
             lost_inds = [lost_inds;i];
         end
     end
 end
-disp('files')
-disp(lost_inds)
-disp('Were lost during scan correction')
-lost_inds = [];
-for i  = 1:numel(files)
-    if isempty(strfind(files(i).name,'scan'))
-        filename = [folders_to_analyze{l},'Analysis\',files(i).name(1:end-9),'_dast_tol_sc.mat'];
-        try
-            load(filename);
-            
-            try
-                cdata.orange = converge_duplicates(cdata.orange,2, 1);
-            catch
-            end
-            try
-                cdata.red = converge_duplicates(cdata.red,2, 0);
-            catch
-            end
-            save([folders_to_analyze{l},'Analysis\',files(i).name(1:end-4),'_full.mat'],'cdata','tol','cal');
-            delete(filename)
-        catch
-            
-        end
-    end
-end
-disp('files')
-disp(lost_inds)
-disp('Were lost during convergance')
+% disp('files')
+% disp(lost_inds)
+% disp('Were lost during scan correction')
+% lost_inds = [];
+% for i  = 1:numel(files)
+%     if isempty(strfind(files(i).name,'scan'))
+%         filename = [folders_to_analyze{l},'Analysis\',files(i).name(1:end-9),'_dast_tol_sc.mat'];
+%         try
+%             load(filename);
+%             
+%             try
+%                 cdata.orange = converge_duplicates(cdata.orange,2, 1);
+%             catch
+%             end
+%             try
+%                 cdata.red = converge_duplicates(cdata.red,2, 0);
+%             catch
+%             end
+%             save([folders_to_analyze{l},'Analysis\',files(i).name(1:end-4),'_full.mat'],'cdata','tol','cal');
+%             delete(filename)
+%         catch
+%             
+%         end
+%     end
+% end
+% disp('files')
+% disp(lost_inds)
+% disp('Were lost during convergance')
 end

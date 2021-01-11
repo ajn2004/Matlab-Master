@@ -33,18 +33,18 @@ try
     
 %     % Beginning of comment block for switching behavior
 % %     % automatically detect switcher behavior
-    dps = cpu_peaks(ifind(:,:,1:100),50,pixw);
-    [iloc, fnum, cents] = divide_up(iprod(:,:,1:100), pixw, dps);
-    
+%     dps = cpu_peaks(ifind(:,:,1:100),50,pixw);
+%     [iloc, fnum, cents] = divide_up(iprod(:,:,1:100), pixw, dps);
+%     
     % The ongoing pursuit of how to automatically detect which frame flips
     % first. This should be corrected in arduino code.
-    if isempty(cents)
-            dps = cpu_peaks(ifind(:,:,1:100),10,pixw);
-            [iloc, fnum, cents] = divide_up(iprod(:,:,1:100), pixw, dps);
-    end
-    odd_red_percentage = sum(mod(fnum,2) == 1 & cents(:,1) < split)/(sum(mod(fnum,2) == 1 & cents(:,1) > split)+1); % on odd frames, ratio of red / orange molecules
-    even_red_percentage = sum(mod(fnum,2) == 0 & cents(:,1) < split)/(sum(mod(fnum,2) == 0 & cents(:,1) > split)+1); % on even frames, ratio of red / orange molecules
-    
+%     if isempty(cents)
+%             dps = cpu_peaks(ifind(:,:,1:100),10,pixw);
+%             [iloc, fnum, cents] = divide_up(iprod(:,:,1:100), pixw, dps);
+%     end
+%     odd_red_percentage = sum(mod(fnum,2) == 1 & cents(:,1) < split)/(sum(mod(fnum,2) == 1 & cents(:,1) > split)+1); % on odd frames, ratio of red / orange molecules
+%     even_red_percentage = sum(mod(fnum,2) == 0 & cents(:,1) < split)/(sum(mod(fnum,2) == 0 & cents(:,1) > split)+1); % on even frames, ratio of red / orange molecules
+%     
 %     % Count percentage of molecules in even and odd channels
 %     ind = mod(fnum,2) == 0;
 %     red_evens = sum(cents(ind,1)<180)/sum(ind);
