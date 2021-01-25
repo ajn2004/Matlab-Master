@@ -8,7 +8,7 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folders_to_analyze = {'G:\Dropbox\Data\12-15-20 glut4 and vglut in neurons\'};
+folders_to_analyze = {'G:\Dropbox\Data\1-20-21 vglut-meos\'};
 
 %% Set and forget Variables
 % Hurricane Variables
@@ -58,7 +58,6 @@ disp('Hurricane')
 
 lost_inds = [];
 for i = 1:numel(files)
-    
     if isempty(strfind(files(i).name,'scan'))
         try
             filename = [folders_to_analyze{l},files(i).name];

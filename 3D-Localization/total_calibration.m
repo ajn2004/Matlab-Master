@@ -331,7 +331,7 @@ plot(ax,z0s,smooth_sx)
 plot(ax,z0s,smooth_sy)                                                            % Plot average sigma-y
 
 % Determining Z parameters
-ind = abs(z0s) < 1;                                                       % Limit height over which to fit sigmas
+ind = abs(z0s) < -1;                                                       % Limit height over which to fit sigmas
 % z_net = train_neural_z(z0s(indy),ims(:,indy));
 
 new_z_cal.sx = smooth_sx;

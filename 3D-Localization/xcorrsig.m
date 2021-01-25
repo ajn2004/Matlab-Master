@@ -11,15 +11,16 @@ sxy1 = gausssmooth(sig1(:,2).^2 - sig1(:,3).^2,4,10);
 sxy2 = gausssmooth(sig2(:,2).^2 - sig2(:,3).^2,4,10);
 f1 = sig1(:,1);
 f2 = sig2(:,1);
-
+[n,m] = size(sxy2);
 % [c, lags] = xcorr(sxy2,sxy1);
 cost = [];
-displacements = [ -80:80];
+displacements = [ -floor(n/2):floor(n/2)];
 for j = displacements
-    cost = [cost; scroll_cost(f1,sxy1,f2-j,sxy2)];
+    cost = [cost; xcorrsig_cost(f1,sxy1,f2-j,sxy2)];
 end
 
-diff = displacements(cost == min(cost));
+diff = displacements(cost == min(cost(cost > 0)));
+diff = diff(1);
 % stem(lags,c)
 % offset = lags(find(c == max(c)));
 % figure

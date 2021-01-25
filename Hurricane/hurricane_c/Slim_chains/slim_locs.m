@@ -128,9 +128,9 @@ else
         [xf, xc, yf, yc, Np, Nc, sx, sxc, sy, syc, off, offc, lv] = slim_chain_loc(i2, thrds, rads, lpcnt);
          yc = -yc;
         ind = Nc ~= -1; % remove all failed localizations
-      fnout = [fnout;fna(ind)];
-      xs = cos(-rads)*xf - sin(-rads)*yf+cen(:,1);
-      ys = sin(-rads)*xf + cos(-rads)*yf+cen(:,2);
+      fnout = [fnout;fna(ind).'];
+      xs = cos(-rads).*xf - sin(-rads).*yf+cen(:,1);
+      ys = sin(-rads).*xf + cos(-rads).*yf+cen(:,2);
         xfo = [xfo; xs(ind)]; % X-Y values will be rotated by rads, perform inverse transformation
         yfo = [yfo; ys(ind)];
         xfc = [xfc; xc(ind)];
@@ -155,7 +155,7 @@ else
 end
 try
 fits = [xfo(:,1),yfo(:,1),N,sxo,syo,offo,zfo]; %consolidate fits
-catch
+catch lsterr_out
     fits = [xfo(:,1),yfo(:,1),N,sxo,syo,offo]; %consolidate fits
 end
 crlbs = abs([xfc,yfc,Nco,sxco,syco,offco]); % consolidate errors

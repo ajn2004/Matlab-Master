@@ -11,7 +11,7 @@ end
 %% post-varargin
 [m,n,p] = size(ipca);
 dps = ipca.*0;
-disp('Finding your Molecules');
+% disp('Finding your Molecules');
 for ii = 1:p
     im1 = ipca(:,:,ii);
     [sim1, I] = sort(im1(:));

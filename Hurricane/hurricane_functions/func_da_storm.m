@@ -5,13 +5,10 @@ function func_da_storm(fname, data_d, an_dir, q, pixw,thresh, mi1, choices)
 q = double(q);
 try
     
-    try
-    load('C:\Users\andre\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
-    load('C:\Users\andre\Documents\GitHub\Matlab-Master\Hurricane\hurricane_functions\z_calib.mat')
-    catch
-        load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat', 'split', 'o2rx','o2ry');
-        load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Hurricane\hurricane_functions\z_calib.mat')
-    end
+
+    comp_name = get_computer_name();
+    load([comp_name , '\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat']);
+    load([comp_name , '\Documents\GitHub\Matlab-Master\Hurricane\hurricane_functions\z_calib.mat']);
 
     i1 = (readtiff(fname) - mi1);
 
