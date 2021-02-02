@@ -4,10 +4,9 @@ try
     tic
 % These values should be updated based on calibrations and changes to
 % detection path
-channel_split = 175; % X position split in pixels
-channel_split_end = 330; % end of channel cropping
-channel_vertical_crop_start = 8;
-channel_vertical_crop_stop = 163;
+channel_split = 30; % X position split in pixels
+channel_split_end = 375; % end of channel cropping
+channel_vertical_crop_start = 15;
 
 
 
@@ -27,7 +26,7 @@ end
 ruler_image = readtiff(ruler_name);
 image = readtiff(image_name);
 [m,n,o] = size(ruler_image);
-% channel_vertical_crop_stop = m;
+channel_vertical_crop_stop = m;
 sub_ruler_image = ruler_image(channel_vertical_crop_start:channel_vertical_crop_stop,channel_split:channel_split_end,:);
 laser_images = image(channel_vertical_crop_start:channel_vertical_crop_stop,channel_split:channel_split_end,2:2:end);
 
