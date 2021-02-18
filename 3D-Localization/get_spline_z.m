@@ -1,8 +1,8 @@
 function zf_um = get_spline_z(sigma_x, sigma_y, z_cal)
 % this function returns Z in microns from sigma widths in pixels
     x_spread = min(z_cal.z0s):0.001:max(z_cal.z0s); % Curve span in microns
-    x_curve = spline(z_cal.z0s,z_cal.sx,x_spread);
-    y_curve = spline(z_cal.z0s,z_cal.sy,x_spread); 
+    x_curve = spline(z_cal.z0s,gausssmooth(z_cal.sx,5,10),x_spread);
+    y_curve = spline(z_cal.z0s,gausssmooth(z_cal.sy,5,10),x_spread); 
     zf_um = sigma_x*0;
     for i = 1:numel(sigma_x)
     D = ((sigma_x(i).^0.5-x_curve.^0.5).^2 + (sigma_y(i).^0.5-y_curve.^0.5).^2).^0.5;

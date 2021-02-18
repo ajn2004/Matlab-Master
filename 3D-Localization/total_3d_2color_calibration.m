@@ -409,7 +409,7 @@ for jj = 1:2
         colormap('jet')
     end
     index = clust == mode(clust);
-    cal.(colors{jj}).a = polyfit(zc.(colors{jj})(index),zf_um.(colors{jj})(index),1)
+    cal.(colors{jj}).a = polyfit(zc.(colors{jj})(index),zf_um.(colors{jj})(index),1);
     zf.(colors{jj}) = zfs.(colors{jj}) / cal.(colors{jj}).a(1);
 end
 %% Axial Tilt Correction
