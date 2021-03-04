@@ -8,7 +8,8 @@ function zf_um = get_spline_z(sigma_x, sigma_y, z_cal)
     D = ((sigma_x(i).^0.5-x_curve.^0.5).^2 + (sigma_y(i).^0.5-y_curve.^0.5).^2).^0.5;
     D = ((sigma_x(i)-x_curve).^2 + (sigma_y(i)-y_curve).^2).^0.5;
     ind = find(D == min(D), 1);
-    if D(ind) < 0.5 && (ind ~= 1 || ind ~= numel(x_spread))
+    min_d(i) = D(ind);
+    if D(ind) < 1.5 && (ind ~= 1 || ind ~= numel(x_spread))
 %         plot(x_spread,D)
 %         hold on
         try

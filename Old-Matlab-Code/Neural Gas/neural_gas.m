@@ -10,7 +10,7 @@ clc
 
 %% user defined variables
 % gas params
-nodes = 2; % number of nodes
+nodes = 200; % number of nodes
 els0 = 0.1; % starting learning rate
 ens0 = 0.001; % starting neighborhood learning rate
 agem = 5;  % max age of edges

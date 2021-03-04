@@ -19,9 +19,9 @@ units = 2;
 T = [0 1; 1 0];
 A = [-1 0; 0 -1];
 id = randi(N);
-w = [xf(id),yf(id),zf(id)];
+w = [data(id,1),data(id,2),data(id,3)];
 id = randi(N);
-w = [w;[xf(id),yf(id),zf(id)]];
+w = [w;[data(id,1),data(id,2),data(id,3)]];
 del = [0,0];
 count = 0;
 
@@ -103,7 +103,7 @@ while true
     
     % Step 8
     if mod(count,lamb) == 0 % if we are an integer multiple of lambda
-        count
+        count;
         [rank_dist, backrank, ranking] = unique(del);
         k = find(ranking == max(ranking),1);
         % K constitutes largest error member of the set
@@ -154,7 +154,7 @@ while true
     end
     % Step 9 Decrease all error by constant d
     del = decr*del;
-    
+    shows = 0;
     if ismember(count,shows)
 %         shows = shows + 1;
         subplot(1,3,1)
@@ -171,7 +171,7 @@ while true
         %         view([-183,38])
         view(vangle)
         axis equal
-        for i = 1:units
+        for i = 1:numel(w(:,1))
             ind = find(T(i,:) == 1);
             for j = 1:numel(ind)
 %                 plot3([w(i,1),w(ind(j),1)],[w(i,2),w(ind(j),2)],[w(i,3),w(ind(j),3)],'y','LineWidth',3)
@@ -209,9 +209,9 @@ while true
     end
 end
 % movie2gif(M,'Results_of_GNG.gif','DelayTime',0.1);
-for i = 1:360
-    view([-183+i,38])
-    drawnow
-    M(i) = getframe(gcf);
-end
+% for i = 1:360
+%     view([-183+i,38])
+%     drawnow
+%     M(i) = getframe(gcf);
+% end
 % movie2gif(M,'Final_gng.gif','DelayTime',0.1);

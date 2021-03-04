@@ -8,7 +8,7 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folders_to_analyze = {'G:\Dropbox\Data\2-16-21 live vglut-halo blinking\'};
+folders_to_analyze = {'G:\Dropbox\Data\2-10-21 gpi-halo-blinking\'};
 
 %% Set and forget Variables
 % Hurricane Variables
