@@ -1,4 +1,4 @@
-function output_string = cdata2json(cdata)
+function output_string = cdata2json(cdata, notes)
 % We're changing the x-y-z cdata to a json string
 
 % data curation
@@ -29,10 +29,17 @@ for i = 1:numel(cdata.red.xf)
 %         output_string = [output_string , num2str(cdata.red.zf_raw(i) - mean(cdata.red.zf_raw)), ','];
     output_string = [output_string , num2str(zfr(i)), ','];
     catch
-        output_string = [output_string , num2str(cdata.red.zf(i)), ','];
+        output_string = [output_string , num2str(cdata.red.zf(i) - mean(cdata.red.zf)), ','];
     end
 end
-output_string = [output_string(1:end-2), ']}, "orange": { "x" : ['];
+
+output_string = [output_string(1:end-2), ']'];
+try
+    output_string = [output_string, ', "tag": "', notes.red ,'"'];
+catch
+end
+
+output_string = [output_string, '}, "orange": { "x" : ['];
 for i = 1:numel(cdata.orange.xf)
     output_string = [output_string , num2str(xfo(i)), ','];
 end
@@ -46,7 +53,18 @@ for i = 1:numel(cdata.orange.xf)
 %         output_string = [output_string , num2str(cdata.orange.zf_raw(i)- mean(cdata.red.zf_raw)), ','];
 output_string = [output_string , num2str(zfo(i)), ','];
     catch
-        output_string = [output_string , num2str(cdata.orange.zf(i)), ','];
+        output_string = [output_string , num2str(cdata.orange.zf(i) - mean(cdata.orange.zf)), ','];
     end
 end
-output_string = [output_string(1:end-2), ']}}'];
+output_string = [output_string(1:end-2), ']'];
+try
+    output_string = [output_string, ', "tag": "', notes.orange, '"'];
+catch
+end
+output_string = [output_string, '}'];
+try
+    output_string = [output_string, ', "info": "', notes.info, '"'];
+catch
+end
+
+output_string = [output_string, '}'];
