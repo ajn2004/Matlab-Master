@@ -15,13 +15,13 @@ for i = 1:10 % perform individual step
                 d_dist = (data(index,k) - w(i,k)).^2 + d_dist;
             end
             d_index = d_dist.^0.5 > 2*radius;
-            index(d_index) = [];
-            if sum(index) > 20 
+            index(d_index) = 0;
+            if sum(index) > 0 
                        
             for k= 1:3
                 
                 dx(k) = mean(data(index,k)) - w(i,k); % This is the correction value based on the data
-                w(i,k) = w(i,k) + step/10*dx(k);
+                w(i,k) = w(i,k) + step*dx(k);
             end
             end
     

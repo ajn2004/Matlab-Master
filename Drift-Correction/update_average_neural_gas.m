@@ -3,8 +3,8 @@ function w = update_average_neural_gas(w,data, radius)
 %position to be the average of the data around them
 % We can model the neural network as network of springs each such that
 % their relative distances in t0 is the x0 of the spring
-step = 0.05;
-for l = 1:100 % perform group average movement
+step = 1;
+for l = 1:10 % perform group average movement
     for i = 1:numel(w(:,1))
         % Determine error due to data position
         d_dist = data(:,1)*0;
