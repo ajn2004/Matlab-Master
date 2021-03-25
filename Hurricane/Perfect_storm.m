@@ -8,7 +8,8 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folders_to_analyze = {'G:\Dropbox\Data\2-10-21 gpi-halo-blinking\'};
+folder_names_to_analyze = {'3-23-12 vglut-gpi'};
+align_color = 'red';
 
 %% Set and forget Variables
 % Hurricane Variables
@@ -19,6 +20,7 @@ pixw = 6;       % radius to localize (final image size is (2*pixw+1)^2 pixels)
 an_dir = 'Analysis'; % name of analysis directory
 angle = 0; %approximate astig rotation in degrees
 sv_im = 'n'; % set to y/Y to save image of localizations
+framechunk_drift_correct = 1000;
 thresh = 5;
 
 %% Perform the Hurricane Process
@@ -32,8 +34,15 @@ saverb = 0;
 two_color = 1; % two color code is as follows 1 = 2 color (algorithm decides order), 2= orange only 3 = red only 0 = no frame blocking
 varys = [savewaves, showlocs, savepsfs, saverb, two_color];
 
-for l = 1:numel(folders_to_analyze)
-cd(folders_to_analyze{l});
+for l = 1:numel(folder_names_to_analyze)
+try
+    folder_to_analyze = ['G:\Dropbox\Data\', folder_names_to_analyze{l}, '\'];
+    cd(folder_to_analyze);
+    
+catch lsterr
+    folder_to_analyze = ['E:\Dropbox\Data\', folder_names_to_analyze{l}, '\'];
+    cd(folder_to_analyze);
+end
 try
     load('back_subtract.mat');
 catch lsterr
@@ -60,7 +69,7 @@ lost_inds = [];
 for i = 1:numel(files)
     if isempty(strfind(files(i).name,'scan'))
         try
-            filename = [folders_to_analyze{l},files(i).name];
+            filename = [folder_to_analyze,files(i).name];
             func_da_storm_ps(files(i).name, q, pix2pho, pixw,thresh, angle, sv_im, mi1, varys);
         catch lsterr
             disp(lsterr.message)
@@ -79,41 +88,41 @@ disp(lost_inds)
 disp('Were lost during hurricane')
 lost_inds = [];
 % Batch Scan Correction
-for i = 1:numel(toleranced_files)
-    if isempty(strfind(toleranced_files(i).name,'scan'))
-        try
-        filename = [folders_to_analyze{l},'Analysis\',toleranced_files(i).name];
-%         filename = [folders_to_analyze{l},'Analysis\',files(i).name];
-        func_batch_h2_tol_ps(filename);
-        delete(filename)
-        catch lsterr
-            disp(lsterr)
-            lost_inds = [lost_inds;i];
-        end
-    end
-end
+% for i = 1:numel(toleranced_files)
+%     if isempty(strfind(toleranced_files(i).name,'scan'))
+%         try
+%         filename = [folder_to_analyze,'Analysis\',toleranced_files(i).name];
+% %         filename = [folders_to_analyze{l},'Analysis\',files(i).name];
+%         func_batch_h2_tol_ps(filename);
+%         delete(filename)
+%         catch lsterr
+%             disp(lsterr)
+%             lost_inds = [lost_inds;i];
+%         end
+%     end
+% end
 
 disp('files')
 disp(lost_inds)
 disp('Were lost during tolerance')
-
-image_path = folders_to_analyze{l};
-lost_inds = [];
-for i = 1:numel(files)
-    if isempty(strfind(files(i).name,'scan'))
-        try
-            image_file_name = [image_path, files(i).name];
-            image_ruler_name = [image_path, files(i).name(1:end-8),'scan.tif'];
-            filename = [folders_to_analyze{l},'Analysis\',files(i).name(1:end-9),'_dast_tol.mat'];
-            file_list = {filename,image_file_name,image_ruler_name};
-            t(i) = laser_scan_correction_avg_ps(file_list);
-%             t(i) = laser_scan_correction_ps(file_list);
-%             delete(filename)
-        catch
-            lost_inds = [lost_inds;i];
-        end
-    end
-end
+drift_and_cluster_correct_tol_folder('red',1000);
+% image_path = folders_to_analyze{l};
+% lost_inds = [];
+% for i = 1:numel(files)
+%     if isempty(strfind(files(i).name,'scan'))
+%         try
+%             image_file_name = [image_path, files(i).name];
+%             image_ruler_name = [image_path, files(i).name(1:end-8),'scan.tif'];
+%             filename = [folders_to_analyze{l},'Analysis\',files(i).name(1:end-9),'_dast_tol.mat'];
+%             file_list = {filename,image_file_name,image_ruler_name};
+%             t(i) = laser_scan_correction_avg_ps(file_list);
+% %             t(i) = laser_scan_correction_ps(file_list);
+% %             delete(filename)
+%         catch
+%             lost_inds = [lost_inds;i];
+%         end
+%     end
+% end
 % disp('files')
 % disp(lost_inds)
 % disp('Were lost during scan correction')

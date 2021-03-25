@@ -147,7 +147,7 @@ end
 
 % Stitch together the average cell drift
 drift = [0, 0, 0];
-dw = [;]
+dw = [];
 for i = 2:10
     dw = mean(w_all(:,:,i,1) - w_all(:,:,i-1,2)); % Take difference from identical drift models
     drift(i,:) = drift(i-1,:) + dw;

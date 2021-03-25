@@ -61,7 +61,7 @@ try
     fnum(ind) = [];
     
     
-    ca.q = q;
+    cal.q = q;
     % Localize the Data
     % [xf_all,xf_crlb, yf_all,yf_crlb,sigx_all, sigx_crlb, sigy_all, sigy_crlb, N, N_crlb,off_all, off_crlb, framenum_all, llv, y, inloc, xin, yin] = da_locs_sigs(iloc, fnum, cents, angle);
     % zf_all = getdz(sigx_all,sigy_all)/q;
@@ -73,11 +73,11 @@ try
     if choices(3) == 1
         writetiff(iloc,[data_d,'\psfs\',fname(1:end-4),'_psfs.tif']);
     end
-    cal.q = q;
+
     % Fitting
     switch choices(5)
         case 1 % 2 color orange first
-            split = 171; % fill in this value based off data
+            split = 181; % fill in this value based off data
             id = cents(:,1) < split; % red localization
             cdata = fit_channel_data(iloc(:,:,id), fnum(id), cents(id,:), cal, 'red');
             id = logical(1-id);
@@ -87,7 +87,7 @@ try
         case 3 % orange only localization
             cdata = fit_channel_data(iloc, fnum, cents, cal, 'orange');
         case 4 % calibration localization
-            split = 171; % fill in this value based off data
+            split = 181; % fill in this value based off data
             id = cents(:,1) < split; % red localization
             cdata = fit_channel_data(iloc(:,:,id), fnum(id), cents(id,:), cal, 'red');
             id = logical(1-id);

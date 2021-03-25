@@ -52,7 +52,7 @@ while true
     % Step 4 Increment Error between nearest point and signal point
     d = 0;
     for j = 1:numel(data(1,:))
-        d = d + (w(io,j) - data(id,j))^2;
+        d = d + (w(io,j) - data(id,j)).^2;
     end
     del(io) = del(io) + d;
     
