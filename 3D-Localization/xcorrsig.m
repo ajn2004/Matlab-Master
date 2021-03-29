@@ -12,11 +12,25 @@ sxy2 = gausssmooth(sig2(:,2).^2 - sig2(:,3).^2,4,10);
 f1 = sig1(:,1);
 f2 = sig2(:,1);
 [n,m] = size(sxy2);
+sx1 = sig1(:,2);
+sy1 = sig1(:,3);
+sx2 = sig2(:,2);
+sy2 = sig2(:,3);
+frame1 = sig1(:,1);
+frame2 = sig2(:,1);
 % [c, lags] = xcorr(sxy2,sxy1);
 cost = [];
 displacements = [ -floor(n/2):floor(n/2)];
 for j = displacements
-    cost = [cost; xcorrsig_cost(f1,sxy1,f2-j,sxy2)];
+    dist = 0;
+    for i = 1:numel(sx2)
+        ind = frame1 == frame2(i) + j;
+        if sum(ind) == 1
+            dist = dist + (sx1(ind)-sx2(i)).^2 + (sy1(ind)-sy2(i))^2;
+        end
+    end
+    cost = [cost; dist];
+%     cost = [cost; xcorrsig_cost(f1,sxy1,f2-j,sxy2)];
 end
 
 diff = displacements(cost == min(cost(cost > 0)));
