@@ -7,7 +7,9 @@ for i = 1:numel(files)
     cdata = model_drift_correction(cdata,color,framechunk);
     cdata = cluster_clean(cdata, 0.15, 5);
     save([files(i).name(1:end-7), 'fin.mat'],'cdata','cal');
-%     delete(files(i).name);
-    catch
+    delete(files(i).name);
+    catch lsterr
+        disp(lsterr)
+
     end
 end

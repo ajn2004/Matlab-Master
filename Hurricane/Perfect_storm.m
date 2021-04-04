@@ -8,7 +8,7 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folder_names_to_analyze = {'3-23-12 vglut-gpi'};
+folder_names_to_analyze = {'3-30-21 vglut-sec61'};
 align_color = 'red';
 
 %% Set and forget Variables
@@ -31,7 +31,7 @@ savewaves = 0;
 showlocs = 0;
 savepsfs = 0;
 saverb = 0;
-two_color = 1; % two color code is as follows 1 = 2 color (algorithm decides order), 2= orange only 3 = red only 0 = no frame blocking
+two_color = 1; % two color code is as follows 1 = 2 color (algorithm decides order), 2= red only 3 = orange only 0 = no frame blocking
 varys = [savewaves, showlocs, savepsfs, saverb, two_color];
 
 for l = 1:numel(folder_names_to_analyze)
@@ -70,6 +70,7 @@ for i = 1:numel(files)
     if isempty(strfind(files(i).name,'scan'))
         try
             filename = [folder_to_analyze,files(i).name];
+            disp(filename)
             func_da_storm_ps(files(i).name, q, pix2pho, pixw,thresh, angle, sv_im, mi1, varys);
         catch lsterr
             disp(lsterr.message)
@@ -88,23 +89,24 @@ disp(lost_inds)
 disp('Were lost during hurricane')
 lost_inds = [];
 % Batch Scan Correction
-% for i = 1:numel(toleranced_files)
-%     if isempty(strfind(toleranced_files(i).name,'scan'))
-%         try
-%         filename = [folder_to_analyze,'Analysis\',toleranced_files(i).name];
-% %         filename = [folders_to_analyze{l},'Analysis\',files(i).name];
-%         func_batch_h2_tol_ps(filename);
+for i = 1:numel(toleranced_files)
+    if isempty(strfind(toleranced_files(i).name,'scan'))
+        try
+        filename = [folder_to_analyze,'Analysis\',toleranced_files(i).name];
+%         filename = [folders_to_analyze{l},'Analysis\',files(i).name];
+        func_batch_h2_tol_ps(filename);
 %         delete(filename)
-%         catch lsterr
-%             disp(lsterr)
-%             lost_inds = [lost_inds;i];
-%         end
-%     end
-% end
+        catch lsterr
+            disp(lsterr)
+            lost_inds = [lost_inds;i];
+        end
+    end
+end
 
 disp('files')
 disp(lost_inds)
 disp('Were lost during tolerance')
+cd('Analysis\');
 drift_and_cluster_correct_tol_folder('red',1000);
 % image_path = folders_to_analyze{l};
 % lost_inds = [];
