@@ -7,6 +7,7 @@ for i = 1:numel(fnames)
     cdata_in.(color).(fnames{i})(ind,:) = [];
 end
 %Define fractionals
+tol.r.dist = 0.5;
 cdata_in.(color).fr_N =  cdata_in.(color).crlbs(:,3).^0.5./cdata_in.(color).fits(:,3);
 cdata_in.(color).fr_sx = cdata_in.(color).crlbs(:,4).^0.5./cdata_in.(color).fits(:,4);
 cdata_in.(color).fr_sy = cdata_in.(color).crlbs(:,5).^0.5./cdata_in.(color).fits(:,5);
@@ -27,6 +28,7 @@ ind = ind & tol.q*cdata_in.(color).crlbs(:,1).^.5 < tol.r.lat_max & tol.q*cdata_
 ind = ind & cdata_in.(color).ilv > tol.r.iln; % llv tolerance
 ind = ind & cdata_in.(color).fr_N < tol.r.frac_lim & abs(cdata_in.(color).fr_o) < tol.r.off_frac; % Fraction photon tolerance
 ind = ind & cdata_in.(color).fr_sx < tol.r.frac_lim & cdata_in.(color).fr_sy < tol.r.frac_lim; % Fraction width tolerance
+ind = ind & cdata_in.(color).distance < tol.r.dist;
 rind = ind; % Index represents all molecules that PASS tolerances
 fnames = fieldnames(cdata_in.(color));
 ind = logical(1-rind); % to remove failed localizations we want 1-pass

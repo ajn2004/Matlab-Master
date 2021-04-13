@@ -154,9 +154,9 @@ else
     end
 end
 try
-fits = [xfo(:,1),yfo(:,1),N,sxo,syo,offo,zfo]; %consolidate fits
+    fits = [xfo(:),yfo(:),N,sxo,syo,offo,zfo]; %consolidate fits
 catch lsterr_out
-    fits = [xfo(:,1),yfo(:,1),N,sxo,syo,offo]; %consolidate fits
+    fits = [xfo(:),yfo(:),N,sxo,syo,offo]; %consolidate fits
 end
 crlbs = abs([xfc,yfc,Nco,sxco,syco,offco]); % consolidate errors
 end

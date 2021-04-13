@@ -30,14 +30,14 @@ try
     end
     
 
-    if choices(5) == 1 % User intended to use dual channel w/ both colors
-
-            ifind = func_image_block(ifind,split,1); 
-    elseif choices(5) == 2 % 2 = orange only channel intended
-        ifind = func_image_red_block(ifind,split);
-    elseif choices(5) == 3 % 3 = red only channel intended
-        ifind = func_image_orange_block(ifind,split);
-    end
+%     if choices(5) == 1 % User intended to use dual channel w/ both colors
+% 
+%             ifind = func_image_block(ifind,split,1); 
+%     elseif choices(5) == 2 % 2 = orange only channel intended
+%         ifind = func_image_red_block(ifind,split);
+%     elseif choices(5) == 3 % 3 = red only channel intended
+%         ifind = func_image_orange_block(ifind,split);
+%     end
 
      %Identification
     dps = cpu_peaks(ifind,thresh,pixw);
@@ -67,9 +67,13 @@ try
             id = logical(1-id);
             cdata = fit_channel_data(iloc(:,:,id), fnum(id), cents(id,:), cal, 'orange', cdata);
         case 2 % Red only localization
-            cdata = fit_channel_data(iloc, fnum, cents, cal, 'red');
+            split = 171; % fill in this value based off data
+            id = cents(:,1) < split; % red localization
+            cdata = fit_channel_data(iloc(:,:,id), fnum, cents, cal, 'red');
         case 3 % orange only localization
-            cdata = fit_channel_data(iloc, fnum, cents, cal, 'orange');
+            split = 171; % fill in this value based off data
+            id = cents(:,1) > split; % red localization
+            cdata = fit_channel_data(iloc(:,:,id), fnum, cents, cal, 'orange');
         case 4 % calibration localization
             split = 171; % fill in this value based off data
             id = cents(:,1) < split; % red localization
@@ -79,7 +83,7 @@ try
     end
     
     % save results
-        save(['Analysis\', fname(1:end-4),'_dast.mat'],  'cdata', 'pixw','q','cal');
+        save(['Analysis\Raw\', fname(1:end-4),'_dast.mat'],  'cdata', 'pixw','q','cal');
 
     
 catch lsterr

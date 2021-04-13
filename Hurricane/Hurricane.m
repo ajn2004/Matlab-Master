@@ -28,7 +28,7 @@ thresh = 5;
   showlocs = 0;
   savepsfs = 0;
   saverb = 0;
-  two_color = 4; % set choice to 2 for single red color, 1 for 2 color (orange frame start), 3 for orange only, 4 for calibration
+  two_color = 2; % set choice to 2 for single red color, 1 for 2 color (orange frame start), 3 for orange only, 4 for calibration
   varys = [savewaves, showlocs, savepsfs, saverb, two_color];
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 

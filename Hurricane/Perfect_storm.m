@@ -8,7 +8,7 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folder_names_to_analyze = {'3-30-21 vglut-sec61'};
+folder_names_to_analyze = {'4-7-21 gpi-vglut'};
 align_color = 'red';
 
 %% Set and forget Variables
@@ -66,6 +66,9 @@ end
 disp('Hurricane')
 
 lost_inds = [];
+mkdir('Analysis\Raw\');
+mkdir('Analysis\Tol\');
+mkdir('Analysis\Fin\');
 for i = 1:numel(files)
     if isempty(strfind(files(i).name,'scan'))
         try
@@ -82,19 +85,21 @@ disp('Tolerance')
 % 
 % % Batch H_tol
 % cd(folders_to_analyze{l});
-toleranced_files = dir('Analysis\*dast.mat');
+toleranced_files = dir('Analysis\raw\*dast.mat');
 
 disp('files')
 disp(lost_inds)
 disp('Were lost during hurricane')
 lost_inds = [];
 % Batch Scan Correction
+folder = [folder_to_analyze,'Analysis\Raw\'];
 for i = 1:numel(toleranced_files)
     if isempty(strfind(toleranced_files(i).name,'scan'))
         try
-        filename = [folder_to_analyze,'Analysis\',toleranced_files(i).name];
+            
+            file = toleranced_files(i).name;
 %         filename = [folders_to_analyze{l},'Analysis\',files(i).name];
-        func_batch_h2_tol_ps(filename);
+        func_batch_h2_tol_ps(folder, file);
 %         delete(filename)
         catch lsterr
             disp(lsterr)
@@ -107,7 +112,9 @@ disp('files')
 disp(lost_inds)
 disp('Were lost during tolerance')
 cd('Analysis\');
-drift_and_cluster_correct_tol_folder('red',1000);
+folder = [folder_to_analyze,'Analysis\Tol\'];
+drift_and_cluster_correct_tol_folder(folder,'red',1000);
+
 % image_path = folders_to_analyze{l};
 % lost_inds = [];
 % for i = 1:numel(files)

@@ -1,10 +1,11 @@
-function func_batch_h2_tol_ps(fname)
+function func_batch_h2_tol_ps(folder, file)
 % batch routine for files
 try
 load('C:\Users\ajnel\Documents\GitHub\Matlab-Master\Hurricane\Tolfile.mat');
 catch
     load('C:\Users\AJN Lab\Documents\GitHub\Matlab-Master\Hurricane\Tolfile.mat');
 end
+fname = [folder, file];
 load(fname,'cdata','cal','pixw','q');
 
 % Identify number of colors we're working with
@@ -31,6 +32,12 @@ channel_flag = flag;
 % if channel flag = 2, orange only
 % if channel flag = 3, red only
 tol.q = cal.q;
+sx_index = cal.red.z0s > tol.r.zlims(1) & cal.red.z0s < tol.r.zlims(2);
+sx_data = [cal.red.sx(sx_index);cal.red.sy(sx_index)].';
+nn_index = knnsearch(sx_data,[cdata.(color).fits(:,4),cdata.(color).fits(:,5)]);
+for i = 1:numel(cdata.(color).xf)
+    cdata.(color).distance(i) =  ((cdata.(color).fits(i,4) - sx_data(nn_index(i),1)).^2 + (cdata.(color).fits(i,5) - sx_data(nn_index(i),2)).^2)^0.5;
+end
 %% defining statistical red
 if channel_flag == 1 || channel_flag == 3 % load red tolerances
     cdata = apply_tolerance_to_cdata(cdata, tol, 'red');
@@ -41,5 +48,5 @@ if channel_flag == 1 || channel_flag == 2 % load orange tolerances
 end
 
 % Scream here for sanity
-save([fname(1:end-4),'_tol.mat']);
+save([folder(1:end-4),'Tol\',file(1:end-4),'_tol.mat']);
 end

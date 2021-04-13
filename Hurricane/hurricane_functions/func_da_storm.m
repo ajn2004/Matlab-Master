@@ -30,17 +30,17 @@ try
     end
     
 
-    if choices(5) == 1 % User intended to use dual channel w/ both colors
-        if odd_red_percentage < even_red_percentage % Even ratio larger than odd indicates red molecules are on even channels
-            ifind = func_image_block(ifind,split,1);
-        else
-            ifind = func_image_block(ifind,split,2); 
-        end
-    elseif choices(5) == 2 % 2 = orange only channel intended
-        ifind = func_image_red_block(ifind,split);
-    elseif choices(5) == 3 % 3 = red only channel intended
-        ifind = func_image_orange_block(ifind,split);
-    end
+%     if choices(5) == 1 % User intended to use dual channel w/ both colors
+%         if odd_red_percentage < even_red_percentage % Even ratio larger than odd indicates red molecules are on even channels
+%             ifind = func_image_block(ifind,split,1);
+%         else
+%             ifind = func_image_block(ifind,split,2); 
+%         end
+%     elseif choices(5) == 2 % 2 = orange only channel intended
+%         ifind = func_image_red_block(ifind,split);
+%     elseif choices(5) == 3 % 3 = red only channel intended
+%         ifind = func_image_orange_block(ifind,split);
+%     end
 
     %Peak identification
     dps = cpu_peaks(ifind,thresh,pixw);
@@ -83,9 +83,13 @@ try
             id = logical(1-id);
             cdata = fit_channel_data(iloc(:,:,id), fnum(id), cents(id,:), cal, 'orange', cdata);
         case 2 % Red only localization
-            cdata = fit_channel_data(iloc, fnum, cents, cal, 'red');
+            split = 181; % fill in this value based off data
+            id = cents(:,1) < split; % red localization
+            cdata = fit_channel_data(iloc(:,:,id), fnum(id), cents(id,:), cal, 'red');
         case 3 % orange only localization
-            cdata = fit_channel_data(iloc, fnum, cents, cal, 'orange');
+            split = 181; % fill in this value based off data
+            id = cents(:,1) > split; % red localization
+            cdata = fit_channel_data(iloc(:,:,id), fnum(id), cents(id,:), cal, 'orange');
         case 4 % calibration localization
             split = 181; % fill in this value based off data
             id = cents(:,1) < split; % red localization

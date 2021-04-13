@@ -7,14 +7,22 @@ function cdata = model_drift_correction(cdata, align_color, frames_in_chunk )
 % color distribution
 [xfo, yfo] = make_nn_channel_transform(cdata.orange.xf,cdata.orange.yf);
 
+try
 if strcmpi(align_color,'orange') % If we specify orange, make reference distribution be orange molecules
     [xfr, yfr] = make_nn_channel_transform(cdata.orange.xf,cdata.orange.yf);
     zfr = -cdata.orange.zf;
+    try
     xfo = cdata.red.xf;
     yfo = cdata.red.yf;
     zfo = -cdata.red.zf;
-    frame_o = cdata.red.framenumber;
     frame_r = cdata.orange.framenumber;
+    catch
+        xfo = 0;
+        yfo = 0;
+        zfo = 0;
+        frame_o = 0;
+    end
+    
     xfo = xfo-mean(xfr);
     zfo = zfo-mean(zfr);
     yfo = yfo-mean(yfr);
@@ -25,9 +33,20 @@ if strcmpi(align_color,'orange') % If we specify orange, make reference distribu
 else
     [xfo, yfo] = make_nn_channel_transform(cdata.orange.xf,cdata.orange.yf);
     zfo = -cdata.orange.zf;
-    xfr = cdata.red.xf;
+    xfr = xccdata.red.xf;
     yfr = cdata.red.yf;
     zfr = -cdata.red.zf;
+    try
+    xfo = cdata.orange.xf;
+    yfo = cdata.orange.yf;
+    zfo = -cdata.orange.zf;
+    frame_o = cdata.orange.framenumber;
+    catch
+        xfo = 0;
+        yfo = 0;
+        zfo = 0;
+        frame_o = 0;
+    end
     xfo = xfo-mean(xfr);
     zfo = zfo-mean(zfr);
     yfo = yfo-mean(yfr);
@@ -35,7 +54,8 @@ else
     zfr = zfr-mean(zfr);
     yfr = yfr-mean(yfr);
     frame_r = cdata.red.framenumber;
-    frame_o = cdata.orange.framenumber;
+    
+    
     next_color = 'orange';
 end
 
@@ -159,11 +179,11 @@ for i = 1:3
     red_model = spline(500:1000:9500, drift(:,i),frame_r);
     orange_model = spline(500:1000:9500, drift(:,i),frame_o);
     data_c(:,i) = data(:,i) - red_model;
-    data_o(:,i) = (odata(:,i) -orange_model);
+    data_o(:,i) = (odata(:,i) -orange_model(:));
     
 end
-data_c(:,3) = data_c(:,3)*2.5;
-data_o(:,3) = data_o(:,3)*2.5;
+data_c(:,3) = data_c(:,3);
+data_o(:,3) = data_o(:,3);
 
 cdata.(align_color).xf = data_c(:,1);
 cdata.(align_color).yf = data_c(:,2);

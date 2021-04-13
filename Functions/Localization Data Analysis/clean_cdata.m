@@ -4,7 +4,7 @@ function cdata = clean_cdata(cdata)
     
     for j = 1:numel(colors)
         try
-        remove_index = cdata.(colors{j}).xf == 0 & cdata.(colors{j}).xf == 0;
+        remove_index = (cdata.(colors{j}).xf == 0 & cdata.(colors{j}).yf == 0) | cdata.(colors{j}).zf < 0;
         disp(sum(remove_index))
         field_arrays = fieldnames(cdata.(colors{j})); % Get field array names
         for i = 1:numel(field_arrays) % cycle through names

@@ -40,7 +40,7 @@ end
 cdata.(color).llv = llv;
 cdata.(color).framenumber = framenumber;
 
-ncoords = make_astigmatism_corrections([cdata.(color).fits(:,1:2),zf],cal.(color),cal.q);
+ncoords = make_astigmatism_corrections([cdata.(color).fits(:,1:2),zf/q],cal.(color),cal.q);
 % Assign fixed coordinates which are in microns at this point
 cdata.(color).xf = ncoords(:,1);
 cdata.(color).yf = ncoords(:,2);
