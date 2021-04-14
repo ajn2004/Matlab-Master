@@ -47,6 +47,17 @@ try
     
     clear ip ipf i1
     
+    switch choices(5)
+    
+        case 2 % Red only localization
+            split = 171; % fill in this value based off data
+            dps(:,split:end,:) = 0;
+        case 3 % orange only localization
+            split = 171; % fill in this value based off data
+            dps(:,1:split,:) = 0;
+        
+    end
+    
     % divide up the data    
     [iloc, fnum, cents] = divide_up(iprod, pixw, dps);
     [m,n,o] = size(iloc);

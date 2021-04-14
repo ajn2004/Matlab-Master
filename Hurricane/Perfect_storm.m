@@ -8,7 +8,7 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folder_names_to_analyze = {'4-7-21 gpi-vglut'};
+folder_names_to_analyze = {'4-13-21 big-red-beads'};
 align_color = 'red';
 
 %% Set and forget Variables
@@ -21,7 +21,7 @@ an_dir = 'Analysis'; % name of analysis directory
 angle = 0; %approximate astig rotation in degrees
 sv_im = 'n'; % set to y/Y to save image of localizations
 framechunk_drift_correct = 1000;
-thresh = 5;
+thresh = 10;
 
 %% Perform the Hurricane Process
 % Hurricane Optionals
@@ -31,7 +31,7 @@ savewaves = 0;
 showlocs = 0;
 savepsfs = 0;
 saverb = 0;
-two_color = 1; % two color code is as follows 1 = 2 color (algorithm decides order), 2= red only 3 = orange only 0 = no frame blocking
+two_color = 2; % two color code is as follows 1 = 2 color (algorithm decides order), 2= red only 3 = orange only 0 = no frame blocking
 varys = [savewaves, showlocs, savepsfs, saverb, two_color];
 
 for l = 1:numel(folder_names_to_analyze)
