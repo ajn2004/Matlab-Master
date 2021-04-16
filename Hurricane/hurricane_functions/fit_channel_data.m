@@ -14,13 +14,13 @@ end
 % iloc is a list of localization images, fnum is the array of frames each
 % loc was found, cents is an array of central positions, cal is the
 % calibration data structure, color is a string variable 'red' or 'orange'
-[fits, crlbs, llv, framenumber] = slim_locs(iloc, fnum, cents, cal.(color).ang);
+[fits, crlbs, llv, framenumber, psfs] = slim_locs(iloc, fnum, cents, cal.(color).ang);
             
 % As everywhere in the equations used sigma is squared, we can without
 % loss of generality make these fits positive definite
 fits(:,4) = abs(fits(:,4));
 fits(:,5) = abs(fits(:,5));
-
+[m,n,o] = size(iloc);
 % Z calculations
 zf = get_spline_z(fits(:,4),fits(:,5),cal.(color)); % New z_registration based off spline 3d calibration
 % remove failed z assignments
@@ -30,7 +30,9 @@ crlbs(ind,:) = [];
 llv(ind) = [];
 framenumber(ind) = [];
 zf(ind) = [];
-
+psfs(:,ind) = [];
+o = numel(psfs(1,:));
+psfs = reshape(psfs,m,n,o);
 
 % Put data into cdata structure
 for i = 1:6
@@ -39,6 +41,7 @@ for i = 1:6
 end
 cdata.(color).llv = llv;
 cdata.(color).framenumber = framenumber;
+cdata.(color).psfs = psfs;
 
 ncoords = make_astigmatism_corrections([cdata.(color).fits(:,1:2),zf/q],cal.(color),cal.q);
 % Assign fixed coordinates which are in microns at this point
@@ -60,5 +63,10 @@ for k=3:numel(field_names)
     end
     
 end
-
+sx_index = cal.(color).z0s > -0.5 & cal.(color).z0s < 0.5;
+sx_data = [cal.(color).sx(sx_index);cal.(color).sy(sx_index)].';
+nn_index = knnsearch(sx_data,[cdata.(color).fits(:,4),cdata.(color).fits(:,5)]);
+for i = 1:numel(cdata.(color).xf)
+    cdata.(color).distance(i,1) =  ((cdata.(color).fits(i,4) - sx_data(nn_index(i),1)).^2 + (cdata.(color).fits(i,5) - sx_data(nn_index(i),2)).^2)^0.5;
+end
 end

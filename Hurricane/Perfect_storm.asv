@@ -77,7 +77,8 @@ for i = 1:numel(files)
             func_da_storm_ps(files(i).name, q, pix2pho, pixw,thresh, angle, sv_im, mi1, varys);
         catch lsterr
             disp(lsterr.message)
-            lost_inds = [lost_inds;i];
+            disp(lsterr.
+%             lost_inds = [lost_inds;i];
         end
     end
 end
@@ -102,7 +103,7 @@ for i = 1:numel(toleranced_files)
         func_batch_h2_tol_ps(folder, file);
 %         delete(filename)
         catch lsterr
-            disp(lsterr)
+            disp(lsterr.stack)
             lost_inds = [lost_inds;i];
         end
     end
