@@ -8,7 +8,7 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folder_names_to_analyze = {'4-14-21 big-red-beads in cells'};
+folder_names_to_analyze = {'5-3-21 gpi-vglutmeos'};
 align_color = 'red';
 
 %% Set and forget Variables
@@ -31,7 +31,7 @@ savewaves = 0;
 showlocs = 0;
 savepsfs = 0;
 saverb = 0;
-two_color = 2; % two color code is as follows 1 = 2 color (algorithm decides order), 2= red only 3 = orange only 0 = no frame blocking
+two_color = 1; % two color code is as follows 1 = 2 color (algorithm decides order), 2= red only 3 = orange only 0 = no frame blocking
 varys = [savewaves, showlocs, savepsfs, saverb, two_color];
 
 for l = 1:numel(folder_names_to_analyze)
@@ -40,7 +40,7 @@ try
     cd(folder_to_analyze);
     
 catch lsterr
-    folder_to_analyze = ['E:\Dropbox\Data\', folder_names_to_analyze{l}, '\'];
+    folder_to_analyze = ['D:\Dropbox\Data\', folder_names_to_analyze{l}, '\'];
     cd(folder_to_analyze);
 end
 try
