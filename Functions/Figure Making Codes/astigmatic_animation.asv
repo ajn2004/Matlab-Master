@@ -111,20 +111,8 @@ sx = sx - mean(sx);
 sy = sy - mean(sy);
 [X Y Z] = rot_mat(deg2rad(degs));
 data = [sx;sy];
-count = 1;
-% for i = 0:degs:360
-    
-%     data = Z(1:2,1:2)*data;
-    plot3(data(1,:),data(2,:),zs,'linewidth',4)
-    xlim([min(sx)*1.2,max(sx)*1.2])
-    ylim([min(sx)*1.2,max(sx)*1.2])
-    zlim([min(zs)*1.1, max(zs)*1.1])
-    set(gca,'xtick',[])
-    set(gca,'ytick',[])
-    set(gca,'ztick',[])
-    xlabel('Guassian Width - X')
-    ylabel('Gaussian Width - Y')
-    zlabel('Axial Position')
-%     M(count) = getframe(gcf);
-%     count = count +1;
-% end
+for i = 0:degs:360
+    plot_data = Z*data;
+    plot3(plot_data(1,:),plot_data(2,:),zs)
+    xlim(1.5*[min(sx),max(sx)*1.2]
+end

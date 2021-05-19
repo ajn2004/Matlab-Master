@@ -74,6 +74,7 @@ try
        
    cal.q = q;
     % Fitting
+    try
     switch choices(5)
         case 1 % 2 color orange first
             split = 171; % fill in this value based off data
@@ -99,7 +100,9 @@ try
     
     % save results
         save(['Analysis\Raw\', fname(1:end-4),'_dast.mat'],  'cdata', 'pixw','q','cal');
-
+    catch
+         save(['Analysis\Raw\', fname(1:end-4),'_dast.mat'],  'cdata', 'pixw','q','cal');
+    end
     
 catch lsterr
     disp(lsterr.message)

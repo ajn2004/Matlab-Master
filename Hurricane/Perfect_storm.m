@@ -8,7 +8,7 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folder_names_to_analyze = {'5-3-21 gpi-vglutmeos'};
+folder_names_to_analyze = {'5-10-21 sec61', '5-11-21 gpi-vglutmeos', '5-11-21 channel calib','5-11-21 glut4halo-vglutmeos'};
 align_color = 'red';
 
 %% Set and forget Variables
