@@ -8,7 +8,11 @@ try
 
     comp_name = get_computer_name();
     load([comp_name , '\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat']);
-    load([comp_name , '\Documents\GitHub\Matlab-Master\Hurricane\hurricane_functions\z_calib.mat']);
+    try
+        load( 'z_calib.mat');
+    catch
+        load([comp_name , '\Documents\GitHub\Matlab-Master\Hurricane\hurricane_functions\z_calib.mat']);
+    end
     load([comp_name , '\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_calibration.mat'],'split');
 
     i1 = (readtiff(fname) - mi1);

@@ -1,4 +1,4 @@
-function cdata = clean_cdata(cdata)
+% function cdata = clean_cdata(cdata)
 % A quick script to remove localizations whose fitting parameters == 0
     colors = {'red','orange'};
     

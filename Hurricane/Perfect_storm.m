@@ -8,7 +8,7 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folder_names_to_analyze = {'5-10-21 sec61', '5-11-21 gpi-vglutmeos', '5-11-21 channel calib','5-11-21 glut4halo-vglutmeos'};
+folder_names_to_analyze = {'6-29-21 vglut-meos gpi-halo', '6-30-21 glut4-halo vglut-meos'};
 align_color = 'red';
 
 %% Set and forget Variables
@@ -20,7 +20,7 @@ pixw = 6;       % radius to localize (final image size is (2*pixw+1)^2 pixels)
 an_dir = 'Analysis'; % name of analysis directory
 angle = 0; %approximate astig rotation in degrees
 sv_im = 'n'; % set to y/Y to save image of localizations
-framechunk_drift_correct = 1000;
+framechunk_drift_correct = 3000;
 thresh = 10;
 
 %% Perform the Hurricane Process
@@ -81,18 +81,22 @@ for i = 1:numel(files)
         end
     end
 end
-disp('Tolerance')
-% 
-% % Batch H_tol
-% cd(folders_to_analyze{l});
-toleranced_files = dir('Analysis\raw\*dast.mat');
-
 disp('files')
 disp(lost_inds)
 disp('Were lost during hurricane')
 lost_inds = [];
+disp('Tolerance')
+
+% 
+% % Batch H_tol
+% cd(folders_to_analyze{l});
+
+
+
 % Batch Scan Correction
 folder = [folder_to_analyze,'Analysis\Raw\'];
+combine_cdata_folder(folder);
+toleranced_files = dir('Analysis\raw\*combo.mat');
 for i = 1:numel(toleranced_files)
     if isempty(strfind(toleranced_files(i).name,'scan'))
         try
@@ -113,7 +117,8 @@ disp(lost_inds)
 disp('Were lost during tolerance')
 cd('Analysis\');
 folder = [folder_to_analyze,'Analysis\Tol\'];
-drift_and_cluster_correct_tol_folder(folder,'red',1000);
+
+drift_and_cluster_correct_tol_folder(folder,'red',2000);
 
 % image_path = folders_to_analyze{l};
 % lost_inds = [];

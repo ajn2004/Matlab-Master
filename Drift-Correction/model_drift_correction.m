@@ -33,13 +33,13 @@ if strcmpi(align_color,'orange') % If we specify orange, make reference distribu
 else
     [xfo, yfo] = make_nn_channel_transform(cdata.orange.xf,cdata.orange.yf);
     zfo = -cdata.orange.zf;
-    xfr = xccdata.red.xf;
+    xfr = cdata.red.xf;
     yfr = cdata.red.yf;
     zfr = -cdata.red.zf;
     try
-    xfo = cdata.orange.xf;
-    yfo = cdata.orange.yf;
-    zfo = -cdata.orange.zf;
+%     xfo = cdata.orange.xf;
+%     yfo = cdata.orange.yf;
+%     zfo = -cdata.orange.zf;
     frame_o = cdata.orange.framenumber;
     catch
         xfo = 0;
@@ -149,9 +149,11 @@ w_all(:,:,1,2) = w0; % last index = 2 is current time chunk's adapted model
 % We are going to find the average drift correction between frames,
 % Every frame will then need 2 different nodal sets, the previous frames
 % node and the current frame's node. 
-for i = 2:10
+chunks = ceil(max(frame_r)/frames_in_chunk);
+for i = 2:chunks
     r_index = frame_r >= (i-1)*frames_in_chunk & frame_r < i*frames_in_chunk;
     o_index = frame_o >= (i-1)*frames_in_chunk & frame_o < i*frames_in_chunk;
+    sum(r_index)
     data1 = data(r_index,:);
     data2 = odata(o_index,:);
     % Data 1 and data 2 are time separated out localization sets
@@ -167,17 +169,21 @@ end
 
 % Stitch together the average cell drift
 drift = [0, 0, 0];
+spline_x = 0;
 dw = [];
-for i = 2:10
+for i = 2:chunks
     dw = mean(w_all(:,:,i,1) - w_all(:,:,i-1,2)); % Take difference from identical drift models
     drift(i,:) = drift(i-1,:) + dw;
 end
 % Correct the drift
 data_c = data;
 data_o = odata;
+spline_x = [0, frames_in_chunk/2:frames_in_chunk:max(frame_r)-frames_in_chunk/2, max(frame_r)]; 
+drift(i+1,:) = drift(i,:);
 for i = 1:3
-    red_model = spline(500:1000:9500, drift(:,i),frame_r);
-    orange_model = spline(500:1000:9500, drift(:,i),frame_o);
+    
+    red_model = spline(spline_x, drift(:,i),frame_r);
+    orange_model = spline(spline_x, drift(:,i),frame_o);
     data_c(:,i) = data(:,i) - red_model;
     data_o(:,i) = (odata(:,i) -orange_model(:));
     

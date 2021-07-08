@@ -7,7 +7,7 @@ for i = 1:numel(fnames)
     cdata_in.(color).(fnames{i})(ind,:) = [];
 end
 %Define fractionals
-tol.r.dist = 0.5;
+tol.r.dist = 1.5;
 cdata_in.(color).fr_N =  cdata_in.(color).crlbs(:,3).^0.5./cdata_in.(color).fits(:,3);
 cdata_in.(color).fr_sx = cdata_in.(color).crlbs(:,4).^0.5./cdata_in.(color).fits(:,4);
 cdata_in.(color).fr_sy = cdata_in.(color).crlbs(:,5).^0.5./cdata_in.(color).fits(:,5);
@@ -33,6 +33,10 @@ rind = ind; % Index represents all molecules that PASS tolerances
 fnames = fieldnames(cdata_in.(color));
 ind = logical(1-rind); % to remove failed localizations we want 1-pass
 for i = 1:numel(fnames) % remove data points
-    cdata_in.(color).(fnames{i})(ind,:) = [];
+    if ~strcmp(fnames{i},'psfs')
+        cdata_in.(color).(fnames{i})(ind,:) = [];
+    else
+        cdata_in.(color).(fnames{i})(:,:,ind) = [];
+    end
 end
  cdata_out = cdata_in;

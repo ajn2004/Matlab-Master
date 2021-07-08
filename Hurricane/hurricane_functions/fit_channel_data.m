@@ -40,7 +40,7 @@ for i = 1:6
     cdata.(color).crlbs(:,i) = crlbs(:,i);
 end
 cdata.(color).llv = llv;
-cdata.(color).framenumber = framenumber;
+cdata.(color).framenumber = framenumber(:);
 cdata.(color).psfs = psfs;
 
 ncoords = make_astigmatism_corrections([cdata.(color).fits(:,1:2),zf/q],cal.(color),cal.q);
@@ -63,7 +63,7 @@ for k=3:numel(field_names)
     end
     
 end
-sx_index = cal.(color).z0s > -0.5 & cal.(color).z0s < 0.5;
+sx_index = cal.(color).z0s > -1.5 & cal.(color).z0s < 1.5;
 sx_data = [cal.(color).sx(sx_index);cal.(color).sy(sx_index)].';
 nn_index = knnsearch(sx_data,[cdata.(color).fits(:,4),cdata.(color).fits(:,5)]);
 for i = 1:numel(cdata.(color).xf)

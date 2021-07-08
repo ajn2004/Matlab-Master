@@ -151,6 +151,7 @@ else
         llv = [llv; lv(ind)];
         psfs = cat(2,psfs,i2(:,ind));
     catch lsterr
+        disp(lsterr)
     end
 end
 try

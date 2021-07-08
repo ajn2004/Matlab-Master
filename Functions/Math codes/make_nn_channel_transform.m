@@ -3,9 +3,11 @@ function [x_out, y_out] = make_nn_channel_transform(x_in,y_in)
 comp_name = get_computer_name();
 try
     load('2_color_neural_net.mat', 'net1');
+%     disp('local neural net')
 catch
 
 load([comp_name,'\Documents\GitHub\Matlab-Master\2-Channel Codes\2_color_neural_net.mat'],'net1');
+disp('preload');
 end
 try
 load([comp_name,'\Documents\GitHub\Matlab-Master\Hurricane\hurricane_functions\zcalib.mat'],'q');
