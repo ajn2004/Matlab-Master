@@ -22,7 +22,7 @@ function cost = nn_drift_cost(sub_locs_1,sub_locs_2)
 
 
 bins = 10;
-[~,nn_dist] = knnsearch(sub_locs_2,sub_locs_1,'K',4);
+[~,nn_dist] = knnsearch(sub_locs_1,sub_locs_2,'K',3);
 nn_dist = mean(nn_dist,2);
 % nn_dist(end+1) = 200;
 % create bin uniform bins to determine the weighting of the nn distances
