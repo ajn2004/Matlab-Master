@@ -9,32 +9,44 @@ function diff = xcorrsig(sig1, sig2)
 
 % sxy1 = gausssmooth(sig1(:,2).^2 - sig1(:,3).^2,4,10);
 % sxy2 = gausssmooth(sig2(:,2).^2 - sig2(:,3).^2,4,10);
-f1 = sig1(:,1);
-f2 = sig2(:,1);
-n = numel(f1);
-sx1 = sig1(:,2);
-sy1 = sig1(:,3);
-sx2 = sig2(:,2);
-sy2 = sig2(:,3);
-frame1 = sig1(:,1);
-frame2 = sig2(:,1);
-% [c, lags] = xcorr(sxy2,sxy1);
-cost = [];
-displacements = [-floor(n/5):floor(n/5)];
-for j = 1:numel(displacements)
-    dist = 0;
-    for i = 1:numel(sx2)
-        ind = frame1 == frame2(i) + displacements(j);
-        if sum(ind) == 1
-            dist = dist + (sx1(ind)-sx2(i)).^2 + (sy1(ind)-sy2(i))^2;
-        end
-    end
-    cost = [cost; dist];
-%     cost = [cost; xcorrsig_cost(f1,sxy1,f2-j,sxy2)];
+%% Nearest neighbor Way 7/19/21
+k = 2;
+offsets = -50:50; % 100 nm scan 
+for i = 1:numel(offsets)
+    sigd = sig2;
+    sigd(:,1) = sigd(:,1) + offsets(i);
+    [I, distance] = knnsearch(sig1,sigd,'k',k);    
+    cost(i) = sum(distance(:));
 end
-s_cost = gausssmooth(cost,4,10);
-diff = displacements(s_cost == min(s_cost(s_cost > 0)));
-diff = diff(1);
+[M,I] = min(cost);
+diff = offsets(I);
+%% Old Way 7/19/21
+% f1 = sig1(:,1);
+% f2 = sig2(:,1);
+% n = numel(f1);
+% sx1 = sig1(:,2);
+% sy1 = sig1(:,3);
+% sx2 = sig2(:,2);
+% sy2 = sig2(:,3);
+% frame1 = sig1(:,1);
+% frame2 = sig2(:,1);
+% % [c, lags] = xcorr(sxy2,sxy1);
+% cost = [];
+% displacements = [-floor(n/5):floor(n/5)];
+% for j = 1:numel(displacements)
+%     dist = 0;
+%     for i = 1:numel(sx2)
+%         ind = frame1 == frame2(i) + displacements(j);
+%         if sum(ind) == 1
+%             dist = dist + (sx1(ind)-sx2(i)).^2 + (sy1(ind)-sy2(i))^2;
+%         end
+%     end
+%     cost = [cost; dist];
+% %     cost = [cost; xcorrsig_cost(f1,sxy1,f2-j,sxy2)];
+% end
+% s_cost = gausssmooth(cost,4,10);
+% diff = displacements(s_cost == min(s_cost(s_cost > 0)));
+% diff = diff(1);
 % stem(lags,c)
 % offset = lags(find(c == max(c)));
 % figure

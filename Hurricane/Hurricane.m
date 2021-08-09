@@ -65,18 +65,18 @@ if varys(1) == 1
 elseif varys(3) == 1
     mkdir('psfs');
 elseif varys(4) == 1
-    mkdir('Rolp0-oling_Ball');
+    mkdir('Rolling_Ball');
 end
 
 for i = 1:numel(files)
     tic
-    if isempty(strfind(files(i).name,'scan'))
+%     if isempty(strfind(files(i).name,'scan'))
         func_da_storm(files(i).name, dpath, an_dir, q, pixw,thresh, mi1, varys);
         clc;
         disp(['File number ' , num2str(i) , ' out of ', num2str(numel(files))]);
         t(i) = toc;
         ajn_wait(t,i,numel(files));
-    end
+%     end
     close all
 end
 

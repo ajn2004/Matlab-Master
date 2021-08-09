@@ -1,11 +1,11 @@
 % Spin Frames
 % A script to rotate and spin a figure by adjusting viewing angles
 function fig_spin(fname)
-azstrt = 0;
+azstrt = -90;
 azend = azstrt + 360;
 elstrt = 90;
 step = 1;
-elend = 25;
+elend = 0;
 % M = [];
 clear Mvy
 
@@ -35,4 +35,4 @@ for el = elend:step:elstrt
         Mvy(numel(Mvy)+1) = getframe(gcf);
 
 end
-movie2gif(Mvy,[fname,'.gif'],'DelayTime',0.02,'LoopCount', Inf);
+movie2gif(Mvy,[fname,'.gif'],'DelayTime',0.04,'LoopCount', Inf);

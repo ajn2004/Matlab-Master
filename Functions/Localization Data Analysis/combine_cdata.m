@@ -11,10 +11,13 @@ cdata_out.orange = [];
 for j = {'orange','red'}
     % Loop through field names
     for i = 1:numel(fnames)
+        try
         if i == 4 % Every field can be concatenated except framenumber, which needs to have an offset for the second structure (structure two starts after structure one)
             cdata_out.(j{1}).(fnames{i}) = [cdata_one.(j{1}).(fnames{i})(:);max(cdata_one.(j{1}).(fnames{i})) + cdata_two.(j{1}).(fnames{i})(:)];
         else
             cdata_out.(j{1}).(fnames{i}) = [cdata_one.(j{1}).(fnames{i}); cdata_two.(j{1}).(fnames{i})];
+        end
+        catch
         end
     end
 end

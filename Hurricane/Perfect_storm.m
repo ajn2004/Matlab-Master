@@ -8,7 +8,7 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folder_names_to_analyze = {'6-29-21 vglut-meos gpi-halo', '6-30-21 glut4-halo vglut-meos'};
+folder_names_to_analyze = {'8-5-21 gpi-halo vglut-meos','8-5-21 sec61-halo vglut-meos'};
 align_color = 'red';
 
 %% Set and forget Variables
@@ -96,7 +96,7 @@ disp('Tolerance')
 % Batch Scan Correction
 folder = [folder_to_analyze,'Analysis\Raw\'];
 combine_cdata_folder(folder);
-toleranced_files = dir('Analysis\raw\*combo.mat');
+toleranced_files = dir('Analysis\raw\*.mat');
 for i = 1:numel(toleranced_files)
     if isempty(strfind(toleranced_files(i).name,'scan'))
         try
@@ -118,7 +118,7 @@ disp('Were lost during tolerance')
 cd('Analysis\');
 folder = [folder_to_analyze,'Analysis\Tol\'];
 
-drift_and_cluster_correct_tol_folder(folder,'red',2000);
+% drift_and_cluster_correct_tol_folder(folder,'red',2000);
 
 % image_path = folders_to_analyze{l};
 % lost_inds = [];
