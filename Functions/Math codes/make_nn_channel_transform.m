@@ -3,6 +3,7 @@ function [x_out, y_out] = make_nn_channel_transform(x_in,y_in)
 comp_name = get_computer_name();
 try
     load('2_color_neural_net.mat', 'net1');
+    disp('loaded local 2color net')
 %     disp('local neural net')
 catch
 

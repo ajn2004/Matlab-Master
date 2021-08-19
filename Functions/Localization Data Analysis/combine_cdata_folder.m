@@ -17,7 +17,8 @@ index = regexp(files(i).name,'X[1-9]');
                 cdata_two = cdata;
                 clearvars cdata;
                 cdata = combine_cdata(cdata_one,cdata_two);
-                save([folder,files(j).name(1:end-4),'_combo.mat']);
+                cal.pixw = pixw;
+                save([folder,files(j).name(1:end-4),'_combo.mat'],'cal','cdata');
                 break
             end
         end

@@ -7,7 +7,7 @@ for i = 1:numel(fnames)
     cdata_in.(color).(fnames{i})(ind,:) = [];
 end
 %Define fractionals
-tol.r.dist = 1.5;
+% tol.r.dist = 0.6;
 cdata_in.(color).fr_N =  cdata_in.(color).crlbs(:,3).^0.5./cdata_in.(color).fits(:,3);
 cdata_in.(color).fr_sx = cdata_in.(color).crlbs(:,4).^0.5./cdata_in.(color).fits(:,4);
 cdata_in.(color).fr_sy = cdata_in.(color).crlbs(:,5).^0.5./cdata_in.(color).fits(:,5);

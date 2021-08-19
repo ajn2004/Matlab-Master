@@ -6,7 +6,7 @@ x = 0:2*cyc;
 zf = zs*0;
 fnumber = framenumber + j;
 y = 0;
-dz = 0.8*dz;
+% dz = 0.8*dz;
 clear dcoords
 % close all
 for i = 2:numel(x)
