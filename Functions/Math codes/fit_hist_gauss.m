@@ -16,3 +16,4 @@ xt = min(xs):0.001:max(xs);
 yfit = (fits(2)*exp(- (xt - fits(1)).^2./(2*fits(3)^2)) + fits(4));
 hold on
 plot(xt,yfit,'r')
+hold off

@@ -54,7 +54,12 @@ if ~exist('weighting','var')
 end
 % Coordinate centering
 try % Try orange red combo
-    [xfo, yfo] = make_nn_channel_transform(cdata.orange.xf,cdata.orange.yf);
+    if min(cdata.orange.xf) > max(cdata.red.xf)
+        [xfo, yfo] = make_nn_channel_transform(cdata.orange.xf,cdata.orange.yf);
+    else
+        xfo = cdata.orange.xf;
+        yfo = cdata.orange.yf;
+    end
     xfo = xfo - mean(cdata.red.xf);
     yfo = yfo - mean(cdata.red.yf);
     zfo = cdata.orange.zf - mean(cdata.red.zf);

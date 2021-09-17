@@ -8,7 +8,7 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folder_names_to_analyze = {'8-16-21 vglut-meo gpi-halo'};
+folder_names_to_analyze = {'9-16-21 calibration\channel'};
 align_color = 'red';
 
 %% Set and forget Variables
@@ -49,11 +49,33 @@ catch lsterr
     mi1 = 0;
 end
 
+
 files = dir('*.tif');
 % if ~isempty([fpath,'\',an_dir])
 % sendit2(an_dir);
 % end
 mkdir(an_dir);
+% Copy files over
+mat_file = dir('mat');
+if isempty(mat_file) % if there is no mat file in the current directory, we need to impart a z_calib.mat
+    try
+        copyfile('D:\Dropbox\Data\Current Copy Files\z_calib.mat')
+    catch
+        copyfile('G:\Dropbox\Data\Current Copy Files\z_calib.mat')
+    end
+end
+% Copy over analysis and neural net files
+cd(an_dir)
+if isempty(mat_file)
+    try
+        copyfile('D:\Dropbox\Data\Current Copy Files\folder_analysis.mlx')
+        copyfile('D:\Dropbox\Data\Current Copy Files\2_color_neural_net.mat')
+    catch
+        copyfile('G:\Dropbox\Data\Current Copy Files\folder_analysis.mlx')
+        copyfile('G:\Dropbox\Data\Current Copy Files\2_color_neural_net.mat')
+    end
+end
+cd(folder_to_analyze);
 % Normalize Name information
 files = rename_problem_files(files);
 if varys(1) == 1
