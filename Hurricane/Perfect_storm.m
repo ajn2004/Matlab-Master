@@ -8,7 +8,7 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folder_names_to_analyze = {'9-16-21 calibration\channel'};
+folder_names_to_analyze = {'10-13-21 vglut-meos gpi-halo physin'};
 align_color = 'red';
 
 %% Set and forget Variables
