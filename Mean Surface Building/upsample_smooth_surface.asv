@@ -1,0 +1,29 @@
+function upsampled_surface = upsample_smooth_surface(smooth_surface,shrink, iterations)
+
+k = knnsearch(smooth_surface,smooth_surface,'k'shrink);
+for j = 1:iterations
+    upsampled_surface = [];
+    
+    for i = 1:numel(k(:,1))
+        upsampled_surface = [upsampled_surface; mean(smooth_surface(k(i,:),:))];
+    end
+    smooth_surface = [smooth_surface; upsampled_surface];
+    k = boundary(smooth_surface,shrink);
+end
+upsampled_surface = smooth_surface;
+
+% Boundary Averaging Behavior
+% function upsampled_surface = upsample_smooth_surface(smooth_surface,shrink, iterations)
+% 'old method' adds a point at the center of every boundary triangle
+
+% k = boundary(smooth_surface,shrink);
+% for j = 1:iterations
+%     upsampled_surface = [];
+%     
+%     for i = 1:numel(k(:,1))
+%         upsampled_surface = [upsampled_surface; mean(smooth_surface(k(i,:),:))];
+%     end
+%     smooth_surface = [smooth_surface; upsampled_surface];
+%     k = boundary(smooth_surface,shrink);
+% end
+% upsampled_surface = smooth_surface;
