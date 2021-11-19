@@ -1,4 +1,4 @@
-function spread_surface = spread_out_surface_points(dense_surface, kk, m, iterations)
+    function spread_surface = spread_out_surface_points(dense_surface, kk, m, iterations)
 sdata = dense_surface;
 sdata1 = sdata;
 
@@ -7,6 +7,7 @@ free = find(fixed == 0);
 for i = 1:iterations
     [Idx, D] = knnsearch(sdata,sdata(free,:),'K',kk);
     for k = 1:numel(free)
+        
         sub_set = sdata(Idx(k,2:end),:);
         r = sub_set - sdata(free(k),:);
         rh = -r./abs(r);
@@ -15,7 +16,11 @@ for i = 1:iterations
         orth_proj = (proj_mat*rh.').';
         rallowed = rh - orth_proj;
         kick = m*sum(rallowed);
-        sdata1(free(k),:) = sdata(free(k),:) + kick;
+        if sum(kick.*kick).^0.5 < 0.5
+            sdata1(free(k),:) = sdata(free(k),:) + kick;
+%             disp('kick')
+        end
+            
         
     end
     sdata = sdata1;
