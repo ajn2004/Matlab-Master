@@ -1,7 +1,7 @@
 function distances = get_normal_distances_from_surface(centers, normals, data, cutoff_distance)
 
 
-distances = zeros(numel(data(:,1)),4) + 20;
+distances = zeros(numel(data(:,1)),2) + 20;
 [Idx, D] = knnsearch(centers,data);
 
 for i = 1:numel(data(:,1)) % loop over all red molecules
