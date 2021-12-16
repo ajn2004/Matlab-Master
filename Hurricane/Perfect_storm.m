@@ -8,7 +8,7 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folder_names_to_analyze = {'12-1-21 gpi-halo clc-meos'};
+folder_names_to_analyze = {'12-15-21 gpi-halo vglut-meos'};
 align_color = 'red';
 
 %% Set and forget Variables
@@ -33,8 +33,8 @@ savepsfs = 0;
 saverb = 0;
 two_color = 1; % two color code is as follows 1 = 2 color (algorithm decides order), 2= red only 3 = orange only 0 = no frame blocking
 varys = [savewaves, showlocs, savepsfs, saverb, two_color];
-
-for l = 1:numel(folder_names_to_analyze)
+folder_start = 1;
+for l = folder_start:numel(folder_names_to_analyze)
 try
     folder_to_analyze = ['G:\Dropbox\Data\', folder_names_to_analyze{l}, '\'];
     cd(folder_to_analyze);
