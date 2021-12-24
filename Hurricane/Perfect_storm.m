@@ -8,7 +8,7 @@ close all;
 clc;
 
 %% Regular Change User Variables
-folder_names_to_analyze = {'12-1-21 gpi-halo clc-meos'};
+folder_names_to_analyze = {'12-20-21 gpi-halo vglut-meos'};
 align_color = 'red';
 
 %% Set and forget Variables
@@ -36,7 +36,7 @@ varys = [savewaves, showlocs, savepsfs, saverb, two_color];
 
 for l = 1:numel(folder_names_to_analyze)
 try
-    folder_to_analyze = ['G:\Dropbox\Data\', folder_names_to_analyze{l}, '\'];
+    folder_to_analyze = ['N:\Dropbox\Dropbox\Data\', folder_names_to_analyze{l}, '\'];
     cd(folder_to_analyze);
     
 catch lsterr
@@ -61,7 +61,7 @@ if isempty(mat_file) % if there is no mat file in the current directory, we need
     try
         copyfile('D:\Dropbox\Data\Current Copy Files\z_calib.mat')
     catch
-        copyfile('G:\Dropbox\Data\Current Copy Files\z_calib.mat')
+        copyfile('N:\Dropbox\Dropbox\Data\Current Copy Files\z_calib.mat')
     end
 end
 % Copy over analysis and neural net files
@@ -71,8 +71,8 @@ if isempty(mat_file)
         copyfile('D:\Dropbox\Data\Current Copy Files\folder_analysis.mlx')
         copyfile('D:\Dropbox\Data\Current Copy Files\2_color_neural_net.mat')
     catch
-        copyfile('G:\Dropbox\Data\Current Copy Files\folder_analysis.mlx')
-        copyfile('G:\Dropbox\Data\Current Copy Files\2_color_neural_net.mat')
+        copyfile('N:\Dropbox\Dropbox\Data\Current Copy Files\folder_analysis.mlx')
+        copyfile('N:\Dropbox\Dropbox\Data\Current Copy Files\2_color_neural_net.mat')
     end
 end
 cd(folder_to_analyze);
@@ -127,6 +127,7 @@ for i = 1:numel(toleranced_files)
             file = toleranced_files(i).name;
 %         filename = [folders_to_analyze{l},'Analysis\',files(i).name];
         func_batch_h2_tol_ps(folder, file);
+        check_tag(folder, file);
 %         delete(filename)
         catch lsterr
             disp(lsterr)
