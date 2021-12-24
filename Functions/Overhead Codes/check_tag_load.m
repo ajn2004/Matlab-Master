@@ -1,7 +1,7 @@
-function check_tag_load(folflder,file_name)
+function check_tag_load(folder,file_name)
 % This will become the fundamental way to load localization data
 % load file
-load([folflder,'\',file_name]);
+load([folder,'\',file_name]);
 index_file_path = '..\..\Composites\';
 index_file_name = 'data_index.mat';
 load([index_file_path,index_file_name])
@@ -14,14 +14,14 @@ if ~exist('file_id_number','var') % Loop executes in absence of a number
     % Acknowledge new file to user
     disp(['New file detected'])
     % Save file id w/ file
-    save([folflder,'\',file_name],'cdata','cal','tol','file_id_number')
+    save([folder,'\',file_name],'cdata','cal','tol','file_id_number')
     % Record file name in proper location in data index object
     data_index(file_id_number).name = file_name;
     % Record file location in data index object
-    data_index(file_id_number).folder = folflder;
+    data_index(file_id_number).folder = folder;
 end
 % Print File information
-disp(['Loading file ', file_name, ' from folder ', folflder]);
+disp(['Loading file ', file_name, ' from folder ', folder]);
 disp(['ID is ', num2str(file_id_number)]);
 % save updated data index object
 save([index_file_path,index_file_name],'data_index');
